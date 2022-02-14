@@ -1,0 +1,26 @@
+{
+  "name": "ultraviolet",
+  "version": "1.0.0",
+  "description": "Proxy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "css-tree": "^2.0.4",
+    "esotope-hammerhead": "^0.6.1",
+    "idb": "^7.0.0",
+    "meriyah": "^4.2.0",
+    "mime-db": "^1.51.0",
+    "node-static": "^0.7.11",
+    "parse5": "^6.0.1",
+    "set-cookie-parser": "^2.4.8",
+    "webpack": "^5.68.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0"
+  }
+}

@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+    <head></head>
+    <body>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/uv.sw.js', {
+                    scope: '/service/'
+                });
+                navigator.serviceWorker.ready.then(() => {
+                    location.reload()
+                })
+            };
+        </script>
+    </body>
+</html>

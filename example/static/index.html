@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
+        <script src="uv.bundle.js"></script>
+        <script src="uv.handler.js"></script>
+    </head>
+    <body>
+        <h1>Testing</h1>
+        <iframe src="/"></iframe>
+        <script>
+            //console.log(__uv$get(window, 'postMessage', __uv) !== __uv$get(parent, 'postMessage', __uv));
+            const frame = document.querySelector('iframe').contentWindow;
+            addEventListener('message', e => console.log(e.source.postMessage !== window.postMessage));
+        </script>
+    </body>
+</html>__uv$get(frame, 'postMessage', __uv)
