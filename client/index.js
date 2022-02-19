@@ -15,6 +15,7 @@ import NavigatorApi from "./navigator.js";
 import Workers from "./worker.js";
 import URLApi from "./url.js";
 import EventEmitter from "./events.js";
+import StorageApi from "./storage.js";
 
 class UVClient extends EventEmitter {
     constructor(window = self, worker = !window.window) {
@@ -25,9 +26,14 @@ class UVClient extends EventEmitter {
             defineProperty: this.window.Object.defineProperty,
             getOwnPropertyDescriptor: this.window.Object.getOwnPropertyDescriptor,
             getOwnPropertyDescriptors: this.window.Object.getOwnPropertyDescriptors,
+            getOwnPropertyNames: this.window.Object.getOwnPropertyNames,
+            keys: this.window.Object.keys,
+            getOwnPropertySymbols: this.window.Object.getOwnPropertySymbols,
             isArray: this.window.Array.isArray,
             setPrototypeOf: this.window.Object.setPrototypeOf,
             isExtensible: this.window.Object.isExtensible,
+            Map: this.window.Map,
+            Proxy: this.window.Proxy,
         };
         this.worker = worker;
         this.fetch = new Fetch(this);
@@ -46,6 +52,7 @@ class UVClient extends EventEmitter {
         this.url = new URLApi(this);
         this.workers = new Workers(this);
         this.location = new LocationApi(this);
+        this.storage = new StorageApi(this);
     };
     initLocation(rewriteUrl, sourceUrl) {
         this.location = new LocationApi(this, sourceUrl, rewriteUrl, this.worker);

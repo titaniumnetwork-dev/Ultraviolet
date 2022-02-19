@@ -10,6 +10,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "bowser": "^2.11.0",
     "css-tree": "^2.0.4",
     "esotope-hammerhead": "^0.6.1",
     "idb": "^7.0.0",

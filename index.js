@@ -18,7 +18,7 @@ console.log(
 */
 
 console.log(
-    uv.rewriteJS('window.eval(saasdsd)')
+    uv.rewriteJS('top')
 )
 
 /*

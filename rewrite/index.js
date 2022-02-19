@@ -5,13 +5,15 @@ import setCookie from 'set-cookie-parser';
 import { xor, base64, plain } from './codecs.js';
 import mimeTypes from './mime.js';
 import { validateCookie, db, getCookies, setCookies, serialize } from './cookie.js';
-import { attributes, isUrl, isForbidden, isHtml, isSrcset, isStyle, text } from './rewrite.html.js'; 
+import { attributes, isUrl, isForbidden, isHtml, isSrcset, isStyle, text, injectHead, createInjection } from './rewrite.html.js'; 
 import { importStyle, url } from './rewrite.css.js';
 //import { call, destructureDeclaration, dynamicImport, getProperty, importDeclaration, setProperty, sourceMethods, wrapEval, wrapIdentifier } from './rewrite.script.js';
-import { dynamicImport, identifier, importDeclaration, property, unwrap, wrapEval } from './rewrite.script.test.js';
+import { dynamicImport, identifier, importDeclaration, property, unwrap, wrapEval } from './rewrite.script.js';
 import { openDB } from 'idb'; 
 import parsel from './parsel.js';
 import UVClient from '../client/index.js';
+import Bowser from 'bowser';
+
 
 const valid_chars = "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~";
 const reserved_chars = "%";
@@ -29,6 +31,8 @@ class Ultraviolet {
         this.meta = options.meta || {};
         this.meta.base ||= undefined;
         this.meta.origin ||= '';
+        this.bundleScript = options.bundleScript || '/uv.bundle.js';
+        this.handlerScript = options.handlerScript || '/uv.handler.js';
         this.meta.url ||= this.meta.base || '';
         this.codec = Ultraviolet.codec;
         this.html = new HTML(this);
@@ -36,10 +40,12 @@ class Ultraviolet {
         this.js = new JS(this);
         this.parsel = parsel;
         this.openDB = this.constructor.openDB;
+        this.Bowser = this.constructor.Bowser;
         this.client = typeof self !== 'undefined' ? new UVClient((options.window || self)) : null;
         this.master = '__uv';
         this.dataPrefix = '__uv$';
         this.attributePrefix = '__uv';
+        this.createHtmlInject = createInjection;
         this.attrs = {
             isUrl,
             isForbidden,
@@ -133,31 +139,17 @@ class Ultraviolet {
         // HTML
         attributes(this);
         text(this);
-
+        injectHead(this);
         // CSS
         url(this);
         importStyle(this);
-
         // JS
-        /*
-        getProperty(this);
-        call(this)
-        setProperty(this);
-        sourceMethods(this);
-        importDeclaration(this);
-        dynamicImport(this);
-        wrapEval(this);
-        wrapIdentifier(this)
-        */
-        
         importDeclaration(this);
         dynamicImport(this);
         property(this);
         wrapEval(this);
         identifier(this);
         unwrap(this);
-        
-        //destructureDeclaration(this)
     };
     get rewriteHtml() {
         return this.html.rewrite.bind(this.html);
@@ -181,6 +173,7 @@ class Ultraviolet {
     static mime = mimeTypes;
     static setCookie = setCookie;
     static openDB = openDB;
+    static Bowser = Bowser;
 };
 
 export default Ultraviolet;

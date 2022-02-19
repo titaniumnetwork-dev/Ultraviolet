@@ -1,5 +1,5 @@
 function attributes(ctx, meta = ctx.meta) {
-    const { html, js, css, attributePrefix } = ctx;
+    const { html, js, css, attributePrefix, handlerScript, bundleScript } = ctx;
     const origPrefix = attributePrefix + '-attr-';
 
     html.on('attr', (attr, type) => {
@@ -20,7 +20,11 @@ function attributes(ctx, meta = ctx.meta) {
 
         if (type === 'rewrite' && isHtml(attr.name)) {
             attr.node.setAttribute(origPrefix + attr.name, attr.value);
-            attr.value = html.rewrite(attr.value, { ...meta, document: true });
+            attr.value = html.rewrite(attr.value, { 
+                ...meta,
+                document: true,
+                injectHead: attr.options.injectHead || [],
+            });
         };
 
         
@@ -154,6 +158,53 @@ function isEvent(name) {
     ].indexOf(name) > -1;
 };
 
+function injectHead(ctx) {
+    const { html, js, css, attributePrefix } = ctx;
+    const origPrefix = attributePrefix + '-attr-';
+    html.on('element', (element, type) => {
+        if (type !== 'rewrite') return false;
+        if (element.tagName !== 'head') return false;
+        if (!('injectHead' in element.options)) return false;
+        
+        element.childNodes.unshift(
+            ...element.options.injectHead
+        );
+    });
+};
+
+function createInjection(handler = '/uv.handler.js', bundle = '/uv.bundle.js', cookies = '', referrer = '') {
+    return [
+        {
+            tagName: 'script',
+            nodeName: 'script',
+            childNodes: [
+                {
+                    nodeName: '#text',
+                    value: `window.__uv$cookies = atob("${btoa(cookies)}");\nwindow.__uv$referrer = atob("${btoa(referrer)}");`
+                },
+            ],
+            attrs: [],
+            skip: true,
+        },
+        {
+            tagName: 'script',
+            nodeName: 'script',
+            childNodes: [],
+            attrs: [
+                { name: 'src', value: bundle, skip: true }
+            ],
+        },
+        {
+            tagName: 'script',
+            nodeName: 'script',
+            childNodes: [],
+            attrs: [
+                { name: 'src', value: handler, skip: true }
+            ],
+        },
+    ];
+};
+
 function isForbidden(name) {
     return ['http-equiv', 'integrity', 'sandbox', 'nonce', 'crossorigin'].indexOf(name) > -1;
 };
@@ -171,4 +222,4 @@ function isSrcset(name) {
 };
 
 
-export { attributes, text, isUrl, isEvent, isForbidden, isHtml, isStyle, isSrcset };
+export { attributes, createInjection, text, isUrl, isEvent, isForbidden, isHtml, isStyle, isSrcset, injectHead };

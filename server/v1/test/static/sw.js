@@ -13,8 +13,6 @@ addEventListener('fetch', async event => {
         sendHeaders.Referer = 'https://www.google.com' + request.referrer.slice(location.origin.length);
     };
 
-    console.log(Object.fromEntries([...request.headers.entries()]), sendHeaders);
-
     event.respondWith(
         fetch('/bare/v1/', {
             headers: {

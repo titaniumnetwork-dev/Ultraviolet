@@ -36,7 +36,23 @@ async function db(openDB) {
 
 function serialize(cookies = [], meta, js) {
     let str = '';
+    const now = new Date();
     for (const cookie of cookies) {
+
+        let expired = false;
+
+        if (cookie.set) {
+            if (cookie.maxAge) {
+                expired =  cookie.set.getTime() + (cookie.maxAge * 1e3) < now;
+            } else if (cookie.expires) {
+                expired = cookie.expires > now;
+            };
+        };
+
+        if (expired) {  
+
+            continue;
+        };
         if (!validateCookie(cookie, meta, js)) continue;
         if (str.length) str += '; ';
         str += cookie.name;
@@ -47,15 +63,34 @@ function serialize(cookies = [], meta, js) {
 };
 
 async function getCookies(db) {
-    return await db.getAll('cookies');
+    const now = new Date();
+    return (await db.getAll('cookies')).filter(cookie => {
+        
+        let expired = false;
+        if (cookie.set) {
+            if (cookie.maxAge) {
+                expired = (cookie.set.getTime() + (cookie.maxAge * 1e3)) < now;
+            } else if (cookie.expires) {
+                expired = new Date(cookie.expires.toLocaleString()) < now;
+            };
+        };
+
+        if (expired) {
+            db.delete('cookies', cookie.id);
+            return false;
+        };
+
+        return  true;
+    });
 };
 
 function setCookies(data, db, meta) {
     if (!db) return false;
+
     const cookies = setCookie(data, {
         decodeValues: false,
     })
-
+    
     for (const cookie of cookies) {
         if (!cookie.domain) cookie.domain = '.' + meta.url.hostname;
         if (!cookie.path) cookie.path = '/';
@@ -67,6 +102,7 @@ function setCookies(data, db, meta) {
         db.put('cookies', {
             ...cookie, 
             id: `${cookie.domain}@${cookie.path}@${cookie.name}`,
+            set: new Date(Date.now()),
         });
     };
     return true;

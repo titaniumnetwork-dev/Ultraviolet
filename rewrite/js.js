@@ -90,33 +90,4 @@ class JS extends EventEmitter {
     };
 };
 
-class NodeEvent extends EventEmitter {
-    constructor(node, parent = null) {
-        super();
-        this._node = node;
-        for (let key in node) {
-            Object.defineProperty(this, key, {
-                get: () => node[key],
-                sel: val => node[key] = val,
-            });
-        };
-        this.parent = parent;
-    };
-    iterate(handler) {
-        for (const key in this._node) {
-            if (key === 'parent') continue;
-            if (Array.isArray(this._node[key])) {
-                this._node[key].forEach(entry => { 
-                    const child = new this.constructor(entry, this._node);
-                    handler(child);
-                });
-            } else {
-                const child = new this.constructor(entry, this._node);
-                walk(this._node[key], this._node, handler);
-            };
-        };
-    };
-};
-
 export default JS;
-export { NodeEvent };

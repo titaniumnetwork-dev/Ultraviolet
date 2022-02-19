@@ -3,7 +3,7 @@ import path from "path";
 
 const __dirname = path.resolve(path.dirname(decodeURI(new URL(import.meta.url).pathname))).slice(3);
 
-console.log(__dirname);
+console.log(path.resolve(path.dirname(decodeURI(new URL(import.meta.url).pathname))), __dirname);
 
 webpack({
     mode: 'none',

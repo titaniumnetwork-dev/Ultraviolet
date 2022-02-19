@@ -11,12 +11,12 @@ function request(request, response) {
         
         remoteRequest.on('response', remoteResponse => {
             const send = prepareResponse(remoteResponse);
+            
             response.writeHead(...send);
             remoteResponse.pipe(response);
         });
 
         remoteRequest.on('error', e => {
-            console.log(e);
             json(response, 500, {
                 error: e.toString()
             });
@@ -24,7 +24,6 @@ function request(request, response) {
 
         request.pipe(remoteRequest);
     } catch(e) {
-        console.log(e);
         json(response, 500, {
             error: e.toString()
         });

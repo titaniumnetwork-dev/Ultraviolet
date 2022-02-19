@@ -1,384 +1,92 @@
 import { Syntax } from 'esotope-hammerhead';
-const master = '__uv';
-const methodPrefix = '__uv$';
-const uvMethods = {
-    get: methodPrefix + 'get',
-    proxy: methodPrefix + 'proxy',
-    call: methodPrefix + 'call',
-    set: methodPrefix + 'set',
-    script: methodPrefix + 'script',
-    url: methodPrefix + 'url',
-    object: methodPrefix + 'obj'
-};
-const uvMethodTypes = {
-    [methodPrefix + 'get']: 'get',
-    [methodPrefix + 'proxy']: 'proxy',
-    [methodPrefix + 'call']: 'call',
-    [methodPrefix + 'set']: 'set',
-    [methodPrefix + 'script']: 'script',
-    [methodPrefix + 'url']: 'url',
-    [methodPrefix + 'obj']: 'object'
-};
-const shortHandAssignment = {
-    '+=': '+',
-    '-=': '-',
-    '*=': '*',
-    '/=': '/',
-    '%=': '%',
-    '**=': '**',
-    '<<=': '<<',
-    '>>=': '>>',
-    '>>>=': '>>>',
-    '&=': '&',
-    '^=': '^',
-    '|=': '|',
-};
-const assignmentOperators = ['=', '+=', '-=', '*=', '/=', '%=', '**=', '<<=', '>>=', '>>>=', '&=', '^=', '|='];
 
-
-function getProperty(ctx) {
+function property(ctx) {
     const { js } = ctx;
-    js.on(Syntax.MemberExpression, (node, data, type) => {
-        if (type !== 'rewrite') return false;
-        if (node.object.type === Syntax.Super)
-            return false;
-        if (node.parent.type === Syntax.AssignmentExpression && node.parent.left === node)
-            return false;
-        if (node.parent.type === Syntax.CallExpression && node.parent.callee === node)
-            return false;
-        if (node.parent.type === Syntax.UnaryExpression && node.parent.operator === 'delete')
-            return false;
-        if (node.parent.type === Syntax.UpdateExpression && (node.parent.operator === '++' || parent.operator === '--'))
-            return false;
-        if (node.parent.type === Syntax.NewExpression && node.parent.callee === node)
-            return false;
-        if (node.parent.type === Syntax.ForInStatement && node.parent.left === node) return false;
-        if (node.computed && node.property.type === Syntax.Literal && !shouldWrapProperty(node.property.value))
-            return false;
-        if (!node.computed && node.property.type === Syntax.Identifier && !shouldWrapProperty(node.property.name))
-            return false;
+    js.on('MemberExpression', (node, data, type) => {
+        if (node.object.type === 'Super') return false;
 
-        data.changes.push({
-            node: `${uvMethods.get}((`,
-            start: node.start,
-            end: node.object.start,
-        })
-
-        node.object.iterateEnd = function () {
+        if (type === 'rewrite' && computedProperty(node)) {
             data.changes.push({
-                start: node.object.end,
+                node: '__uv.$wrap((',
+                start: node.property.start,
                 end: node.property.start,
-            });
-
-            data.changes.push({
-                node: '), ('
-            });
-
-            if (node.computed) {
-                node.property.iterateEnd = function () {
-                    data.changes.push({
-                        start: node.property.end,
-                        end: node.end,
-                        node: `), ${master}, true)`
-                    });
-                    
-                };
-            } else {
+            })
+            node.iterateEnd = function() {
                 data.changes.push({
-                    end: node.end,
-                    node: '"' + node.property.name + `"), ${master}, false)`
-                })
+                    node: '))',
+                    start: node.property.end,
+                    end: node.property.end,
+                });
             };
-
-        };
-    })
-};
-
-function call(ctx) {
-    const { js } = ctx;
-    js.on(Syntax.CallExpression, (node, data, type) => {
-        if (type !== 'rewrite') return false;
-        if (node.callee.type !== Syntax.MemberExpression) 
-            return false;
-        if (node.callee.object.type === Syntax.Super) 
-            return false;
-        if (node.callee.computed && node.callee.property.type === Syntax.Literal && !shouldWrapProperty(node.callee.property.value))
-            return false;
-        if (!node.callee.computed && node.callee.property.type === Syntax.Identifier && !shouldWrapProperty(node.callee.property.name))
-            return false;
-
-        const { callee } = node;
-
-        data.changes.push({
-            node: `${uvMethods.call}((`,
-            start: node.start,
-            end: callee.object.start,
-        })
-
-        callee.object.iterateEnd = function () {
-            data.changes.push({
-                start: callee.object.end,
-                end: callee.property.start,
-            });
-
-            data.changes.push({
-                node: '), ('
-            });
-
-            if (callee.computed) {
-                callee.property.iterateEnd = function() {
-
-                    data.changes.push({
-                        end: node.arguments.length ? node.arguments[0].start : callee.end,
-                        start: callee.property.end,
-                        node: '), ['
-                    })
-                    node.iterateEnd = function() {
-                        data.changes.push({
-                            end: node.end,
-                            start: node.arguments.length ? node.arguments[node.arguments.length - 1].end : callee.end,
-                            node: `], ${master}, true)`
-                        })
-                    };
-                };
-            } else {
-                data.changes.push({
-                    end: node.arguments.length ? node.arguments[0].start : false,
-                    node: '"' + callee.property.name + '"), ['
-                })
-                node.iterateEnd = function() {
-                    data.changes.push({
-                        end: node.end,
-                        start: node.arguments.length ? node.arguments[node.arguments.length - 1].end : false,
-                        node: `], ${master}, false)`
-                    })
-                };
-            };
-
-        };
-    });
-};
-
-function setProperty(ctx) {
-    const { js } = ctx;
-    js.on(Syntax.AssignmentExpression, (node, data, type) => {
-        if (type !== 'rewrite') return false;
-        if (node.left.type !== Syntax.MemberExpression) return false;
-        if (!assignmentOperators.includes(node.operator)) return false;
-        if (node.left.object.type === Syntax.Super) 
-            return false;
-        if (node.left.computed && node.left.property.type === Syntax.Literal && !shouldWrapProperty(node.left.property.value))
-            return false;
-        if (!node.left.computed && node.left.property.type === Syntax.Identifier && !shouldWrapProperty(node.left.property.name))
-            return false;
-
-        const { left, right } = node;
-
-        data.changes.push({
-            node: `${uvMethods.set}((`,
-            start: left.object.start,
-            end: left.object.start,
-        });
-
-        left.object.iterateEnd = function () {
-            data.changes.push({
-                start: left.object.end,
-                end: left.property.start,
-            });
-
-            data.changes.push({
-                node: '), ('
-            });
-
-            if (left.computed) {
-                left.property.iterateEnd = function() {
-                    data.changes.push({
-                        end: right.start,
-                        node: '' + left.property.name + '), '
-                    })
-                    if (shortHandAssignment[node.operator]) {
-                        data.changes.push({
-                            node: data.input.slice(left.start, left.end) + ` ${shortHandAssignment[node.operator]} `
-                        })
-                    };
-                    node.iterateEnd = function() {
-                        data.changes.push({
-                            end: node.end,
-                            start: right.end,
-                            node: `, ${master}, true)`
-                        })
-                    };
-                };
-            } else {
-                data.changes.push({
-                    end: right.start,
-                    node: '"' + left.property.name + '"), '
-                })
-                if (shortHandAssignment[node.operator]) {
-                    data.changes.push({
-                        node: data.input.slice(left.start, left.end) + ` ${shortHandAssignment[node.operator]} `
-                    })
-                };
-                node.iterateEnd = function() {
-                    data.changes.push({
-                        end: node.end,
-                        start: right.end,
-                        node: `, ${master}, false)`
-                    })
-                };
-            };
-
-        };
-    });
-};
-
-function wrapEval(ctx) {
-    const { js } = ctx;
-    js.on(Syntax.CallExpression, (node, data, type) => {
-        if (type !== 'rewrite') return false;
-        if (!node.arguments.length) return false;
-        if (node.callee.type !== Syntax.Identifier) return false;
-        if (node.callee.name !== 'eval') return false;
-        
-        const [ script ] = node.arguments;
     
-        data.changes.push({
-            node: uvMethods.script + '(',
-            start: script.start,
-            end: script.start,
-        })
-        node.iterateEnd = function() {
+        };
+    
+        if (!node.computed && node.property.name === 'location' && type === 'rewrite' || node.property.name === '__uv$location' && type === 'source') {
             data.changes.push({
-                node: ')',
-                start: script.end,
-                end: script.end,
+                start: node.property.start,
+                end: node.property.end,
+                node: type === 'rewrite' ? '__uv$setSource(__uv).__uv$location' : 'location'
             });
         };
-    });
-};
 
-function sourceMethods(ctx) {
-    const { js } = ctx;
-    js.on(Syntax.CallExpression, (node, data, type) => {
-        if (type !== 'source') return false;
-        if (node.callee.type !== Syntax.Identifier) return false;
-        if (!uvMethodTypes[node.callee.name]) return false;
 
-        const info = uvWrapperInfo(node, data);
+        if (!node.computed && node.property.name === 'top' && type === 'rewrite' || node.property.name === '__uv$top' && type === 'source') {
+            data.changes.push({
+                start: node.property.start,
+                end: node.property.end,
+                node: type === 'rewrite' ? '__uv$setSource(__uv).__uv$top' : 'top'
+            });
+        };
 
-        switch(uvMethodTypes[node.callee.name]) {
-            case 'set':
+        if (!node.computed && node.property.name === 'parent' && type === 'rewrite' || node.property.name === '__uv$parent' && type === 'source') {
+            data.changes.push({
+                start: node.property.start,
+                end: node.property.end,
+                node: type === 'rewrite' ? '__uv$setSource(__uv).__uv$parent' : 'parent'
+            });
+        };
+
+
+        if (!node.computed && node.property.name === 'postMessage' && type === 'rewrite') {
+            data.changes.push({
+                start: node.property.start,
+                end: node.property.end,
+                node:'__uv$setSource(__uv).postMessage',
+            });
+        };
+
+
+        if (!node.computed && node.property.name === 'eval' && type === 'rewrite' || node.property.name === '__uv$eval' && type === 'source') {
+            data.changes.push({
+                start: node.property.start,
+                end: node.property.end,
+                node: type === 'rewrite' ? '__uv$setSource(__uv).__uv$eval' : 'eval'
+            });
+        };
+
+        if (!node.computed && node.property.name === '__uv$setSource' && type === 'source' && node.parent.type === Syntax.CallExpression) {
+            const { parent, property } = node; 
+            data.changes.push({
+                start: property.start - 1,
+                end: parent.end,
+            });
+
+            node.iterateEnd = function() {
                 data.changes.push({
-                    node: info.computed ? `${info.object}[${info.property}] = ${info.value}` : `${info.object}.${info.property} = ${info.value}`,
-                    start: node.start,
-                    end: node.end,
+                    start: property.start,
+                    end: parent.end,
                 });
-                break;
-            case 'get':
-                data.changes.push({
-                    node: info.computed ? `${info.object}[${info.property}]` : `${info.object}.${info.property}`,
-                    start: node.start,
-                    end: node.end,
-                });
-                break;
-            case 'call':
-                data.changes.push({
-                    node: info.computed ? `${info.object}[${info.property}](${info.args})` : `${info.object}.${info.property}${info.args}`,
-                    start: node.start,
-                    end: node.end,
-                });
-                break;
-            case 'script':
-                data.changes.push({
-                    node: info.script,
-                    start: node.start,
-                    end: node.end
-                });
-                break;
-            case 'url':
-                data.changes.push({
-                    node: info.url,
-                    start: node.start,
-                    end: node.end
-                });
-                break;
-            case 'proxy':
-                data.changes.push({
-                    node: info.name,
-                    start: node.start,
-                    end: node.end,
-                });
-                break;
+            };
         };
     });
 };
 
-function uvWrapperInfo(node, { input }) {
-    const method = uvMethodTypes[node.callee.name];
-
-    switch(method) {   
-        case 'set':
-            {
-                const [ object, property, value, source, computed ] = node.arguments;
-                return {
-                    method,
-                    object: input.slice(object.start - 1, object.end + 1),
-                    property: property.type === Syntax.Literal && !computed.value ? property.value : input.slice(property.start, property.end),
-                    computed: !!computed.value,
-                    value: input.slice(value.start, value.end),
-                };
-            };
-        case 'get':
-            {
-                const [ object, property, source, computed ] = node.arguments;
-                return {
-                    method,
-                    object: input.slice(object.start - 1, object.end + 1),
-                    property: property.type === Syntax.Literal && !computed.value ? property.value : input.slice(property.start, property.end),
-                    computed: !!computed.value,
-                }
-            };
-        case 'call': 
-            {
-                const [ object, property, args, source, computed ] = node.arguments;
-                return {
-                    method,
-                    object: input.slice(object.start - 1, object.end + 1),
-                    property: property.type === Syntax.Literal && !computed.value ? property.value : input.slice(property.start, property.end),
-                    args: input.slice(args.start + 1, args.end - 1),
-                    computed: !!computed.value,
-                };
-            };
-        case 'script':
-            {
-                const [ script ] = node.arguments;
-                return {
-                    script: input.slice(script.start, script.end),
-                }
-            }
-        case 'url':
-            {
-                const [ url ] = node.arguments;
-                return {
-                    url: input.slice(url.start, url.end),
-                }
-            }
-        case 'proxy':
-            {
-                const [ name ] = node.arguments;
-                return { name };
-            };
-        default:
-            return false;
-    };
-};
-
-function wrapIdentifier(ctx) {
+function identifier(ctx) {
     const { js } = ctx;
-    js.on(Syntax.Identifier, (node, data, type) => {
+    js.on('Identifier', (node, data, type) => {
         if (type !== 'rewrite') return false;
         const { parent } = node;
-        if (!shouldWrapIdentifier(node.name)) return false;
+        if (!['location', 'eval', 'parent', 'top'].includes(node.name)) return false;
         if (parent.type === Syntax.VariableDeclarator && parent.id === node) return false;
         if ((parent.type === Syntax.AssignmentExpression || parent.type === Syntax.AssignmentPattern) && parent.left === node) return false;
         if ((parent.type === Syntax.FunctionExpression || parent.type === Syntax.FunctionDeclaration) && parent.id === node) return false;
@@ -393,11 +101,37 @@ function wrapIdentifier(ctx) {
         if (parent.type === Syntax.RestElement) return false;
         if (parent.type === Syntax.ExportSpecifier) return false;
         if (parent.type === Syntax.ImportSpecifier) return false;
+
         data.changes.push({
             start: node.start,
             end: node.end,
-            node: `${uvMethods.proxy}(${node.name}, __uv)`
+            node: '__uv.$get(' + node.name + ')'
         });
+    });
+};
+
+function wrapEval(ctx) {
+    const { js } = ctx;
+    js.on('CallExpression', (node, data, type) => {
+        if (type !== 'rewrite') return false;
+        if (!node.arguments.length) return false;
+        if (node.callee.type !== 'Identifier') return false;
+        if (node.callee.name !== 'eval') return false;
+        
+        const [ script ] = node.arguments;
+    
+        data.changes.push({
+            node: '__uv.js.rewrite(',
+            start: script.start,
+            end: script.start,
+        })
+        node.iterateEnd = function() {
+            data.changes.push({
+                node: ')',
+                start: script.end,
+                end: script.end,
+            });
+        };
     });
 };
 
@@ -420,7 +154,7 @@ function dynamicImport(ctx) {
     js.on(Syntax.ImportExpression, (node, data, type) => {
         if (type !== 'rewrite') return false;
         data.changes.push({
-            node: uvMethods.url + '(',
+            node: '__uv.rewriteUrl(',
             start: node.source.start,
             end: node.source.start,
         })
@@ -434,41 +168,76 @@ function dynamicImport(ctx) {
     });
 };
 
-function destructureDeclaration(ctx) {
+function unwrap(ctx) {
     const { js } = ctx;
-    js.on(Syntax.VariableDeclarator, (node, data, type) => {
-        if (type !== 'rewrite') return false;
-        if (node.id.type !== Syntax.ObjectPattern) return false;
-        const names = [];
+    js.on('CallExpression', (node, data, type) => {
+        if (type !== 'source') return false;
+        if (!isWrapped(node.callee)) return false;
 
-        for (const { key } of node.id.properties) {
-            names.push(key.name);
+        switch(node.callee.property.name) {
+            case '$wrap':
+                if (!node.arguments || node.parent.type !== Syntax.MemberExpression || node.parent.property !== node) return false;
+                const [ property ] = node.arguments;
+
+                data.changes.push({
+                    start: node.callee.start,
+                    end: property.start,
+                });
+
+                node.iterateEnd = function() {
+                    data.changes.push({
+                        start: node.end - 2,
+                        end: node.end,
+                    });
+                }; 
+                break;
+            case '$get':
+            case 'rewriteUrl':
+                const [ arg ] = node.arguments;
+
+                data.changes.push({
+                    start: node.callee.start,
+                    end: arg.start,
+                });
+
+                node.iterateEnd = function() {
+                    data.changes.push({
+                        start: node.end - 1,
+                        end: node.end,
+                    });
+                }; 
+                break;
+            case 'rewrite':
+                const [ script ] = node.arguments;
+                data.changes.push({
+                    start: node.callee.start,
+                    end: script.start,
+                });
+                node.iterateEnd = function() {
+                    data.changes.push({
+                        start: node.end - 1,
+                        end: node.end,
+                    });
+                };
         };
 
-        console.log(names);
-
-        data.changes.push({
-            node: uvMethods.object + '(',
-            start: node.init.start,
-            end: node.init.start,
-        })
-        
-        node.iterateEnd = function() {
-            data.changes.push({
-                node: ')',
-                start: node.init.end,
-                end: node.init.end,
-            });
-        };
     });
 };
 
-function shouldWrapProperty(name) {
-    return name === 'eval' || name === 'postMessage' || name === 'location' || name === 'parent' || name === 'top';
+function isWrapped(node) {
+    if (node.type !== Syntax.MemberExpression) return false;
+    if (node.property.name === 'rewrite' && isWrapped(node.object)) return true;
+    if (node.object.type !== Syntax.Identifier || node.object.name !== '__uv') return false;
+    if (!['js', '$get', '$wrap', 'rewriteUrl'].includes(node.property.name)) return false;
+    return true;
 };
 
-function shouldWrapIdentifier(name) {
-    return name === 'postMessage' || name === 'location' || name === 'parent' || name === 'top';
+function computedProperty(parent) {
+    if (!parent.computed) return false;
+    const { property: node } = parent; 
+    if (node.type === 'Literal' && !['location', 'top', 'parent']) return false;
+    return true;
 };
 
-export { getProperty, destructureDeclaration, setProperty, call, sourceMethods, importDeclaration, dynamicImport, wrapIdentifier, wrapEval };
+
+export { property, wrapEval, dynamicImport, importDeclaration, identifier, unwrap };

@@ -95,6 +95,18 @@ class LocationApi {
             });
         };
         
+        if ('ancestorOrigins' in this.location) {
+            this.ctx.nativeMethods.defineProperty(emulation, 'ancestorOrigins', {
+                get() {
+                    const arr = [];
+                    if (that.window.DOMStringList) that.ctx.nativeMethods.setPrototypeOf(arr, that.window.DOMStringList.prototype);
+                    return arr;
+                },
+                set: undefined,
+                enumerable: true,
+            });
+        };
+        
 
         this.ctx.nativeMethods.defineProperty(emulation, 'toString', {
             value: this.ctx.wrap(this.location, 'toString', () => {

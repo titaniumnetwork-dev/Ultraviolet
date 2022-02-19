@@ -1,7 +1,7 @@
 export function prepareResponse({ headers, statusCode, statusMessage }) {
     const sendHeaders = {
         'x-bare-headers': JSON.stringify(headers),   
-        'x-bare-status': statusCode,
+        'x-bare-status': statusCode.toString(),
         'x-bare-status-text': statusMessage,
     };
 

@@ -1,4 +1,4 @@
 {
-    "prefix": "/service/",
+    "prefix": "/sw/",
     "bare": "/bare/"
 }
