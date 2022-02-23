@@ -335,12 +335,12 @@ export async function v1socket(server, server_request, server_socket, server_hea
 	});
 
 	socket.on('error', err => {
-		console.error('Remote socket error:', err);
+		//console.error('Remote socket error:', err);
 		server_socket.end();
 	});
 	
 	server_socket.on('error', err => {
-		console.error('Serving socket error:', err);
+		//console.error('Serving socket error:', err);
 		socket.end();
 	});
 

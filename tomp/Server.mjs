@@ -70,7 +70,7 @@ export class Server {
 					break;
 			}
 		}catch(err){
-			console.error(err);
+			//console.error(err);
 			socket.end();
 		}
 	}
@@ -107,7 +107,7 @@ export class Server {
 
 			}
 		}catch(err){
-			console.error(err);
+			//console.error(err);
 			
 			if(err instanceof Error){
 				response = this.json(500, {
@@ -127,7 +127,7 @@ export class Server {
 		}
 
 		if(!(response instanceof Response)){
-			console.error('Response to', server_request.url, 'was not a response.');
+			//console.error('Response to', server_request.url, 'was not a response.');
 			response = this.fof;
 		}
 		
