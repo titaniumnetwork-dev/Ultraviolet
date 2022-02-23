@@ -16,6 +16,7 @@ import Workers from "./worker.js";
 import URLApi from "./url.js";
 import EventEmitter from "./events.js";
 import StorageApi from "./storage.js";
+import StyleApi from "./dom/style.js";
 
 class UVClient extends EventEmitter {
     constructor(window = self, worker = !window.window) {
@@ -53,6 +54,7 @@ class UVClient extends EventEmitter {
         this.workers = new Workers(this);
         this.location = new LocationApi(this);
         this.storage = new StorageApi(this);
+        this.style = new StyleApi(this);
     };
     initLocation(rewriteUrl, sourceUrl) {
         this.location = new LocationApi(this, sourceUrl, rewriteUrl, this.worker);
