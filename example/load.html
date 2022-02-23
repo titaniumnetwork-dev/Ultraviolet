@@ -5,7 +5,7 @@
         <script>
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/uv.sw.js', {
-                    scope: '/sw/'
+                    scope: '/sw/',
                 });
                 navigator.serviceWorker.ready.then(() => {
                     location.reload()

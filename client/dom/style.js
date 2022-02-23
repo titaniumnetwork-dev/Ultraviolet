@@ -10,6 +10,7 @@ class StyleApi extends EventEmitter {
         this.cssStyleProto = this.CSSStyleDeclaration.prototype || {};
         this.getPropertyValue = this.cssStyleProto.getPropertyValue || null;
         this.setProperty = this.cssStyleProto.setProperty || null;
+        this.cssText - ctx.nativeMethods.getOwnPropertyDescriptors(this.cssStyleProto, 'cssText');
         this.urlProps = ['background', 'backgroundImage', 'borderImage', 'borderImageSource', 'listStyle', 'listStyleImage', 'cursor'];
         this.dashedUrlProps = ['background', 'background-image', 'border-image', 'border-image-source', 'list-style', 'list-style-image', 'cursor'];
         this.propToDashed = {
@@ -43,6 +44,24 @@ class StyleApi extends EventEmitter {
 
             if (event.intercepted) return event.returnValue;
             return event.target.call(event.that, event.data.property, event.data.value);
+        });
+    };
+    overrideCssText() {
+        this.ctx.overrideDescriptor(this.cssStyleProto, 'cssText', {
+            get: (target, that) => {
+                const event = new HookEvent({ value: target.call(that) }, target, that);
+                this.emit('getCssText', event);
+
+                if (event.intercepted) return event.returnValue;
+                return event.data.value;
+            },
+            set: (target, that, [ val ]) => {
+                const event = new HookEvent({ value: val }, target, that);
+                this.emit('setCssText', event);
+
+                if (event.intercepted) return event.returnValue;
+                return event.target.call(event.that, event.data.value);
+            },
         });
     };
 };

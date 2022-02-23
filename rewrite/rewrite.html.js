@@ -172,7 +172,7 @@ function injectHead(ctx) {
     });
 };
 
-function createInjection(handler = '/uv.handler.js', bundle = '/uv.bundle.js', cookies = '', referrer = '') {
+function createInjection(handler = '/uv.handler.js', bundle = '/uv.bundle.js', config = '/uv.config.js', cookies = '', referrer = '') {
     return [
         {
             tagName: 'script',
@@ -183,7 +183,13 @@ function createInjection(handler = '/uv.handler.js', bundle = '/uv.bundle.js', c
                     value: `window.__uv$cookies = atob("${btoa(cookies)}");\nwindow.__uv$referrer = atob("${btoa(referrer)}");`
                 },
             ],
-            attrs: [],
+            attrs: [
+                {
+                    name: '__uv-script',
+                    value: '1',
+                    skip: true,
+                }
+            ],
             skip: true,
         },
         {
@@ -191,7 +197,12 @@ function createInjection(handler = '/uv.handler.js', bundle = '/uv.bundle.js', c
             nodeName: 'script',
             childNodes: [],
             attrs: [
-                { name: 'src', value: bundle, skip: true }
+                { name: 'src', value: bundle, skip: true },
+                {
+                    name: '__uv-script',
+                    value: '1',
+                    skip: true,
+                }
             ],
         },
         {
@@ -199,9 +210,27 @@ function createInjection(handler = '/uv.handler.js', bundle = '/uv.bundle.js', c
             nodeName: 'script',
             childNodes: [],
             attrs: [
-                { name: 'src', value: handler, skip: true }
+                { name: 'src', value: config, skip: true },
+                {
+                    name: '__uv-script',
+                    value: '1',
+                    skip: true,
+                }
             ],
         },
+        {
+            tagName: 'script',
+            nodeName: 'script',
+            childNodes: [],
+            attrs: [
+                { name: 'src', value: handler, skip: true },
+                {
+                    name: '__uv-script',
+                    value: '1',
+                    skip: true,
+                }
+            ],
+        }
     ];
 };
 

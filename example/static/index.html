@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
-        <script src="uv.bundle.js"></script>
-        <script src="uv.handler.js"></script>
+        
+        <link href="index.css" rel="stylesheet">
     </head>
     <body>
-        <h1>Testing</h1>
-        <iframe src="/"></iframe>
-        <script>
-            //console.log(__uv$get(window, 'postMessage', __uv) !== __uv$get(parent, 'postMessage', __uv));
-            const frame = document.querySelector('iframe').contentWindow;
-            addEventListener('message', e => console.log(e.source.postMessage !== window.postMessage));
-        </script>
+
+        <div class="logo-wrapper">
+            <img src="uv.png" class="logo">
+            <div class="text">Ultraviolet</div>
+        </div>
+        <form>
+            <input placeholder="Search the web">
+        </form>
+        <footer>
+            <a href="https://github.com/titaniumnetwork-dev">Titanium Network</a>
+            <a href="https://github.com/tomphttp">TOMP</a>
+            <a href="https://github.com/titaniumnetwork-dev/Ultraviolet">GitHub</a>
+
+            <a href="" style="margin-left: auto">License</a>
+            <span>Ultraviolet 2022</span>
+        </footer>
     </body>
 </html>

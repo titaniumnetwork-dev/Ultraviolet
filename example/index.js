@@ -36,6 +36,12 @@ server.on('request', (req, res) => {
         return true;
     };
 
+    if (req.url.startsWith('/uv.config.js')) {
+        res.writeHead(200, { "Content-Type": "application/javascript" });
+        createUVFileStream('uv.config.js').pipe(res);
+        return true;
+    };
+
     if (req.url.startsWith(config.prefix)) {
         res.writeHead(200, { "Content-Type": "text/html" });
         createReadStream(path.join(__dirname, './load.html')).pipe(res);
@@ -49,7 +55,7 @@ server.on('upgrade', (req, socket, head) => {
     if (!bare.route_upgrade(req, socket, head)) socket.end();
 });
 
-server.listen(3030);
+server.listen(443);
 
 function createUVFileStream(file) {
     return createReadStream(
