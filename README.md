@@ -7,7 +7,7 @@ Powered by [TOMP](https://github.com/tomphttp)
 [Deploy](https://github.com/titaniumnetwork-dev/uv-app)
 
 
-Authors
+# Authors
 
 Caracal.js - Creator of Ultraviolet
 
