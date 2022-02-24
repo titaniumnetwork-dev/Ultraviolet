@@ -4,6 +4,17 @@ Web proxy used for evading internet censorship or accessing websites in a contro
 Ultraviolet works by intercepting HTTP requests with a service worker script that follows the [TompHTTP](https://github.com/tomphttp) specifications
 
 
+# Main scripts
+
+The main scripts required for UV are located in `lib/`
+
+- Scripts
+    - `uv.sw.js` Service worker script
+    - `uv.bundle.js` Webpack compiled Ultraviolet rewriter
+    - `uv.handler.js` Client-side hooking
+    - `uv.config.js` Configuration
+
+
 
 [Deploy](https://github.com/titaniumnetwork-dev/uv-app)
 
