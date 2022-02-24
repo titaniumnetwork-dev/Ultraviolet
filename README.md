@@ -1,7 +1,8 @@
 # Ultraviolet
 Web proxy used for evading internet censorship or accessing websites in a controlled sandbox.
 
-Powered by [TOMP](https://github.com/tomphttp)
+Ultraviolet works by intercepting HTTP requests with a service worker script that follows the [TompHTTP](https://github.com/tomphttp) specifications
+
 
 
 [Deploy](https://github.com/titaniumnetwork-dev/uv-app)
