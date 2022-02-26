@@ -9,7 +9,8 @@ Ultraviolet works by intercepting HTTP requests with a service worker script tha
 The main scripts required for UV are located in `lib/`
 
 - Scripts
-    - `uv.sw.js` Service worker script
+    - `uv.sw.js` Service worker gateway
+    - `uv.sw-handler.js` - Service worker handler
     - `uv.bundle.js` Webpack compiled Ultraviolet rewriter
     - `uv.handler.js` Client-side hooking
     - `uv.config.js` Configuration
