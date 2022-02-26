@@ -122,34 +122,3 @@ class StorageApi extends EventEmitter {
 };
 
 export default StorageApi;
-
-
-class StorageWrapper {
-    constructor(api, storage, wrap, unwrap, origin) {
-        this.api = api;
-        this.ctx = api.ctx;
-        this.storage = storage;
-        this.wrap = wrap;
-        this.unwrap = unwrap;
-        this.origin = origin;
-        this.emulation = {};
-    };   
-    clear() {
-        for (const key in this.storage) {
-            const data = this.unwrap(key);
-            if (!data || data.origin !== this.origin) continue;
-            this.api.removeItem.call(this.storage, key);
-        };
-        this.emulation = {};
-        this.ctx.nativeMethods.setPrototypeOf(this.emulation, this.api.storeProto);
-    };
-    __init() {
-        for (const key in this.storage) {
-            const data = this.unwrap(key);
-            if (!data || data.origin !== this.origin) continue;
-
-            this.emulation[data.name] = this.api.getItem.call(this.storage, key);
-        };
-        this.ctx.nativeMethods.setPrototypeOf(this.emulation, this.api.storeProto);
-    };
-};
