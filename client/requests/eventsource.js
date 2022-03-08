@@ -9,6 +9,9 @@ class EventSourceApi extends EventEmitter {
         this.EventSource = this.window.EventSource || {};
         this.esProto = this.EventSource.prototype || {};
         this.url = ctx.nativeMethods.getOwnPropertyDescriptor(this.esProto, 'url');
+        this.CONNECTING = 0;
+        this.OPEN = 1;
+        this.CLOSED = 2;
     };
     overrideConstruct() {
         this.ctx.override(this.window, 'EventSource', (target, that, args) => {
@@ -21,6 +24,12 @@ class EventSourceApi extends EventEmitter {
             if (event.intercepted) return event.returnValue;
             return new event.target(event.data.url, event.data.config);
         }, true);
+
+        if ('EventSource' in this.window) {
+            this.window.EventSource.CONNECTING = this.CONNECTING;
+            this.window.EventSource.OPEN = this.OPEN;
+            this.window.EventSource.CLOSED = this.CLOSED;
+        };
     };
     overrideUrl() {
         this.ctx.overrideDescriptor(this.esProto, 'url', {

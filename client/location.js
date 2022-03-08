@@ -1,11 +1,15 @@
-class LocationApi {
+import EventEmitter from "./events.js";
+
+class LocationApi extends EventEmitter {
     constructor(ctx) {
+        super();
         this.ctx = ctx;
         this.window = ctx.window;
         this.location = this.window.location;
         this.WorkerLocation = this.ctx.worker ? this.window.WorkerLocation : null;
         this.workerLocProto = this.WorkerLocation ? this.WorkerLocation.prototype : {};
         this.keys = ['href', 'protocol', 'host', 'hostname', 'port', 'pathname', 'search', 'hash', 'origin'];
+        this.HashChangeEvent = this.window.HashChangeEvent || null;
         this.href = this.WorkerLocation ? ctx.nativeMethods.getOwnPropertyDescriptor(this.workerLocProto, 'href') : 
         ctx.nativeMethods.getOwnPropertyDescriptor(this.location, 'href');
     };
@@ -42,7 +46,7 @@ class LocationApi {
                             that.location.href = wrap(val);
                             break;
                         case 'hash':
-                            that.location.hash = val;
+                            that.emit('hashchange', emulation.href, (val.trim().startsWith('#') ? new URL(val.trim(), emulation.href).href : new URL('#' + val.trim(), emulation.href).href), that);
                             break;
                         default:
                             const url = new URL(emulation.href);
