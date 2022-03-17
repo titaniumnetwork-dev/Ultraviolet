@@ -6,7 +6,7 @@ Ultraviolet works by intercepting HTTP requests with a service worker script tha
 
 # Main scripts
 
-The main scripts required for UV are located in `lib/`
+The main scripts required for UV are located in [ultraviolet-scripts](https://github.com/titaniumnetwork-dev/ultraviolet-scripts)
 
 - Scripts
     - `uv.sw.js` Service worker gateway
