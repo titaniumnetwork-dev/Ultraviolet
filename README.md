@@ -148,13 +148,13 @@ location / {
 	proxy_busy_buffers_size  512k;
 	proxy_buffers  4 512k;
 	proxy_buffer_size  256k;
-    proxy_pass http://localhost:8080;
+ 	proxy_pass http://localhost:8080;
 	proxy_http_version 1.1;
 	proxy_set_header Upgrade $http_upgrade;
 	proxy_set_header Connection 'Upgrade';
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-Host $host:$server_port;
-    proxy_set_header X-Forwarded-Server $host;
+    	proxy_set_header X-Real-IP $remote_addr;
+    	proxy_set_header X-Forwarded-Host $host:$server_port;
+    	proxy_set_header X-Forwarded-Server $host;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header Host $host;
 }
