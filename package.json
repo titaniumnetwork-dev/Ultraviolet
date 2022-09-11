@@ -4,7 +4,7 @@
   "description": "Proxy",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node bundle"
   },
   "author": "",
   "license": "ISC",
