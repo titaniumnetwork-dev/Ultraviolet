@@ -1,6 +1,6 @@
-<p style="text-align: center"><img src="https://raw.githubusercontent.com/titaniumnetwork-development/Ultraviolet-Static/main/public/uv.png" height="200"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/titaniumnetwork-development/Ultraviolet-Static/main/public/uv.png" height="200"></p>
 
-<h1 style="text-align: center">Ultraviolet</h1>
+<h1 align="center">Ultraviolet</h1>
 
 Advanced web proxy used for evading internet censorship or accessing websites in a controlled sandbox.
 
