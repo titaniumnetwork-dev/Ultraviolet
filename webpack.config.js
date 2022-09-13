@@ -1,16 +1,22 @@
-import webpack from "webpack";
-import path from "path";
+import webpack from 'webpack';
+import { fileURLToPath } from 'url';
 
-const __dirname = path.resolve(path.dirname(decodeURI(new URL(import.meta.url).pathname))).slice(3);
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
-console.log(path.resolve(path.dirname(decodeURI(new URL(import.meta.url).pathname))), __dirname);
+/**
+ * @type {webpack.Configuration}
+ */
+const config = {
+	mode: isDevelopment ? 'development' : 'production',
+	entry: fileURLToPath(new URL('./rewrite/index.js', import.meta.url)),
+	output: {
+		path: fileURLToPath(new URL('./lib/', import.meta.url)),
+		filename: 'uv.bundle.js',
+	},
+	performance: {
+		// suppress "entrypoint size limit" warning
+		hints: false,
+	},
+};
 
-webpack({
-    entry: path.join(__dirname, './rewrite/index.js'),
-    output: {
-        path: __dirname,
-        filename: './lib/uv.bundle.js',
-    }
-}, (err, i) => 
-    console.log(!err ? 'Ultraviolet bundled!' : e)
-);
+export default config;
