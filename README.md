@@ -1,13 +1,12 @@
-<center>
+<p align="center">
+	<img src="https://raw.githubusercontent.com/titaniumnetwork-development/ultraviolet-static/main/uv.png" height="200">
+</p>
 
-<img src="https://raw.githubusercontent.com/titaniumnetwork-development/ultraviolet-static/main/uv.png" alt="Ultraviolet" height="200">
+<h1 style="text-align: center">Ultraviolet</h1>
 
-# Ultraviolet
+Advanced web proxy used for evading internet censorship or accessing websites in a controlled sandbox.
 
-</center>
-
-Advanced web proxy used for evading internet censorship or accessing websites in a controlled sandbox.<br><br>
-Ultraviolet works by intercepting HTTP requests with a service worker script that follows the <a href="https://github.com/tomphttp">TompHTTP</a> specifications.
+Ultraviolet works by intercepting HTTP requests with a service worker script that follows the [TompHTTP specifications](https://github.com/tomphttp).
 
 ## How do I deploy/run this?
 
