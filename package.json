@@ -21,9 +21,15 @@
 		"set-cookie-parser": "^2.4.8"
 	},
 	"devDependencies": {
+		"copy-webpack-plugin": "^11.0.0",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.8.0",
+		"terser-webpack-plugin": "^5.3.6",
 		"webpack": "^5.74.0",
 		"webpack-cli": "^4.10.0"
-	}
+	},
+	"files": [
+		"dist",
+		"src"
+	]
 }
