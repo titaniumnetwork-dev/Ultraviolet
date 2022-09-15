@@ -22,28 +22,6 @@ You can extract the scripts from the NPM package in the [releases section](https
 
 If you cannot open the tar.gz (Chrome OS?), use a [converter](https://cloudconvert.com/tar.gz-to-zip). We can only do so much to make the scripts accessible.
 
-## How do I package this?
-
-```sh
-$ git clone https://github.com/titaniumnetwork-development/Ultraviolet.git
-> Cloning into Ultraviolet...
-$ cd Ultraviolet
-```
-
-```sh
-$ npm install
-```
-
-```sh
-$ npm run build
-```
-
-```sh
-$ npm pack
-```
-
-Package will be named `ultraviolet-X.X.X.tgz`
-
 ## How do I install this?
 
 > This will provide built files and the JS API to access the path of dist files.
@@ -53,3 +31,30 @@ Currently, we don't have an NPM package. As a current solution, you can install 
 ```sh
 $ npm install https://github.com/titaniumnetwork-development/Ultraviolet/releases/download/v1.0.1/ultraviolet-1.0.1.tgz
 ```
+
+## How do I build this?
+
+1. Clone the repository
+```sh
+$ git clone https://github.com/titaniumnetwork-development/Ultraviolet.git
+> Cloning into Ultraviolet...
+$ cd Ultraviolet
+```
+2. Install dependencies
+```sh
+$ npm install
+```
+3. Produce the `dist/` directory and compile scripts
+```sh
+$ npm run build
+```
+
+## Packaging
+
+This is intended for releasing on hosting the package as a file, not on NPM.
+
+```sh
+$ npm pack
+```
+
+Package will be named `ultraviolet-X.X.X.tgz`
