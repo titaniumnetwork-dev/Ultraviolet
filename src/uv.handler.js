@@ -2,7 +2,7 @@ if (!self.__uv) {
     __uvHook(self, self.__uv$config, self.__uv$config.bare);
 };
 
-async function __uvHook(window, config = {}, bare = '/bare/') {
+function __uvHook(window, config = {}, bare = '/bare/') {
     if ('__uv' in window && window.__uv instanceof Ultraviolet) return false;
 
     if (window.document && !!window.window) {
@@ -1127,3 +1127,5 @@ async function __uvHook(window, config = {}, bare = '/bare/') {
         },
     });
 };
+
+self.__uvHook = __uvHook;
