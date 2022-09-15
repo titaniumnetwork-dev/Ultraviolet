@@ -11,3 +11,27 @@ Ultraviolet works by intercepting HTTP requests with a service worker script tha
 This repository is the bare-bones of Ultraviolet. This only contains the source code required to compile `uv.bundle.js`.
 
 See [Ultraviolet-Node](https://github.com/titaniumnetwork-development/Ultraviolet-Node) for easy instructions to deploy an Ultraviolet website.
+
+## How do I package this?
+
+This is primarily for maintainers building then releasing on GitHub. We don't have an official NPM package.
+
+```sh
+$ git clone https://github.com/titaniumnetwork-development/Ultraviolet.git
+> Cloning into Ultraviolet...
+$ cd Ultraviolet
+```
+
+```sh
+$ npm install
+```
+
+```sh
+$ npm run build
+```
+
+```sh
+$ npm pack
+```
+
+Package will be named `ultraviolet-X.X.X.tgz`

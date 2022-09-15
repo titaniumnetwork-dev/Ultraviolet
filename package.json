@@ -2,6 +2,7 @@
 	"name": "ultraviolet",
 	"version": "1.0.0",
 	"description": "Proxy",
+	"main": "lib/index.js",
 	"scripts": {
 		"build": "cross-env NODE_ENV=production webpack-cli",
 		"build:dev": "cross-env NODE_ENV=development webpack-cli",
@@ -30,6 +31,7 @@
 	},
 	"files": [
 		"dist",
-		"src"
+		"src",
+		"lib"
 	]
 }
