@@ -6,6 +6,8 @@ Advanced web proxy used for evading internet censorship or accessing websites in
 
 Ultraviolet works by intercepting HTTP requests with a service worker script that follows the [TompHTTP specifications](https://github.com/tomphttp).
 
+See the [changelog](./CHANGELOG.md).
+
 ## How do I deploy/run this?
 
 This repository is the bare-bones of Ultraviolet. This only contains the source code required to compile `uv.bundle.js`.
