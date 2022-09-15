@@ -10,11 +10,17 @@ See the [changelog](./CHANGELOG.md) if you're using v1.0.1 or above!
 
 ## How do I deploy/run this?
 
-This repository is the bare-bones of Ultraviolet. This only contains the source code required to compile `uv.bundle.js`.
+This repository is the bare-bones of Ultraviolet. This only contains the source code required to compile `uv.` scripts.
 
 See [Ultraviolet-Node](https://github.com/titaniumnetwork-development/Ultraviolet-Node) for easy instructions to deploy an Ultraviolet website.
 
 An example of REALLY using this (API, copying files, etc) is in [Ultraviolet-Static](https://github.com/titaniumnetwork-development/Ultraviolet-Static). See [scripts/build.js](https://github.com/titaniumnetwork-development/Ultraviolet-Static/blob/main/scripts/build.js).
+
+## I don't care about building, where are the scripts for my website?!
+
+You can extract the scripts from the NPM package in the [releases section](https://github.com/titaniumnetwork-development/Ultraviolet/releases). All the scripts you would typically look for (`uv.bundle.js`, `uv.handler.js`, `uv.sw.js`, and `uv.config.js`) are found within the `dist` directory.
+
+If you cannot open the tar.gz (Chrome OS?), use a [converter](https://cloudconvert.com/tar.gz-to-zip). We can only do so much to make the scripts accessible.
 
 ## How do I package this?
 
