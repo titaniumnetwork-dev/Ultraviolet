@@ -1,1 +1,3 @@
-export const uvPath: string;
+declare const uvPath: string;
+
+export default uvPath;
