@@ -8,6 +8,8 @@ Ultraviolet works by intercepting HTTP requests with a service worker script tha
 
 See the [changelog](./CHANGELOG.md) if you're using v1.0.1 or above!
 
+Documentation can be found on the [wiki](https://github.com/titaniumnetwork-development/Ultraviolet/wiki).
+
 ## How do I deploy/run this?
 
 This repository is the bare-bones of Ultraviolet. This only contains the source code required to compile `uv.` scripts.
@@ -35,16 +37,21 @@ $ npm install https://github.com/titaniumnetwork-development/Ultraviolet/release
 ## How do I build this?
 
 1. Clone the repository
+
 ```sh
 $ git clone https://github.com/titaniumnetwork-development/Ultraviolet.git
 > Cloning into Ultraviolet...
 $ cd Ultraviolet
 ```
+
 2. Install dependencies
+
 ```sh
 $ npm install
 ```
+
 3. Produce the `dist/` directory and compile scripts
+
 ```sh
 $ npm run build
 ```
