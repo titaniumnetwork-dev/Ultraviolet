@@ -2,7 +2,6 @@ import webpack from 'webpack';
 import { fileURLToPath } from 'url';
 import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import { resolve } from 'path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -24,7 +23,7 @@ const config = {
 		minimize: !isDevelopment,
 		minimizer: [
 			new TerserPlugin({
-				exclude: ['uv.config.js'],
+				exclude: ['sw.js', 'uv.config.js'],
 			}),
 		],
 	},
@@ -33,6 +32,9 @@ const config = {
 			patterns: [
 				{
 					from: fileURLToPath(new URL('./src/uv.config.js', import.meta.url)),
+				},
+				{
+					from: fileURLToPath(new URL('./src/sw.js', import.meta.url)),
 				},
 			],
 		}),
