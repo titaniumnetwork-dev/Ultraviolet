@@ -2,7 +2,7 @@
 	"name": "ultraviolet",
 	"version": "1.0.2",
 	"description": "Proxy",
-	"main": "lib/index.js",
+	"main": "lib/index.cjs",
 	"scripts": {
 		"build": "cross-env NODE_ENV=production webpack-cli",
 		"build:dev": "cross-env NODE_ENV=development webpack-cli",
@@ -10,7 +10,7 @@
 	},
 	"author": "",
 	"license": "MIT",
-	"type": "commonjs",
+	"type": "module",
 	"dependencies": {
 		"bowser": "^2.11.0",
 		"css-tree": "^2.0.4",
