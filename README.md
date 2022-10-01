@@ -8,7 +8,7 @@ Ultraviolet works by intercepting HTTP requests with a service worker script tha
 
 See the [changelog](./CHANGELOG.md) if you're using v1.0.1 or above!
 
-Documentation can be found on the [wiki](https://github.com/titaniumnetwork-development/Ultraviolet/wiki).
+Documentation can be found in the [wiki](https://github.com/titaniumnetwork-development/Ultraviolet/wiki).
 
 ## How do I deploy/run this?
 
