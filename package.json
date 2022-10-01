@@ -9,7 +9,7 @@
 		"build:watch": "cross-env NODE_ENV=development webpack-cli --watch"
 	},
 	"author": "",
-	"license": "ISC",
+	"license": "MIT",
 	"type": "commonjs",
 	"dependencies": {
 		"bowser": "^2.11.0",
