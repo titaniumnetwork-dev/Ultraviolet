@@ -196,6 +196,7 @@ function createInjection(
     handler = '/uv.handler.js',
     bundle = '/uv.bundle.js',
     config = '/uv.config.js',
+    bareData = {},
     cookies = '',
     referrer = ''
 ) {
@@ -206,7 +207,9 @@ function createInjection(
             childNodes: [
                 {
                     nodeName: '#text',
-                    value: `window.__uv$cookies = atob("${btoa(
+                    value: `window.__uv$bareData = ${JSON.stringify(
+                        bareData
+                    )}; window.__uv$cookies = atob("${btoa(
                         cookies
                     )}");\nwindow.__uv$referrer = atob("${btoa(referrer)}");`,
                 },

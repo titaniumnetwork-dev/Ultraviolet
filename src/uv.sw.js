@@ -221,6 +221,7 @@ class UVServiceWorker extends EventEmitter {
                                         this.config.handler,
                                         this.config.bundle,
                                         this.config.config,
+                                        this.client.data,
                                         ultraviolet.cookie.serialize(
                                             cookies,
                                             ultraviolet.meta,
