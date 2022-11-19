@@ -5,18 +5,18 @@
  * MIT Licensed
  */
 
-'use strict'
+'use strict';
 
 /**
  * Module dependencies.
  * @private
  */
 
-var $exports = {}
-    
-import db from "mime-db";
+var $exports = {};
 
-var extname = function(path = '') {
+import db from 'mime-db';
+
+var extname = function (path = '') {
     if (!path.includes('.')) return '';
     const map = path.split('.');
 
@@ -28,24 +28,24 @@ var extname = function(path = '') {
  * @private
  */
 
-var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/
-var TEXT_TYPE_REGEXP = /^text\//i
+var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
+var TEXT_TYPE_REGEXP = /^text\//i;
 
 /**
  * Module exports.
  * @public
  */
 
-$exports.charset = charset
-$exports.charsets = { lookup: charset }
-$exports.contentType = contentType
-$exports.extension = extension
-$exports.extensions = Object.create(null)
-$exports.lookup = lookup
-$exports.types = Object.create(null)
+$exports.charset = charset;
+$exports.charsets = { lookup: charset };
+$exports.contentType = contentType;
+$exports.extension = extension;
+$exports.extensions = Object.create(null);
+$exports.lookup = lookup;
+$exports.types = Object.create(null);
 
 // Populate the extensions/types maps
-populateMaps($exports.extensions, $exports.types)
+populateMaps($exports.extensions, $exports.types);
 
 /**
  * Get the default charset for a MIME type.
@@ -54,25 +54,25 @@ populateMaps($exports.extensions, $exports.types)
  * @return {boolean|string}
  */
 
-function charset (type) {
-  if (!type || typeof type !== 'string') {
-    return false
-  }
+function charset(type) {
+    if (!type || typeof type !== 'string') {
+        return false;
+    }
 
-  // TODO: use media-typer
-  var match = EXTRACT_TYPE_REGEXP.exec(type)
-  var mime = match && db[match[1].toLowerCase()]
+    // TODO: use media-typer
+    var match = EXTRACT_TYPE_REGEXP.exec(type);
+    var mime = match && db[match[1].toLowerCase()];
 
-  if (mime && mime.charset) {
-    return mime.charset
-  }
+    if (mime && mime.charset) {
+        return mime.charset;
+    }
 
-  // default text/* to utf-8
-  if (match && TEXT_TYPE_REGEXP.test(match[1])) {
-    return 'UTF-8'
-  }
+    // default text/* to utf-8
+    if (match && TEXT_TYPE_REGEXP.test(match[1])) {
+        return 'UTF-8';
+    }
 
-  return false
+    return false;
 }
 
 /**
@@ -82,27 +82,25 @@ function charset (type) {
  * @return {boolean|string}
  */
 
-function contentType (str) {
-  // TODO: should this even be in this module?
-  if (!str || typeof str !== 'string') {
-    return false
-  }
+function contentType(str) {
+    // TODO: should this even be in this module?
+    if (!str || typeof str !== 'string') {
+        return false;
+    }
 
-  var mime = str.indexOf('/') === -1
-    ? $exports.lookup(str)
-    : str
+    var mime = str.indexOf('/') === -1 ? $exports.lookup(str) : str;
 
-  if (!mime) {
-    return false
-  }
+    if (!mime) {
+        return false;
+    }
 
-  // TODO: use content-type or other module
-  if (mime.indexOf('charset') === -1) {
-    var charset = $exports.charset(mime)
-    if (charset) mime += '; charset=' + charset.toLowerCase()
-  }
+    // TODO: use content-type or other module
+    if (mime.indexOf('charset') === -1) {
+        var charset = $exports.charset(mime);
+        if (charset) mime += '; charset=' + charset.toLowerCase();
+    }
 
-  return mime
+    return mime;
 }
 
 /**
@@ -112,22 +110,22 @@ function contentType (str) {
  * @return {boolean|string}
  */
 
-function extension (type) {
-  if (!type || typeof type !== 'string') {
-    return false
-  }
+function extension(type) {
+    if (!type || typeof type !== 'string') {
+        return false;
+    }
 
-  // TODO: use media-typer
-  var match = EXTRACT_TYPE_REGEXP.exec(type)
+    // TODO: use media-typer
+    var match = EXTRACT_TYPE_REGEXP.exec(type);
 
-  // get extensions
-  var exts = match && $exports.extensions[match[1].toLowerCase()]
+    // get extensions
+    var exts = match && $exports.extensions[match[1].toLowerCase()];
 
-  if (!exts || !exts.length) {
-    return false
-  }
+    if (!exts || !exts.length) {
+        return false;
+    }
 
-  return exts[0]
+    return exts[0];
 }
 
 /**
@@ -137,21 +135,21 @@ function extension (type) {
  * @return {boolean|string}
  */
 
-function lookup (path) {
-  if (!path || typeof path !== 'string') {
-    return false
-  }
+function lookup(path) {
+    if (!path || typeof path !== 'string') {
+        return false;
+    }
 
-  // get the extension ("ext" or ".ext" or full path)
-  var extension = extname('x.' + path)
-    .toLowerCase()
-    .substr(1)
+    // get the extension ("ext" or ".ext" or full path)
+    var extension = extname('x.' + path)
+        .toLowerCase()
+        .substr(1);
 
-  if (!extension) {
-    return false
-  }
+    if (!extension) {
+        return false;
+    }
 
-  return $exports.types[extension] || false
+    return $exports.types[extension] || false;
 }
 
 /**
@@ -159,40 +157,44 @@ function lookup (path) {
  * @private
  */
 
-function populateMaps (extensions, types) {
-  // source preference (least -> most)
-  var preference = ['nginx', 'apache', undefined, 'iana']
+function populateMaps(extensions, types) {
+    // source preference (least -> most)
+    var preference = ['nginx', 'apache', undefined, 'iana'];
 
-  Object.keys(db).forEach(function forEachMimeType (type) {
-    var mime = db[type]
-    var exts = mime.extensions
+    Object.keys(db).forEach(function forEachMimeType(type) {
+        var mime = db[type];
+        var exts = mime.extensions;
 
-    if (!exts || !exts.length) {
-      return
-    }
-
-    // mime -> extensions
-    extensions[type] = exts
-
-    // extension -> mime
-    for (var i = 0; i < exts.length; i++) {
-      var extension = exts[i]
-
-      if (types[extension]) {
-        var from = preference.indexOf(db[types[extension]].source)
-        var to = preference.indexOf(mime.source)
-
-        if (types[extension] !== 'application/octet-stream' &&
-          (from > to || (from === to && types[extension].substr(0, 12) === 'application/'))) {
-          // skip the remapping
-          continue
+        if (!exts || !exts.length) {
+            return;
         }
-      }
 
-      // set the extension -> mime
-      types[extension] = type
-    }
-  })
+        // mime -> extensions
+        extensions[type] = exts;
+
+        // extension -> mime
+        for (var i = 0; i < exts.length; i++) {
+            var extension = exts[i];
+
+            if (types[extension]) {
+                var from = preference.indexOf(db[types[extension]].source);
+                var to = preference.indexOf(mime.source);
+
+                if (
+                    types[extension] !== 'application/octet-stream' &&
+                    (from > to ||
+                        (from === to &&
+                            types[extension].substr(0, 12) === 'application/'))
+                ) {
+                    // skip the remapping
+                    continue;
+                }
+            }
+
+            // set the extension -> mime
+            types[extension] = type;
+        }
+    });
 }
 
 export default $exports;

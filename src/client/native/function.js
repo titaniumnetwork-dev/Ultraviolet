@@ -1,5 +1,5 @@
-import EventEmitter from "../events.js";
-import HookEvent from "../hook.js";
+import EventEmitter from '../events.js';
+import HookEvent from '../hook.js';
 
 class FunctionHook extends EventEmitter {
     constructor(ctx) {
@@ -13,25 +13,38 @@ class FunctionHook extends EventEmitter {
         this.call = this.fnProto.call;
         this.apply = this.fnProto.apply;
         this.bind = this.fnProto.bind;
-    };
+    }
     overrideFunction() {
-        this.ctx.override(this.window, 'Function', (target, that, args) => {
-            if (!args.length) return target.apply(that, args);
+        this.ctx.override(
+            this.window,
+            'Function',
+            (target, that, args) => {
+                if (!args.length) return target.apply(that, args);
 
-            let script = args[args.length - 1];
-            let fnArgs = [];
+                let script = args[args.length - 1];
+                let fnArgs = [];
 
-            for (let i = 0; i < args.length - 1; i++) {
-                fnArgs.push(args[i]);
-            };
+                for (let i = 0; i < args.length - 1; i++) {
+                    fnArgs.push(args[i]);
+                }
 
-            const event = new HookEvent({ script, args: fnArgs }, target, that);
-            this.emit('function', event);
+                const event = new HookEvent(
+                    { script, args: fnArgs },
+                    target,
+                    that
+                );
+                this.emit('function', event);
 
-            if (event.intercepted) return event.returnValue;
-            return event.target.call(event.that, ...event.data.args, event.data.script);
-        }, true);
-    };
+                if (event.intercepted) return event.returnValue;
+                return event.target.call(
+                    event.that,
+                    ...event.data.args,
+                    event.data.script
+                );
+            },
+            true
+        );
+    }
     overrideToString() {
         this.ctx.override(this.fnProto, 'toString', (target, that) => {
             const event = new HookEvent({ fn: that }, target, that);
@@ -40,7 +53,7 @@ class FunctionHook extends EventEmitter {
             if (event.intercepted) return event.returnValue;
             return event.target.call(event.data.fn);
         });
-    };
-};
+    }
+}
 
 export default FunctionHook;

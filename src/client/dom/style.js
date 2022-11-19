@@ -1,5 +1,5 @@
-import EventEmitter from "../events.js";
-import HookEvent from "../hook.js";
+import EventEmitter from '../events.js';
+import HookEvent from '../hook.js';
 
 class StyleApi extends EventEmitter {
     constructor(ctx) {
@@ -10,9 +10,29 @@ class StyleApi extends EventEmitter {
         this.cssStyleProto = this.CSSStyleDeclaration.prototype || {};
         this.getPropertyValue = this.cssStyleProto.getPropertyValue || null;
         this.setProperty = this.cssStyleProto.setProperty || null;
-        this.cssText - ctx.nativeMethods.getOwnPropertyDescriptors(this.cssStyleProto, 'cssText');
-        this.urlProps = ['background', 'backgroundImage', 'borderImage', 'borderImageSource', 'listStyle', 'listStyleImage', 'cursor'];
-        this.dashedUrlProps = ['background', 'background-image', 'border-image', 'border-image-source', 'list-style', 'list-style-image', 'cursor'];
+        this.cssText -
+            ctx.nativeMethods.getOwnPropertyDescriptors(
+                this.cssStyleProto,
+                'cssText'
+            );
+        this.urlProps = [
+            'background',
+            'backgroundImage',
+            'borderImage',
+            'borderImageSource',
+            'listStyle',
+            'listStyleImage',
+            'cursor',
+        ];
+        this.dashedUrlProps = [
+            'background',
+            'background-image',
+            'border-image',
+            'border-image-source',
+            'list-style',
+            'list-style-image',
+            'cursor',
+        ];
         this.propToDashed = {
             background: 'background',
             backgroundImage: 'background-image',
@@ -20,42 +40,58 @@ class StyleApi extends EventEmitter {
             borderImageSource: 'border-image-source',
             listStyle: 'list-style',
             listStyleImage: 'list-style-image',
-            cursor: 'cursor'
+            cursor: 'cursor',
         };
-    };
+    }
     overrideSetGetProperty() {
-        this.ctx.override(this.cssStyleProto, 'getPropertyValue', (target, that, args) => {
-            if (!args.length) return target.apply(that, args);
+        this.ctx.override(
+            this.cssStyleProto,
+            'getPropertyValue',
+            (target, that, args) => {
+                if (!args.length) return target.apply(that, args);
 
-            let [ property ] = args;
+                let [property] = args;
 
-            const event = new HookEvent({ property }, target, that);
-            this.emit('getPropertyValue', event);
+                const event = new HookEvent({ property }, target, that);
+                this.emit('getPropertyValue', event);
 
-            if (event.intercepted) return event.returnValue;
-            return event.target.call(event.that, event.data.property);
-        });
-        this.ctx.override(this.cssStyleProto, 'setProperty', (target, that, args) => {
-            if (2 > args.length) return target.apply(that, args);
-            let [ property, value ] = args;
+                if (event.intercepted) return event.returnValue;
+                return event.target.call(event.that, event.data.property);
+            }
+        );
+        this.ctx.override(
+            this.cssStyleProto,
+            'setProperty',
+            (target, that, args) => {
+                if (2 > args.length) return target.apply(that, args);
+                let [property, value] = args;
 
-            const event = new HookEvent({ property, value }, target, that);
-            this.emit('setProperty', event);
+                const event = new HookEvent({ property, value }, target, that);
+                this.emit('setProperty', event);
 
-            if (event.intercepted) return event.returnValue;
-            return event.target.call(event.that, event.data.property, event.data.value);
-        });
-    };
+                if (event.intercepted) return event.returnValue;
+                return event.target.call(
+                    event.that,
+                    event.data.property,
+                    event.data.value
+                );
+            }
+        );
+    }
     overrideCssText() {
         this.ctx.overrideDescriptor(this.cssStyleProto, 'cssText', {
             get: (target, that) => {
-                const event = new HookEvent({ value: target.call(that) }, target, that);
+                const event = new HookEvent(
+                    { value: target.call(that) },
+                    target,
+                    that
+                );
                 this.emit('getCssText', event);
 
                 if (event.intercepted) return event.returnValue;
                 return event.data.value;
             },
-            set: (target, that, [ val ]) => {
+            set: (target, that, [val]) => {
                 const event = new HookEvent({ value: val }, target, that);
                 this.emit('setCssText', event);
 
@@ -63,7 +99,7 @@ class StyleApi extends EventEmitter {
                 return event.target.call(event.that, event.data.value);
             },
         });
-    };
-};
+    }
+}
 
 export default StyleApi;
