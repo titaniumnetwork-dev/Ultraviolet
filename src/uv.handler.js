@@ -1017,14 +1017,6 @@ function __uvHook(window, config = {}, bare = '/bare/') {
             requestHeaders['Origin'] = __uv.meta.url.origin;
             requestHeaders['User-Agent'] = navigator.userAgent;
 
-            for (let proto of [].concat(protocol)) {
-                if (!validProtocol(proto)) {
-                    throw new DOMException(
-                        `Failed to construct 'WebSocket': The subprotocol '${proto}' is invalid.`
-                    );
-                }
-            }
-
             if (__uv.cookieStr !== '')
                 requestHeaders['Cookie'] = __uv.cookieStr.toString();
 
