@@ -1143,6 +1143,36 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     eventTarget(MockWebSocket.prototype, 'message');
     eventTarget(MockWebSocket.prototype, 'error');
 
+    for (const hook of [
+        'url',
+        'protocol',
+        'extensions',
+        'readyState',
+        'binaryType',
+    ]) {
+        const officialDesc = Object.getOwnPropertyDescriptor(
+            WebSocket.prototype,
+            hook
+        );
+        const customDesc = Object.getOwnPropertyDescriptor(
+            MockWebSocket.prototype,
+            hook
+        );
+
+        if (customDesc?.get && officialDesc?.get)
+            client.emit('wrap', customDesc.get, officialDesc.get);
+
+        if (customDesc?.set && officialDesc?.set)
+            client.emit('wrap', customDesc.get, officialDesc.get);
+    }
+
+    client.emit('wrap', WebSocket.prototype.send, MockWebSocket.prototype.send);
+    client.emit(
+        'wrap',
+        WebSocket.prototype.close,
+        MockWebSocket.prototype.close
+    );
+
     client.override(
         window,
         'WebSocket',
