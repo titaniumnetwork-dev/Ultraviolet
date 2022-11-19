@@ -299,7 +299,7 @@ class RequestContext {
     constructor(request, worker, ultraviolet, body = null) {
         this.ultraviolet = ultraviolet;
         this.request = request;
-        this.headers = Object.fromEntries([...request.headers.entries()]);
+        this.headers = Object.fromEntries(request.headers.entries());
         this.method = request.method;
         this.address = worker.address;
         this.body = body || null;
