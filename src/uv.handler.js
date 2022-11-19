@@ -1086,7 +1086,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                 );
             }
 
-            this.#ready = this.#open(parsed, [].concat(protocol));
+            this.#ready = this.#open(parsed, protocol);
         }
         get protocol() {
             return this.#protocol;
