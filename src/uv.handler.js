@@ -1136,10 +1136,6 @@ function __uvHook(window, config = {}, bare = '/bare/') {
 
             this.#ready.then(() => this.#socket.close(code, reason));
         }
-        static CONNECTING = WebSocket.CONNECTING;
-        static OPEN = WebSocket.OPEN;
-        static CLOSING = WebSocket.CLOSING;
-        static CLOSED = WebSocket.CLOSED;
     }
 
     eventTarget(MockWebSocket.prototype, 'close');
@@ -1147,23 +1143,14 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     eventTarget(MockWebSocket.prototype, 'message');
     eventTarget(MockWebSocket.prototype, 'error');
 
-    client.websocket.on('websocket', (event) => {
-        event.respondWith(
-            new MockWebSocket(event.data.url, event.data.protocols)
-        );
-    });
+    client.override(
+        window,
+        'WebSocket',
+        (target, that, args) => new MockWebSocket(...args),
+        true
+    );
 
-    client.websocket.on('url', (event) => {
-        if ('__uv$url' in event.that) {
-            event.data.value = event.that.__uv$url;
-        }
-    });
-
-    client.websocket.on('protocol', (event) => {
-        if ('__uv$protocol' in event.that) {
-            event.data.value = event.that.__uv$protocol;
-        }
-    });
+    MockWebSocket.prototype.constructor = window.WebSocket;
 
     client.function.on('function', (event) => {
         event.data.script = __uv.rewriteJS(event.data.script);
@@ -1360,9 +1347,6 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     client.history.overrideReplaceState();
     client.eventSource.overrideConstruct();
     client.eventSource.overrideUrl();
-    client.websocket.overrideWebSocket();
-    client.websocket.overrideProtocol();
-    client.websocket.overrideUrl();
     client.url.overrideObjectURL();
     client.document.overrideCookie();
     client.message.overridePostMessage();

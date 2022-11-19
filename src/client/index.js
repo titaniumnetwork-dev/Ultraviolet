@@ -5,7 +5,6 @@ import AttrApi from './dom/attr.js';
 import FunctionHook from './native/function.js';
 import ObjectHook from './native/object.js';
 import Fetch from './requests/fetch.js';
-import WebSocketApi from './requests/websocket.js';
 import Xhr from './requests/xhr.js';
 import EventSourceApi from './requests/eventsource.js';
 import History from './history.js';
@@ -21,6 +20,9 @@ import StyleApi from './dom/style.js';
 class UVClient extends EventEmitter {
     constructor(window = self, worker = !window.window) {
         super();
+        /**
+         * @type {typeof self}
+         */
         this.window = window;
         this.nativeMethods = {
             fnToString: this.window.Function.prototype.toString,
@@ -48,7 +50,6 @@ class UVClient extends EventEmitter {
         this.function = new FunctionHook(this);
         this.object = new ObjectHook(this);
         this.message = new MessageApi(this);
-        this.websocket = new WebSocketApi(this);
         this.navigator = new NavigatorApi(this);
         this.eventSource = new EventSourceApi(this);
         this.attribute = new AttrApi(this);
