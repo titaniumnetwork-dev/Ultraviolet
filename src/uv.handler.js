@@ -1047,10 +1047,10 @@ function __uvHook(window, config = {}, bare = '/bare/') {
             const meta = await this.#socket.meta;
 
             if (meta.headers.has('sec-websocket-protocol'))
-                this.#protocol = headers.get('sec-websocket-protocol');
+                this.#protocol = meta.headers.get('sec-websocket-protocol');
 
             if (meta.headers.has('sec-websocket-extensions'))
-                this.#extensions = headers.get('sec-websocket-extensions');
+                this.#extensions = meta.headers.get('sec-websocket-extensions');
 
             let setCookie = meta.rawHeaders['set-cookie'] || [];
             if (!Array.isArray(setCookie)) setCookie = [];
