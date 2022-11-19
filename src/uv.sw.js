@@ -1,10 +1,20 @@
 // Users must import the config (and bundle) prior to importing uv.sw.js
 // This is to allow us to produce a generic bundle with no hard-coded paths.
 
+/**
+ * @typedef {typeof import("./rewrite/index.js").default} Ultraviolet
+ */
+
+/**
+ * @type {typeof import("./rewrite/index.js").default}
+ */
+const Ultraviolet = globalThis.Ultraviolet;
+
 class UVServiceWorker extends EventEmitter {
     constructor(config = __uv$config) {
         super();
         if (!config.bare) config.bare = '/bare/';
+        if (!config.prefix) config.prefix = '/service/';
         this.addresses =
             typeof config.bare === 'string'
                 ? [new URL(config.bare, location)]
@@ -37,6 +47,12 @@ class UVServiceWorker extends EventEmitter {
             empty: [204, 304],
         };
         this.config = config;
+        /**
+         * @type {InstanceType<Ultraviolet['BareClient']>}
+         */
+        this.client = new Ultraviolet.BareClient(
+            new URL(this.config.bare, location.toString())
+        );
         this.browser = Ultraviolet.Bowser.getParser(
             self.navigator.userAgent
         ).getBrowserName();
@@ -46,12 +62,13 @@ class UVServiceWorker extends EventEmitter {
             this.headers.forward.push('content-type');
         }
     }
+    /**
+     *
+     * @param {Event & {request: Request}} param0
+     * @returns
+     */
     async fetch({ request }) {
-        if (
-            !request.url.startsWith(
-                location.origin + (this.config.prefix || '/service/')
-            )
-        ) {
+        if (!request.url.startsWith(location.origin + this.config.prefix)) {
             return fetch(request);
         }
         try {
@@ -128,13 +145,28 @@ class UVServiceWorker extends EventEmitter {
 
             if (reqEvent.intercepted) return reqEvent.returnValue;
 
-            const response = await fetch(requestCtx.send);
+            const response = await this.client.fetch(
+                requestCtx.blob
+                    ? 'blob:' + location.origin + requestCtx.url.pathname
+                    : requestCtx.url,
+                {
+                    headers: requestCtx.headers,
+                    method: requestCtx.method,
+                    body: requestCtx.body,
+                    credentials: requestCtx.credentials,
+                    mode:
+                        location.origin !== requestCtx.address.origin
+                            ? 'cors'
+                            : requestCtx.mode,
+                    redirect: requestCtx.redirect,
+                }
+            );
 
             if (response.status === 500) {
                 return Promise.reject('');
             }
 
-            const responseCtx = new ResponseContext(requestCtx, response, this);
+            const responseCtx = new ResponseContext(requestCtx, response);
             const resEvent = new HookEvent(responseCtx, null, null);
 
             this.emit('beforemod', resEvent);
@@ -231,25 +263,6 @@ class UVServiceWorker extends EventEmitter {
             });
         }
     }
-    getBarerResponse(response) {
-        const headers = {};
-        const raw = JSON.parse(response.headers.get('x-bare-headers'));
-
-        for (const key in raw) {
-            headers[key.toLowerCase()] = raw[key];
-        }
-
-        return {
-            headers,
-            status: +response.headers.get('x-bare-status'),
-            statusText: response.headers.get('x-bare-status-text'),
-            body: !this.statusCode.empty.includes(
-                +response.headers.get('x-bare-status')
-            )
-                ? response.body
-                : null,
-        };
-    }
     get address() {
         return this.addresses[
             Math.floor(Math.random() * this.addresses.length)
@@ -261,22 +274,19 @@ class UVServiceWorker extends EventEmitter {
 self.UVServiceWorker = UVServiceWorker;
 
 class ResponseContext {
-    constructor(request, response, worker) {
-        const { headers, status, statusText, body } = !request.blob
-            ? worker.getBarerResponse(response)
-            : {
-                  status: response.status,
-                  statusText: response.statusText,
-                  headers: Object.fromEntries([...response.headers.entries()]),
-                  body: response.body,
-              };
+    /**
+     *
+     * @param {RequestContext} request
+     * @param {import("@tomphttp/bare-client").BareResponseFetch} response
+     */
+    constructor(request, response) {
         this.request = request;
         this.raw = response;
         this.ultraviolet = request.ultraviolet;
-        this.headers = headers;
-        this.status = status;
-        this.statusText = statusText;
-        this.body = body;
+        this.headers = Object.fromEntries(response.headers.entries());
+        this.status = response.status;
+        this.statusText = response.statusText;
+        this.body = response.body;
     }
     get url() {
         return this.request.url;
@@ -290,6 +300,13 @@ class ResponseContext {
 }
 
 class RequestContext {
+    /**
+     *
+     * @param {Request} request
+     * @param {UVServiceWorker} worker
+     * @param {Ultraviolet} ultraviolet
+     * @param {BodyInit} body
+     */
     constructor(request, worker, ultraviolet, body = null) {
         this.ultraviolet = ultraviolet;
         this.request = request;
@@ -302,33 +319,6 @@ class RequestContext {
         this.credentials = 'omit';
         this.mode = request.mode === 'cors' ? request.mode : 'same-origin';
         this.blob = false;
-    }
-    get send() {
-        return new Request(
-            !this.blob
-                ? this.address.href + 'v1/'
-                : 'blob:' + location.origin + this.url.pathname,
-            {
-                method: this.method,
-                headers: {
-                    'x-bare-protocol': this.url.protocol,
-                    'x-bare-host': this.url.hostname,
-                    'x-bare-path': this.url.pathname + this.url.search,
-                    'x-bare-port':
-                        this.url.port ||
-                        (this.url.protocol === 'https:' ? '443' : '80'),
-                    'x-bare-headers': JSON.stringify(this.headers),
-                    'x-bare-forward-headers': JSON.stringify(this.forward),
-                },
-                redirect: this.redirect,
-                credentials: this.credentials,
-                mode:
-                    location.origin !== this.address.origin
-                        ? 'cors'
-                        : this.mode,
-                body: this.body,
-            }
-        );
     }
     get url() {
         return this.ultraviolet.meta.url;

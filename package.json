@@ -12,6 +12,7 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
+        "@tomphttp/bare-client": "^1.1.0",
         "bowser": "^2.11.0",
         "css-tree": "^2.0.4",
         "esotope-hammerhead": "^0.6.1",

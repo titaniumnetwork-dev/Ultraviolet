@@ -36,6 +36,7 @@ import { openDB } from 'idb';
 import parsel from './parsel.js';
 import UVClient from '../client/index.js';
 import Bowser from 'bowser';
+import BareClient from '@tomphttp/bare-client';
 
 const valid_chars =
     "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~";
@@ -212,6 +213,7 @@ class Ultraviolet {
     static setCookie = setCookie;
     static openDB = openDB;
     static Bowser = Bowser;
+    static BareClient = BareClient;
 }
 
 export default Ultraviolet;
