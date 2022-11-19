@@ -10,6 +10,27 @@
  */
 const Ultraviolet = globalThis.Ultraviolet;
 
+const cspHeaders = [
+    'cross-origin-embedder-policy',
+    'cross-origin-opener-policy',
+    'cross-origin-resource-policy',
+    'content-security-policy',
+    'content-security-policy-report-only',
+    'expect-ct',
+    'feature-policy',
+    'origin-isolation',
+    'strict-transport-security',
+    'upgrade-insecure-requests',
+    'x-content-type-options',
+    'x-download-options',
+    'x-frame-options',
+    'x-permitted-cross-domain-policies',
+    'x-powered-by',
+    'x-xss-protection',
+];
+const emptyMethods = ['GET', 'HEAD'];
+const emptyStatus = [204, 304];
+
 class UVServiceWorker extends EventEmitter {
     constructor(config = __uv$config) {
         super();
@@ -19,33 +40,6 @@ class UVServiceWorker extends EventEmitter {
             typeof config.bare === 'string'
                 ? [new URL(config.bare, location)]
                 : config.bare.map((str) => new URL(str, location));
-        this.headers = {
-            csp: [
-                'cross-origin-embedder-policy',
-                'cross-origin-opener-policy',
-                'cross-origin-resource-policy',
-                'content-security-policy',
-                'content-security-policy-report-only',
-                'expect-ct',
-                'feature-policy',
-                'origin-isolation',
-                'strict-transport-security',
-                'upgrade-insecure-requests',
-                'x-content-type-options',
-                'x-download-options',
-                'x-frame-options',
-                'x-permitted-cross-domain-policies',
-                'x-powered-by',
-                'x-xss-protection',
-            ],
-            forward: ['accept-encoding', 'connection', 'content-length'],
-        };
-        this.method = {
-            empty: ['GET', 'HEAD'],
-        };
-        this.statusCode = {
-            empty: [204, 304],
-        };
         this.config = config;
         /**
          * @type {InstanceType<Ultraviolet['BareClient']>}
@@ -56,11 +50,6 @@ class UVServiceWorker extends EventEmitter {
         this.browser = Ultraviolet.Bowser.getParser(
             self.navigator.userAgent
         ).getBrowserName();
-
-        if (this.browser === 'Firefox') {
-            this.headers.forward.push('user-agent');
-            this.headers.forward.push('content-type');
-        }
     }
     /**
      *
@@ -89,7 +78,7 @@ class UVServiceWorker extends EventEmitter {
                 request,
                 this,
                 ultraviolet,
-                !this.method.empty.includes(request.method.toUpperCase())
+                !emptyMethods.includes(request.method.toUpperCase())
                     ? await request.blob()
                     : null
             );
@@ -172,7 +161,7 @@ class UVServiceWorker extends EventEmitter {
             this.emit('beforemod', resEvent);
             if (resEvent.intercepted) return resEvent.returnValue;
 
-            for (const name of this.headers.csp) {
+            for (const name of cspHeaders) {
                 if (responseCtx.headers[name]) delete responseCtx.headers[name];
             }
 
@@ -312,7 +301,6 @@ class RequestContext {
         this.request = request;
         this.headers = Object.fromEntries([...request.headers.entries()]);
         this.method = request.method;
-        this.forward = [...worker.headers.forward];
         this.address = worker.address;
         this.body = body || null;
         this.redirect = request.redirect;
