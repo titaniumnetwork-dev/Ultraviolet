@@ -948,7 +948,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         }
     });
 
-    client.websocket.on('websocket', async (event) => {
+    client.websocket.on('websocket', (event) => {
         let url;
         try {
             url = new URL(event.data.url);
