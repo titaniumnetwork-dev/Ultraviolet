@@ -1,16 +1,23 @@
 {
     "name": "@titaniumnetwork-dev/ultraviolet",
     "version": "1.0.3",
-    "description": "Proxy",
+    "description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
     "main": "lib/index.cjs",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/titaniumnetwork-dev/Ultraviolet.git"
+    },
+    "files": [
+        "dist",
+        "lib"
+    ],
+    "type": "module",
     "scripts": {
         "build": "cross-env NODE_ENV=production webpack-cli",
         "build:dev": "cross-env NODE_ENV=development webpack-cli",
         "build:watch": "cross-env NODE_ENV=development webpack-cli --watch"
     },
-    "author": "",
-    "license": "MIT",
-    "type": "module",
     "dependencies": {
         "@tomphttp/bare-client": "^1.1.1",
         "bowser": "^2.11.0",
@@ -30,9 +37,5 @@
         "terser-webpack-plugin": "^5.3.6",
         "webpack": "^5.74.0",
         "webpack-cli": "^4.10.0"
-    },
-    "files": [
-        "dist",
-        "lib"
-    ]
+    }
 }
