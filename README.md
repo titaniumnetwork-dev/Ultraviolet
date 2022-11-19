@@ -2,6 +2,8 @@
 
 <h1 align="center">Ultraviolet</h1>
 
+<a href="https://www.npmjs.com/package/@titaniumnetwork-dev/ultraviolet"><img src="https://img.shields.io/npm/v/@titaniumnetwork-dev/ultraviolet.svg?maxAge=3600" alt="npm version" /></a>
+
 Advanced web proxy used for evading internet censorship or accessing websites in a controlled sandbox.
 
 Ultraviolet works by intercepting HTTP requests with a service worker script that follows the [TompHTTP specifications](https://github.com/tomphttp).
