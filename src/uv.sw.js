@@ -114,16 +114,6 @@ class UVServiceWorker extends EventEmitter {
                 false
             );
 
-            if (
-                this.browser === 'Firefox' &&
-                !(
-                    request.destination === 'iframe' ||
-                    request.destination === 'document'
-                )
-            ) {
-                requestCtx.forward.shift();
-            }
-
             requestCtx.headers['user-agent'] = navigator.userAgent;
 
             if (cookieStr) requestCtx.headers.cookie = cookieStr;
