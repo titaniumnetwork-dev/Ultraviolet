@@ -10,6 +10,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  */
 const config = {
     mode: isDevelopment ? 'development' : 'production',
+    devtool: isDevelopment ? 'eval' : 'source-map',
     entry: {
         bundle: fileURLToPath(
             new URL('./src/rewrite/index.js', import.meta.url)
