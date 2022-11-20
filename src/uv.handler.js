@@ -691,28 +691,29 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         },
     });
 
+    const contentWindowGet = Object.getOwnPropertyDescriptor(
+        HTMLIFrameElement.prototype,
+        'contentWindow'
+    ).get;
+
     client.element.hookProperty(HTMLIFrameElement, 'contentWindow', {
         get: (target, that) => {
             const win = target.call(that);
             try {
                 if (!win.__uv) __uvHook(win, config, bare);
-                return win;
-            } catch (e) {
-                return win;
-            }
+            } catch (e) {}
+            return win;
         },
     });
 
     client.element.hookProperty(HTMLIFrameElement, 'contentDocument', {
         get: (target, that) => {
+            const win = contentWindowGet.call(that);
             const doc = target.call(that);
             try {
-                const win = doc.defaultView;
                 if (!win.__uv) __uvHook(win, config, bare);
-                return doc;
-            } catch (e) {
-                return win;
-            }
+            } catch (e) {}
+            return doc;
         },
     });
 
