@@ -55,10 +55,10 @@ class UVServiceWorker extends EventEmitter {
      * @returns
      */
     async fetch({ request }) {
-        if (!request.url.startsWith(location.origin + this.config.prefix)) {
-            return fetch(request);
-        }
         try {
+            if (!request.url.startsWith(location.origin + this.config.prefix))
+                return await fetch(request);
+
             const ultraviolet = new Ultraviolet(this.config);
 
             if (typeof this.config.construct === 'function') {
@@ -238,6 +238,7 @@ class UVServiceWorker extends EventEmitter {
                 statusText: responseCtx.statusText,
             });
         } catch (err) {
+            console.error(err);
             return new Response(err.toString(), {
                 status: 500,
             });
