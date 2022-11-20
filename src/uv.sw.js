@@ -44,7 +44,7 @@ class UVServiceWorker extends EventEmitter {
         /**
          * @type {InstanceType<Ultraviolet['BareClient']>}
          */
-        this.client = new Ultraviolet.BareClient(this.address);
+        this.bareClient = new Ultraviolet.BareClient(this.address);
         this.browser = Ultraviolet.Bowser.getParser(
             self.navigator.userAgent
         ).getBrowserName();
@@ -132,7 +132,7 @@ class UVServiceWorker extends EventEmitter {
 
             if (reqEvent.intercepted) return reqEvent.returnValue;
 
-            const response = await this.client.fetch(
+            const response = await this.bareClient.fetch(
                 requestCtx.blob
                     ? 'blob:' + location.origin + requestCtx.url.pathname
                     : requestCtx.url,
@@ -219,7 +219,7 @@ class UVServiceWorker extends EventEmitter {
                                         this.config.handler,
                                         this.config.bundle,
                                         this.config.config,
-                                        this.client.data,
+                                        this.bareClient.data,
                                         ultraviolet.cookie.serialize(
                                             cookies,
                                             ultraviolet.meta,
