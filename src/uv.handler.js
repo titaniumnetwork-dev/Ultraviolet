@@ -696,24 +696,27 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         'contentWindow'
     ).get;
 
+    function uvInject(that) {
+        const win = contentWindowGet.call(that);
+
+        try {
+            win.__uv$bareData = __uv.bareData;
+            win.__uv$cookies = __uv.cookieStr;
+            if (!win.__uv) __uvHook(win, config, bare);
+        } catch (e) {}
+    }
+
     client.element.hookProperty(HTMLIFrameElement, 'contentWindow', {
         get: (target, that) => {
-            const win = target.call(that);
-            try {
-                if (!win.__uv) __uvHook(win, config, bare);
-            } catch (e) {}
-            return win;
+            uvInject(that);
+            return target.call(that);
         },
     });
 
     client.element.hookProperty(HTMLIFrameElement, 'contentDocument', {
         get: (target, that) => {
-            const win = contentWindowGet.call(that);
-            const doc = target.call(that);
-            try {
-                if (!win.__uv) __uvHook(win, config, bare);
-            } catch (e) {}
-            return doc;
+            uvInject(that);
+            return target.call(that);
         },
     });
 
