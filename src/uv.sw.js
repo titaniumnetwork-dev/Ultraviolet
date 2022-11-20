@@ -141,10 +141,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 }
             );
 
-            if (response.status === 500) {
-                return Promise.reject('');
-            }
-
             const responseCtx = new ResponseContext(requestCtx, response);
             const resEvent = new HookEvent(responseCtx, null, null);
 
