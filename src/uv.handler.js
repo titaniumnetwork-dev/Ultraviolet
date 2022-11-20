@@ -703,7 +703,10 @@ function __uvHook(window, config = {}, bare = '/bare/') {
             win.__uv$bareData = __uv.bareData;
             win.__uv$cookies = __uv.cookieStr;
             if (!win.__uv) __uvHook(win, config, bare);
-        } catch (e) {}
+        } catch (e) {
+            console.error('catastrophic failure');
+            console.error(e);
+        }
     }
 
     client.element.hookProperty(HTMLIFrameElement, 'contentWindow', {
@@ -1155,7 +1158,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         'binaryType',
     ]) {
         const officialDesc = Object.getOwnPropertyDescriptor(
-            WebSocket.prototype,
+            window.WebSocket.prototype,
             hook
         );
         const customDesc = Object.getOwnPropertyDescriptor(
@@ -1170,10 +1173,14 @@ function __uvHook(window, config = {}, bare = '/bare/') {
             client.emit('wrap', customDesc.get, officialDesc.get);
     }
 
-    client.emit('wrap', WebSocket.prototype.send, MockWebSocket.prototype.send);
     client.emit(
         'wrap',
-        WebSocket.prototype.close,
+        window.WebSocket.prototype.send,
+        MockWebSocket.prototype.send
+    );
+    client.emit(
+        'wrap',
+        window.WebSocket.prototype.close,
         MockWebSocket.prototype.close
     );
 
