@@ -124,6 +124,8 @@ class UVServiceWorker extends EventEmitter {
                 requestCtx.forward.shift();
             }
 
+            requestCtx.headers['user-agent'] = navigator.userAgent;
+
             if (cookieStr) requestCtx.headers.cookie = cookieStr;
             requestCtx.headers.Host = requestCtx.url.host;
 
