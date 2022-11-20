@@ -1,5 +1,5 @@
 import { parse, walk, generate } from 'css-tree';
-import EventEmitter from './events.js';
+import EventEmitter from 'events';
 import parsel from './parsel.js';
 
 class CSS extends EventEmitter {

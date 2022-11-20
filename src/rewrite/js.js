@@ -1,7 +1,7 @@
 import { parseScript } from 'meriyah';
 // import { parse } from 'acorn-hammerhead';
 import { generate } from 'esotope-hammerhead';
-import EventEmitter from './events.js';
+import EventEmitter from 'events';
 
 class JS extends EventEmitter {
     constructor() {

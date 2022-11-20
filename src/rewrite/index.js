@@ -37,6 +37,7 @@ import parsel from './parsel.js';
 import UVClient from '../client/index.js';
 import Bowser from 'bowser';
 import BareClient from '@tomphttp/bare-client';
+import EventEmitter from 'events';
 
 const valid_chars =
     "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~";
@@ -214,6 +215,7 @@ class Ultraviolet {
     static openDB = openDB;
     static Bowser = Bowser;
     static BareClient = BareClient;
+    static EventEmitter = EventEmitter;
 }
 
 export default Ultraviolet;

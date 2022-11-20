@@ -1,4 +1,4 @@
-import EventEmitter from './events.js';
+import EventEmitter from 'events';
 import { parse, parseFragment, serialize } from 'parse5';
 
 class HTML extends EventEmitter {

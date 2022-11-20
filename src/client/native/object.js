@@ -1,4 +1,4 @@
-import EventEmitter from '../events.js';
+import EventEmitter from 'events';
 import HookEvent from '../hook.js';
 
 class ObjectHook extends EventEmitter {

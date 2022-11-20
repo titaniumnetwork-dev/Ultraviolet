@@ -13,7 +13,7 @@ import MessageApi from './message.js';
 import NavigatorApi from './navigator.js';
 import Workers from './worker.js';
 import URLApi from './url.js';
-import EventEmitter from './events.js';
+import EventEmitter from 'events';
 import StorageApi from './storage.js';
 import StyleApi from './dom/style.js';
 
