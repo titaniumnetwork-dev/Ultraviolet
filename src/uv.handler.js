@@ -994,8 +994,6 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                     listeners.set(this, value);
                     this.addEventListener(event, value);
                 }
-
-                return value;
             },
         });
     }
@@ -1117,8 +1115,6 @@ function __uvHook(window, config = {}, bare = '/bare/') {
             if (this.#socket) {
                 this.#socket.binaryType = value;
             }
-
-            return value;
         }
         send(data) {
             if (!this.#socket) {
