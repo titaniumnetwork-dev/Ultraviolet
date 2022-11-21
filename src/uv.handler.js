@@ -552,7 +552,9 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                 __uv.attributePrefix + '-attr-' + event.data.name,
                 event.data.value
             );
-            event.data.value = __uv.html.wrapSrcset(event.data.value);
+            event.data.value = __uv.html.wrapSrcset(
+                event.data.value.toString()
+            );
         }
 
         if (__uv.attrs.isForbidden(event.data.name)) {
@@ -653,7 +655,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                 __uv.attributePrefix + '-attr-srcset',
                 val
             );
-            target.call(that, __uv.html.wrapSrcset(val));
+            target.call(that, __uv.html.wrapSrcset(val.toString()));
         },
     });
 
@@ -864,7 +866,9 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                 __uv.attributePrefix + '-attr-' + event.data.name,
                 event.data.value
             );
-            event.data.value = __uv.html.wrapSrcset(event.data.value);
+            event.data.value = __uv.html.wrapSrcset(
+                event.data.value.toString()
+            );
         }
     });
 
