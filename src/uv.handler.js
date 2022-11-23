@@ -700,10 +700,13 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         },
     });
 
-    const contentWindowGet = Object.getOwnPropertyDescriptor(
-        HTMLIFrameElement.prototype,
-        'contentWindow'
-    ).get;
+    // HTMLIFrameElement may not be defined (workers)
+    const contentWindowGet =
+        HTMLIFrameElement &&
+        Object.getOwnPropertyDescriptor(
+            HTMLIFrameElement.prototype,
+            'contentWindow'
+        ).get;
 
     function uvInject(that) {
         const win = contentWindowGet.call(that);
