@@ -6,7 +6,7 @@ import CopyPlugin from 'copy-webpack-plugin';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 /**
- * @type {webpack.Configuration}
+ * @type {import('webpack').Configuration}
  */
 const config = {
     mode: isDevelopment ? 'development' : 'production',
