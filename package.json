@@ -19,23 +19,23 @@
         "watch": "cross-env NODE_ENV=development webpack-cli --watch"
     },
     "dependencies": {
-        "@tomphttp/bare-client": "^1.1.2-beta",
+        "@tomphttp/bare-client": "^1.1.2-beta.1",
         "css-tree": "^2.0.4",
         "esotope-hammerhead": "^0.6.1",
         "events": "^3.3.0",
-        "idb": "^7.0.0",
-        "meriyah": "^4.2.0",
+        "idb": "^7.1.1",
+        "meriyah": "^4.3.3",
         "mime-db": "^1.51.0",
-        "parse5": "^6.0.1",
+        "parse5": "^7.1.2",
         "set-cookie-parser": "^2.4.8"
     },
     "devDependencies": {
         "copy-webpack-plugin": "^11.0.0",
         "cross-env": "^7.0.3",
         "eslint": "^8.28.0",
-        "prettier": "^2.7.1",
+        "prettier": "^2.8.0",
         "terser-webpack-plugin": "^5.3.6",
-        "webpack": "^5.74.0",
-        "webpack-cli": "^4.10.0"
+        "webpack": "^5.75.0",
+        "webpack-cli": "^5.0.0"
     }
 }
