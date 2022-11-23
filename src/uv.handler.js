@@ -1,11 +1,20 @@
 /**
- * @typedef {typeof import("./rewrite/index.js").default} Ultraviolet
+ * @typedef {import("./rewrite/index.js").default} Ultraviolet
  */
 
 /**
- * @type {typeof import("./rewrite/index.js").default}
+ * @typedef {import("./client/index.js").default} UVClient
+ */
+
+/**
+ * @type {typeof Ultraviolet}
  */
 const Ultraviolet = globalThis.Ultraviolet;
+
+/**
+ * @type {typeof UVClient}
+ */
+const UVClient = globalThis.UVClient;
 
 if (!self.__uv) {
     __uvHook(self, self.__uv$config, self.__uv$config.bare);
@@ -23,16 +32,13 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     const worker = !window.window;
     const master = '__uv';
     const methodPrefix = '__uv$';
-    const __uv = new Ultraviolet({
-        ...config,
-        window,
-    });
+    const __uv = new Ultraviolet(config);
 
     if (typeof config.construct === 'function') {
         config.construct(__uv, worker ? 'worker' : 'window');
     }
 
-    const { client } = __uv;
+    const client = new UVClient(window);
     const {
         HTMLMediaElement,
         HTMLScriptElement,
@@ -538,6 +544,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                 injectHead: __uv.createHtmlInject(
                     __uv.handlerScript,
                     __uv.bundleScript,
+                    __uv.clientScript,
                     __uv.configScript,
                     __uv.bareData,
                     __uv.cookieStr,
@@ -742,6 +749,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                     injectHead: __uv.createHtmlInject(
                         __uv.handlerScript,
                         __uv.bundleScript,
+                        __uv.clientScript,
                         __uv.configScript,
                         __uv.bareData,
                         __uv.cookieStr,
@@ -852,6 +860,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                 injectHead: __uv.createHtmlInject(
                     __uv.handlerScript,
                     __uv.bundleScript,
+                    __uv.clientScript,
                     __uv.configScript,
                     __uv.bareData,
                     __uv.cookieStr,

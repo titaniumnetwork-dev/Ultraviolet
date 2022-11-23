@@ -3,11 +3,11 @@
 // This is to allow us to produce a generic bundle with no hard-coded paths.
 
 /**
- * @typedef {typeof import("./rewrite/index.js").default} Ultraviolet
+ * @typedef {import("./rewrite/index.js").default} Ultraviolet
  */
 
 /**
- * @type {typeof import("./rewrite/index.js").default}
+ * @type {typeof Ultraviolet}
  */
 const Ultraviolet = globalThis.Ultraviolet;
 
@@ -178,7 +178,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 switch (request.destination) {
                     case 'script':
                     case 'worker':
-                        responseCtx.body = `if (!self.__uv && self.importScripts) importScripts('${ultraviolet.bundleScript}', '${ultraviolet.configScript}', '${ultraviolet.handlerScript}');\n`;
+                        responseCtx.body = `if (!self.__uv && self.importScripts) importScripts('${ultraviolet.bundleScript}', '${ultraviolet.clientScript}', '${ultraviolet.configScript}', '${ultraviolet.handlerScript}');\n`;
                         responseCtx.body += ultraviolet.js.rewrite(
                             await response.text()
                         );
@@ -203,6 +203,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                     injectHead: ultraviolet.createHtmlInject(
                                         ultraviolet.handlerScript,
                                         ultraviolet.bundleScript,
+                                        ultraviolet.clientScript,
                                         ultraviolet.configScript,
                                         this.bareClient.data,
                                         ultraviolet.cookie.serialize(

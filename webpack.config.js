@@ -14,6 +14,9 @@ const config = {
         bundle: fileURLToPath(
             new URL('./src/rewrite/index.js', import.meta.url)
         ),
+        client: fileURLToPath(
+            new URL('./src/client/index.js', import.meta.url)
+        ),
         handler: fileURLToPath(new URL('./src/uv.handler.js', import.meta.url)),
         sw: fileURLToPath(new URL('./src/uv.sw.js', import.meta.url)),
     },

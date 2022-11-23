@@ -34,7 +34,6 @@ import {
 } from './rewrite.script.js';
 import { openDB } from 'idb';
 import parsel from './parsel.js';
-import UVClient from '../client/index.js';
 import BareClient from '@tomphttp/bare-client';
 import EventEmitter from 'events';
 
@@ -53,6 +52,7 @@ class Ultraviolet {
         this.meta.origin ||= '';
         this.bundleScript = options.bundle || '/uv.bundle.js';
         this.handlerScript = options.handler || '/uv.handler.js';
+        this.clientScript = options.client || '/uv.client.js';
         this.configScript = options.config || '/uv.config.js';
         this.meta.url ||= this.meta.base || '';
         this.codec = Ultraviolet.codec;
@@ -61,10 +61,6 @@ class Ultraviolet {
         this.js = new JS(this);
         this.parsel = parsel;
         this.openDB = this.constructor.openDB;
-        this.client =
-            typeof self !== 'undefined'
-                ? new UVClient(options.window || self)
-                : null;
         this.master = '__uv';
         this.dataPrefix = '__uv$';
         this.attributePrefix = '__uv';

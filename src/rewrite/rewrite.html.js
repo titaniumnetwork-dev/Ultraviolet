@@ -210,6 +210,7 @@ function injectHead(ctx) {
 function createInjection(
     handler = '/uv.handler.js',
     bundle = '/uv.bundle.js',
+    client = '/uv.client.js',
     config = '/uv.config.js',
     bareData = {},
     cookies = '',
@@ -244,6 +245,19 @@ function createInjection(
             childNodes: [],
             attrs: [
                 { name: 'src', value: bundle, skip: true },
+                {
+                    name: '__uv-script',
+                    value: '1',
+                    skip: true,
+                },
+            ],
+        },
+        {
+            tagName: 'script',
+            nodeName: 'script',
+            childNodes: [],
+            attrs: [
+                { name: 'src', value: client, skip: true },
                 {
                     name: '__uv-script',
                     value: '1',
