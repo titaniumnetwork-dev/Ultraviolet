@@ -1,13 +1,11 @@
 import { parse, walk, generate } from 'css-tree';
 import EventEmitter from 'events';
-import parsel from './parsel.js';
 
 class CSS extends EventEmitter {
     constructor(ctx) {
         super();
         this.ctx = ctx;
         this.meta = ctx.meta;
-        this.parsel = parsel;
         this.parse = parse;
         this.walk = walk;
         this.generate = generate;

@@ -33,7 +33,6 @@ import {
     wrapEval,
 } from './rewrite.script.js';
 import { openDB } from 'idb';
-import parsel from './parsel.js';
 import BareClient from '@tomphttp/bare-client';
 import EventEmitter from 'events';
 
@@ -64,7 +63,6 @@ class Ultraviolet {
         this.html = new HTML(this);
         this.css = new CSS(this);
         this.js = new JS(this);
-        this.parsel = parsel;
         this.openDB = this.constructor.openDB;
         this.master = '__uv';
         this.dataPrefix = '__uv$';
