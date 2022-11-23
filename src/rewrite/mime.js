@@ -58,8 +58,8 @@ function contentType(str) {
 
     // TODO: use content-type or other module
     if (mime.indexOf('charset') === -1) {
-        const charset = charset(mime);
-        if (charset) mime += '; charset=' + charset.toLowerCase();
+        const detected = charset(mime);
+        if (detected) mime += '; charset=' + detected.toLowerCase();
     }
 
     return mime;
