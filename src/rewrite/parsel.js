@@ -365,7 +365,7 @@ export default (function (exports) {
      * Calculate specificity of a selector.
      * If the selector is a list, the max specificity is returned.
      */
-    function specificity(selector, { format = 'array' } = {}) {
+    function specificity(selector) {
         let ast =
             typeof selector === 'object'
                 ? selector

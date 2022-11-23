@@ -481,7 +481,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     });
 
     client.overrideDescriptor(window, 'origin', {
-        get: (target, that) => {
+        get: () => {
             return __uv.location.origin;
         },
     });
@@ -1318,20 +1318,13 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     });
 
     // Proper hash emulation.
-    if (!!window.window) {
-        __uv.addEventListener.call(window, 'hashchange', (event) => {
-            if (event.__uv$dispatched) return false;
-            event.stopImmediatePropagation();
-            const hash = window.location.hash;
-            client.history.replaceState.call(
-                window.history,
-                '',
-                '',
-                event.oldURL
-            );
-            __uv.location.hash = hash;
-        });
-    }
+    __uv.addEventListener.call(window, 'hashchange', (event) => {
+        if (event.__uv$dispatched) return false;
+        event.stopImmediatePropagation();
+        const hash = window.location.hash;
+        client.history.replaceState.call(window.history, '', '', event.oldURL);
+        __uv.location.hash = hash;
+    });
 
     client.location.on('hashchange', (oldUrl, newUrl, ctx) => {
         if (ctx.HashChangeEvent && client.history.replaceState) {

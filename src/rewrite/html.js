@@ -176,7 +176,7 @@ class P5Element extends EventEmitter {
         if (this.stream) return null;
 
         let str = '';
-        iterate(this.node, (node) => {
+        this.iterate(this.node, (node) => {
             if (node.nodeName === '#text') str += node.value;
         });
 

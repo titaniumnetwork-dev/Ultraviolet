@@ -261,54 +261,61 @@ function unwrap(ctx) {
 
         switch (node.callee.property.name) {
             case '$wrap':
-                if (
-                    !node.arguments ||
-                    node.parent.type !== Syntax.MemberExpression ||
-                    node.parent.property !== node
-                )
-                    return false;
-                const [property] = node.arguments;
+                {
+                    if (
+                        !node.arguments ||
+                        node.parent.type !== Syntax.MemberExpression ||
+                        node.parent.property !== node
+                    )
+                        return false;
+                    const [property] = node.arguments;
 
-                data.changes.push({
-                    start: node.callee.start,
-                    end: property.start,
-                });
-
-                node.iterateEnd = function () {
                     data.changes.push({
-                        start: node.end - 2,
-                        end: node.end,
+                        start: node.callee.start,
+                        end: property.start,
                     });
-                };
+
+                    node.iterateEnd = function () {
+                        data.changes.push({
+                            start: node.end - 2,
+                            end: node.end,
+                        });
+                    };
+                }
                 break;
             case '$get':
             case 'rewriteUrl':
-                const [arg] = node.arguments;
+                {
+                    const [arg] = node.arguments;
 
-                data.changes.push({
-                    start: node.callee.start,
-                    end: arg.start,
-                });
-
-                node.iterateEnd = function () {
                     data.changes.push({
-                        start: node.end - 1,
-                        end: node.end,
+                        start: node.callee.start,
+                        end: arg.start,
                     });
-                };
+
+                    node.iterateEnd = function () {
+                        data.changes.push({
+                            start: node.end - 1,
+                            end: node.end,
+                        });
+                    };
+                }
                 break;
             case 'rewrite':
-                const [script] = node.arguments;
-                data.changes.push({
-                    start: node.callee.start,
-                    end: script.start,
-                });
-                node.iterateEnd = function () {
+                {
+                    const [script] = node.arguments;
                     data.changes.push({
-                        start: node.end - 1,
-                        end: node.end,
+                        start: node.callee.start,
+                        end: script.start,
                     });
-                };
+                    node.iterateEnd = function () {
+                        data.changes.push({
+                            start: node.end - 1,
+                            end: node.end,
+                        });
+                    };
+                }
+                break;
         }
     });
 }

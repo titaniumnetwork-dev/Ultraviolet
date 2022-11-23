@@ -1,4 +1,3 @@
-import webpack from 'webpack';
 import { fileURLToPath } from 'url';
 import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';

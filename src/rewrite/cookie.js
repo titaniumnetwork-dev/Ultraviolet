@@ -21,7 +21,7 @@ function validateCookie(cookie, meta, js = false) {
 
 async function db(openDB) {
     const db = await openDB('__op', 1, {
-        upgrade(db, oldVersion, newVersion, transaction) {
+        upgrade(db) {
             const store = db.createObjectStore('cookies', {
                 keyPath: 'id',
             });

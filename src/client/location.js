@@ -37,7 +37,7 @@ class LocationApi extends EventEmitter {
 
         for (const key of this.keys) {
             this.ctx.overrideDescriptor(this.workerLocProto, key, {
-                get: (target, that) => {
+                get: () => {
                     return parse(uv.href.get.call(this.location))[key];
                 },
             });
@@ -78,9 +78,12 @@ class LocationApi extends EventEmitter {
                                       );
                                       break;
                                   default:
-                                      const url = new URL(emulation.href);
-                                      url[key] = val;
-                                      that.location.href = wrap(url.href);
+                                      {
+                                          const url = new URL(emulation.href);
+                                          url[key] = val;
+                                          that.location.href = wrap(url.href);
+                                      }
+                                      break;
                               }
                           }
                         : undefined,

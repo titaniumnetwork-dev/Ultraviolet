@@ -1,3 +1,4 @@
+/*globals __uv$config*/
 // Users must import the config (and bundle) prior to importing uv.sw.js
 // This is to allow us to produce a generic bundle with no hard-coded paths.
 
@@ -29,7 +30,6 @@ const cspHeaders = [
     'x-xss-protection',
 ];
 const emptyMethods = ['GET', 'HEAD'];
-const emptyStatus = [204, 304];
 
 class UVServiceWorker extends Ultraviolet.EventEmitter {
     constructor(config = __uv$config) {

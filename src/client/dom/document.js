@@ -193,21 +193,6 @@ class DocumentHook extends EventEmitter {
             },
         });
     }
-    overrideReferrer() {
-        this.ctx.overrideDescriptor(this.docProto, 'referrer', {
-            get: (target, that) => {
-                const event = new HookEvent(
-                    { value: target.call(that) },
-                    target,
-                    that
-                );
-                this.emit('referrer', event);
-
-                if (event.intercepted) return event.returnValue;
-                return event.data.value;
-            },
-        });
-    }
     overrideCookie() {
         this.ctx.overrideDescriptor(this.docProto, 'cookie', {
             get: (target, that) => {

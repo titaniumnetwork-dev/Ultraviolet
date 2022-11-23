@@ -1,3 +1,4 @@
+/*global Ultraviolet*/
 self.__uv$config = {
     prefix: '/service/',
     bare: 'https://incog.dev/bare/',

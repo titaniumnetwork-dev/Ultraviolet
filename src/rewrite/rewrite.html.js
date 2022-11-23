@@ -1,5 +1,5 @@
 function attributes(ctx, meta = ctx.meta) {
-    const { html, js, css, attributePrefix, handlerScript, bundleScript } = ctx;
+    const { html, js, attributePrefix } = ctx;
     const origPrefix = attributePrefix + '-attr-';
 
     html.on('attr', (attr, type) => {
@@ -68,8 +68,8 @@ function attributes(ctx, meta = ctx.meta) {
     });
 }
 
-function text(ctx, meta = ctx.meta) {
-    const { html, js, css, attributePrefix } = ctx;
+function text(ctx) {
+    const { html, js, css } = ctx;
 
     html.on('text', (text, type) => {
         if (text.element.tagName === 'script') {
@@ -181,8 +181,7 @@ function isEvent(name) {
 }
 
 function injectHead(ctx) {
-    const { html, js, css, attributePrefix } = ctx;
-    const origPrefix = attributePrefix + '-attr-';
+    const { html } = ctx;
     html.on('element', (element, type) => {
         if (type !== 'rewrite') return false;
         if (element.tagName !== 'head') return false;
