@@ -1,51 +1,13 @@
-/*!
- * mime-types
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-
-'use strict';
-
-/**
- * Module dependencies.
- * @private
- */
-
-var $exports = {};
-
 import db from 'mime-db';
 
-var extname = function (path = '') {
-    if (!path.includes('.')) return '';
-    const map = path.split('.');
-
-    return '.' + map[map.length - 1];
-};
-
-/**
- * Module variables.
- * @private
- */
-
-var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
-var TEXT_TYPE_REGEXP = /^text\//i;
-
-/**
- * Module exports.
- * @public
- */
-
-$exports.charset = charset;
-$exports.charsets = { lookup: charset };
-$exports.contentType = contentType;
-$exports.extension = extension;
-$exports.extensions = Object.create(null);
-$exports.lookup = lookup;
-$exports.types = Object.create(null);
+const EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
+const TEXT_TYPE_REGEXP = /^text\//i;
+const extensions = Object.create(null);
+const types = Object.create(null);
+const charsets = { lookup: charset };
 
 // Populate the extensions/types maps
-populateMaps($exports.extensions, $exports.types);
+populateMaps(extensions, types);
 
 /**
  * Get the default charset for a MIME type.
@@ -60,8 +22,8 @@ function charset(type) {
     }
 
     // TODO: use media-typer
-    var match = EXTRACT_TYPE_REGEXP.exec(type);
-    var mime = match && db[match[1].toLowerCase()];
+    const match = EXTRACT_TYPE_REGEXP.exec(type);
+    const mime = match && db[match[1].toLowerCase()];
 
     if (mime && mime.charset) {
         return mime.charset;
@@ -88,7 +50,7 @@ function contentType(str) {
         return false;
     }
 
-    var mime = str.indexOf('/') === -1 ? $exports.lookup(str) : str;
+    let mime = str.indexOf('/') === -1 ? lookup(str) : str;
 
     if (!mime) {
         return false;
@@ -96,7 +58,7 @@ function contentType(str) {
 
     // TODO: use content-type or other module
     if (mime.indexOf('charset') === -1) {
-        var charset = $exports.charset(mime);
+        const charset = charset(mime);
         if (charset) mime += '; charset=' + charset.toLowerCase();
     }
 
@@ -116,10 +78,10 @@ function extension(type) {
     }
 
     // TODO: use media-typer
-    var match = EXTRACT_TYPE_REGEXP.exec(type);
+    const match = EXTRACT_TYPE_REGEXP.exec(type);
 
     // get extensions
-    var exts = match && $exports.extensions[match[1].toLowerCase()];
+    const exts = match && extensions[match[1].toLowerCase()];
 
     if (!exts || !exts.length) {
         return false;
@@ -141,15 +103,15 @@ function lookup(path) {
     }
 
     // get the extension ("ext" or ".ext" or full path)
-    var extension = extname('x.' + path)
+    const extension = extname('x.' + path)
         .toLowerCase()
-        .substr(1);
+        .slice(1);
 
     if (!extension) {
         return false;
     }
 
-    return $exports.types[extension] || false;
+    return types[extension] || false;
 }
 
 /**
@@ -159,11 +121,11 @@ function lookup(path) {
 
 function populateMaps(extensions, types) {
     // source preference (least -> most)
-    var preference = ['nginx', 'apache', undefined, 'iana'];
+    const preference = ['nginx', 'apache', undefined, 'iana'];
 
-    Object.keys(db).forEach(function forEachMimeType(type) {
-        var mime = db[type];
-        var exts = mime.extensions;
+    for (const type in db) {
+        const mime = db[type];
+        const exts = mime.extensions;
 
         if (!exts || !exts.length) {
             return;
@@ -173,12 +135,12 @@ function populateMaps(extensions, types) {
         extensions[type] = exts;
 
         // extension -> mime
-        for (var i = 0; i < exts.length; i++) {
-            var extension = exts[i];
+        for (let i = 0; i < exts.length; i++) {
+            const extension = exts[i];
 
             if (types[extension]) {
-                var from = preference.indexOf(db[types[extension]].source);
-                var to = preference.indexOf(mime.source);
+                const from = preference.indexOf(db[types[extension]].source);
+                const to = preference.indexOf(mime.source);
 
                 if (
                     types[extension] !== 'application/octet-stream' &&
@@ -194,7 +156,14 @@ function populateMaps(extensions, types) {
             // set the extension -> mime
             types[extension] = type;
         }
-    });
+    }
 }
 
-export default $exports;
+function extname(path = '') {
+    if (!path.includes('.')) return '';
+    const map = path.split('.');
+
+    return '.' + map[map.length - 1];
+}
+
+export { charset, charsets, contentType, extension, lookup };
