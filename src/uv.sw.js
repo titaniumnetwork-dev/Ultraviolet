@@ -3,11 +3,7 @@
 // This is to allow us to produce a generic bundle with no hard-coded paths.
 
 /**
- * @typedef {import("./rewrite/index.js").default} Ultraviolet
- */
-
-/**
- * @type {typeof Ultraviolet}
+ * @type {import('./uv').UltravioletCtor}
  */
 const Ultraviolet = globalThis.Ultraviolet;
 

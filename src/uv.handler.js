@@ -1,18 +1,10 @@
 /**
- * @typedef {import("./rewrite/index.js").default} Ultraviolet
- */
-
-/**
- * @typedef {import("./client/index.js").default} UVClient
- */
-
-/**
- * @type {typeof Ultraviolet}
+ * @type {import('./uv').UltravioletCtor}
  */
 const Ultraviolet = globalThis.Ultraviolet;
 
 /**
- * @type {typeof UVClient}
+ * @type {import('./uv').UVClientCtor}
  */
 const UVClient = globalThis.UVClient;
 

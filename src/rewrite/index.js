@@ -3,7 +3,7 @@ import CSS from './css.js';
 import JS from './js.js';
 import setCookie from 'set-cookie-parser';
 import { xor, base64, plain } from './codecs.js';
-import mimeTypes from './mime.js';
+import mimeTypes from 'mime-types';
 import {
     validateCookie,
     db,
