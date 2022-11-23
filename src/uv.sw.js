@@ -174,10 +174,21 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 switch (request.destination) {
                     case 'script':
                     case 'worker':
-                        responseCtx.body = `if (!self.__uv && self.importScripts) importScripts('${ultraviolet.bundleScript}', '${ultraviolet.clientScript}', '${ultraviolet.configScript}', '${ultraviolet.handlerScript}');\n`;
-                        responseCtx.body += ultraviolet.js.rewrite(
-                            await response.text()
-                        );
+                        {
+                            // craft a JS-safe list of arguments
+                            const scripts = [
+                                ultraviolet.bundleScript,
+                                ultraviolet.clientScript,
+                                ultraviolet.configScript,
+                                ultraviolet.handlerScript,
+                            ]
+                                .map((script) => JSON.stringify(script))
+                                .join(',');
+                            responseCtx.body = `if (!self.__uv && self.importScripts) importScripts(${scripts});\n`;
+                            responseCtx.body += ultraviolet.js.rewrite(
+                                await response.text()
+                            );
+                        }
                         break;
                     case 'style':
                         responseCtx.body = ultraviolet.rewriteCSS(
