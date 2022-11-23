@@ -52,7 +52,12 @@ class Ultraviolet {
         this.meta.origin ||= '';
         this.bundleScript = options.bundle || '/uv.bundle.js';
         this.handlerScript = options.handler || '/uv.handler.js';
-        this.clientScript = options.client || '/uv.client.js';
+        this.clientScript =
+            options.client ||
+            (options.bundle &&
+                options.bundle.includes('uv.bundle.js') &&
+                options.bundle.replace('uv.bundle.js', 'uv.client.js')) ||
+            '/uv.client.js';
         this.configScript = options.config || '/uv.config.js';
         this.meta.url ||= this.meta.base || '';
         this.codec = Ultraviolet.codec;
