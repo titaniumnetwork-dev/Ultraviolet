@@ -35,7 +35,6 @@ import {
 import { openDB } from 'idb';
 import parsel from './parsel.js';
 import UVClient from '../client/index.js';
-import Bowser from 'bowser';
 import BareClient from '@tomphttp/bare-client';
 import EventEmitter from 'events';
 
@@ -66,7 +65,6 @@ class Ultraviolet {
         this.js = new JS(this);
         this.parsel = parsel;
         this.openDB = this.constructor.openDB;
-        this.Bowser = this.constructor.Bowser;
         this.client =
             typeof self !== 'undefined'
                 ? new UVClient(options.window || self)
@@ -213,7 +211,6 @@ class Ultraviolet {
     static mime = mimeTypes;
     static setCookie = setCookie;
     static openDB = openDB;
-    static Bowser = Bowser;
     static BareClient = BareClient;
     static EventEmitter = EventEmitter;
 }

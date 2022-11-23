@@ -45,9 +45,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
          * @type {InstanceType<Ultraviolet['BareClient']>}
          */
         this.bareClient = new Ultraviolet.BareClient(this.address);
-        this.browser = Ultraviolet.Bowser.getParser(
-            self.navigator.userAgent
-        ).getBrowserName();
     }
     /**
      *
