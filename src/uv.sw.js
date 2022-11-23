@@ -178,7 +178,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 switch (request.destination) {
                     case 'script':
                     case 'worker':
-                        responseCtx.body = `if (!self.__uv && self.importScripts) importScripts('${__uv$config.bundle}', '${__uv$config.config}', '${__uv$config.handler}');\n`;
+                        responseCtx.body = `if (!self.__uv && self.importScripts) importScripts('${ultraviolet.bundleScript}', '${ultraviolet.configScript}', '${ultraviolet.handlerScript}');\n`;
                         responseCtx.body += ultraviolet.js.rewrite(
                             await response.text()
                         );
@@ -201,9 +201,9 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                 {
                                     document: true,
                                     injectHead: ultraviolet.createHtmlInject(
-                                        this.config.handler,
-                                        this.config.bundle,
-                                        this.config.config,
+                                        ultraviolet.handlerScript,
+                                        ultraviolet.bundleScript,
+                                        ultraviolet.configScript,
                                         this.bareClient.data,
                                         ultraviolet.cookie.serialize(
                                             cookies,
