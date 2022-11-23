@@ -1,6 +1,14 @@
 import EventEmitter from 'events';
 
+/**
+ * @typedef {import('./index').default} UVClient
+ */
+
 class LocationApi extends EventEmitter {
+    /**
+     *
+     * @param {UVClient} ctx
+     */
     constructor(ctx) {
         super();
         this.ctx = ctx;

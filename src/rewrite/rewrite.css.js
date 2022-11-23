@@ -1,3 +1,11 @@
+/**
+ * @typedef {import('./index').default} Ultraviolet
+ */
+
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function url(ctx) {
     const { css } = ctx;
     css.on('Url', (node, data, type) => {
@@ -8,6 +16,10 @@ function url(ctx) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function importStyle(ctx) {
     const { css } = ctx;
     css.on('Atrule', (node, data, type) => {

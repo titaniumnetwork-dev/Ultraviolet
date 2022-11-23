@@ -1,5 +1,13 @@
 import { Syntax } from 'esotope-hammerhead';
 
+/**
+ * @typedef {import('./index').default} Ultraviolet
+ */
+
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function property(ctx) {
     const { js } = ctx;
     js.on('MemberExpression', (node, data, type) => {
@@ -118,6 +126,10 @@ function property(ctx) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function identifier(ctx) {
     const { js } = ctx;
     js.on('Identifier', (node, data, type) => {
@@ -185,6 +197,10 @@ function identifier(ctx) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function wrapEval(ctx) {
     const { js } = ctx;
     js.on('CallExpression', (node, data, type) => {
@@ -210,6 +226,10 @@ function wrapEval(ctx) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function importDeclaration(ctx) {
     const { js } = ctx;
     js.on(Syntax.Literal, (node, data, type) => {
@@ -234,6 +254,10 @@ function importDeclaration(ctx) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function dynamicImport(ctx) {
     const { js } = ctx;
     js.on(Syntax.ImportExpression, (node, data, type) => {
@@ -253,6 +277,10 @@ function dynamicImport(ctx) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function unwrap(ctx) {
     const { js } = ctx;
     js.on('CallExpression', (node, data, type) => {

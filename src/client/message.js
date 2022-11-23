@@ -1,7 +1,15 @@
 import EventEmitter from 'events';
 import HookEvent from './hook.js';
 
+/**
+ * @typedef {import('./index').default} Ultraviolet
+ */
+
 class MessageApi extends EventEmitter {
+    /**
+     *
+     * @param {Ultraviolet} ctx
+     */
     constructor(ctx) {
         super();
         this.ctx = ctx;

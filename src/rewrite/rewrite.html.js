@@ -1,3 +1,11 @@
+/**
+ * @typedef {import('./index').default} Ultraviolet
+ */
+
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function attributes(ctx, meta = ctx.meta) {
     const { html, js, attributePrefix } = ctx;
     const origPrefix = attributePrefix + '-attr-';
@@ -68,6 +76,10 @@ function attributes(ctx, meta = ctx.meta) {
     });
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function text(ctx) {
     const { html, js, css } = ctx;
 
@@ -180,6 +192,10 @@ function isEvent(name) {
     );
 }
 
+/**
+ *
+ * @param {Ultraviolet} ctx
+ */
 function injectHead(ctx) {
     const { html } = ctx;
     html.on('element', (element, type) => {

@@ -1,7 +1,15 @@
 import EventEmitter from 'events';
 import HookEvent from './hook.js';
 
+/**
+ * @typedef {import('./index').default} UVClient
+ */
+
 class StorageApi extends EventEmitter {
+    /**
+     *
+     * @param {UVClient} ctx
+     */
     constructor(ctx) {
         super();
         this.ctx = ctx;
