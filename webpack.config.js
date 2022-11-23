@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'url';
+import ESLintPlugin from 'eslint-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 
@@ -33,6 +34,7 @@ const config = {
         ],
     },
     plugins: [
+        new ESLintPlugin(),
         new CopyPlugin({
             patterns: [
                 {
