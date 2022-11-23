@@ -68,7 +68,7 @@ class UVClient extends EventEmitter {
         );
     }
     override(obj, prop, wrapper, construct) {
-        if (!(prop in obj)) return false;
+        // if (!(prop in obj)) return false;
         const wrapped = this.wrap(obj, prop, wrapper, construct);
         return (obj[prop] = wrapped);
     }

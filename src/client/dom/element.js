@@ -212,7 +212,8 @@ class ElementApi extends EventEmitter {
         );
     }
     hookProperty(element, prop, handler) {
-        if (!element || !(prop in element)) return false;
+        // if (!element || !(prop in element)) return false;
+        if (!element) return false;
 
         if (this.ctx.nativeMethods.isArray(element)) {
             for (const elem of element) {
