@@ -25,6 +25,16 @@ const config = {
         path: fileURLToPath(new URL('./dist/', import.meta.url)),
         filename: 'uv.[name].js',
     },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                enforce: 'pre',
+                use: ['source-map-loader'],
+            },
+        ],
+    },
+    ignoreWarnings: [/Failed to parse source map/],
     optimization: {
         minimize: !isDevelopment,
         minimizer: [
