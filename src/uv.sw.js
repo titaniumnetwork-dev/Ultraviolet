@@ -264,7 +264,10 @@ class ResponseContext {
         this.request = request;
         this.raw = response;
         this.ultraviolet = request.ultraviolet;
-        this.headers = Object.fromEntries(response.headers.entries());
+        this.headers = {};
+        // eg set-cookie
+        for (const key in response.rawHeaders)
+            this.headers[key.toLowerCase()] = response.rawHeaders[key];
         this.status = response.status;
         this.statusText = response.statusText;
         this.body = response.body;
