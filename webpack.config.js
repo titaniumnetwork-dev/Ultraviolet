@@ -28,13 +28,21 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.(js|mjs)$/,
                 enforce: 'pre',
-                use: ['source-map-loader'],
+                use: [
+                    {
+                        loader: 'source-map-loader',
+                        options: {
+                            filterSourceMappingUrl: (url, resourcePath) =>
+                                // parse5 references sourcemaps but doesn't publish them
+                                !resourcePath.includes('parse5'),
+                        },
+                    },
+                ],
             },
         ],
     },
-    ignoreWarnings: [/Failed to parse source map/],
     optimization: {
         minimize: !isDevelopment,
         minimizer: [
