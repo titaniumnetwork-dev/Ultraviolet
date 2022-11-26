@@ -703,14 +703,15 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     function uvInject(that) {
         const win = contentWindowGet.call(that);
 
-        try {
-            win.__uv$bareData = __uv.bareData;
-            win.__uv$cookies = __uv.cookieStr;
-            if (!win.__uv) __uvHook(win, config, bare);
-        } catch (e) {
-            console.error('catastrophic failure');
-            console.error(e);
-        }
+        if (!win.__uv)
+            try {
+                win.__uv$bareData = __uv.bareData;
+                win.__uv$cookies = __uv.cookieStr;
+                __uvHook(win, config, bare);
+            } catch (e) {
+                console.error('catastrophic failure');
+                console.error(e);
+            }
     }
 
     client.element.hookProperty(HTMLIFrameElement, 'contentWindow', {
