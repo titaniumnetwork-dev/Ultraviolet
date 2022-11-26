@@ -110,7 +110,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             requestCtx.headers['user-agent'] = navigator.userAgent;
 
             if (cookieStr) requestCtx.headers.cookie = cookieStr;
-            requestCtx.headers.Host = requestCtx.url.host;
 
             const reqEvent = new HookEvent(requestCtx, null, null);
             this.emit('request', reqEvent);
