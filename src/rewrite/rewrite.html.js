@@ -6,7 +6,7 @@
  *
  * @param {Ultraviolet} ctx
  */
-function attributes(ctx, meta = ctx.meta) {
+export function attributes(ctx, meta = ctx.meta) {
     const { html, js, attributePrefix } = ctx;
     const origPrefix = attributePrefix + '-attr-';
 
@@ -80,7 +80,7 @@ function attributes(ctx, meta = ctx.meta) {
  *
  * @param {Ultraviolet} ctx
  */
-function text(ctx) {
+export function text(ctx) {
     const { html, js, css } = ctx;
 
     html.on('text', (text, type) => {
@@ -101,7 +101,7 @@ function text(ctx) {
     return true;
 }
 
-function isUrl(name, tag) {
+export function isUrl(name, tag) {
     return (
         (tag === 'object' && name === 'data') ||
         [
@@ -116,7 +116,8 @@ function isUrl(name, tag) {
         ].indexOf(name) > -1
     );
 }
-function isEvent(name) {
+
+export function isEvent(name) {
     return (
         [
             'onafterprint',
@@ -196,7 +197,7 @@ function isEvent(name) {
  *
  * @param {Ultraviolet} ctx
  */
-function injectHead(ctx) {
+export function injectHead(ctx) {
     const { html } = ctx;
     html.on('element', (element, type) => {
         if (type !== 'rewrite') return false;
@@ -207,7 +208,7 @@ function injectHead(ctx) {
     });
 }
 
-function createJsInject(
+export function createJsInject(
     bareURL = '',
     bareData = {},
     cookies = '',
@@ -221,7 +222,7 @@ function createJsInject(
     );
 }
 
-function createHtmlInject(
+export function createHtmlInject(
     handlerScript,
     bundleScript,
     clientScript,
@@ -305,7 +306,7 @@ function createHtmlInject(
     ];
 }
 
-function isForbidden(name) {
+export function isForbidden(name) {
     return (
         ['http-equiv', 'integrity', 'sandbox', 'nonce', 'crossorigin'].indexOf(
             name
@@ -313,28 +314,14 @@ function isForbidden(name) {
     );
 }
 
-function isHtml(name) {
+export function isHtml(name) {
     return name === 'srcdoc';
 }
 
-function isStyle(name) {
+export function isStyle(name) {
     return name === 'style';
 }
 
-function isSrcset(name) {
+export function isSrcset(name) {
     return name === 'srcset' || name === 'imagesrcset';
 }
-
-export {
-    attributes,
-    createHtmlInject,
-    createJsInject,
-    text,
-    isUrl,
-    isEvent,
-    isForbidden,
-    isHtml,
-    isStyle,
-    isSrcset,
-    injectHead,
-};
