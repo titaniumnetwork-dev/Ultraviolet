@@ -1,3 +1,5 @@
+/*global __uv$config,__uv$bareData,__uv$bareURL,__uv$cookies*/
+
 /**
  * @type {import('./uv').UltravioletCtor}
  */
@@ -8,11 +10,11 @@ const Ultraviolet = globalThis.Ultraviolet;
  */
 const UVClient = globalThis.UVClient;
 
-if (!self.__uv) {
-    __uvHook(self, self.__uv$config, self.__uv$config.bare);
-}
+if (!self.__uv) __uvHook(self);
 
-function __uvHook(window, config = {}, bare = '/bare/') {
+self.__uvHook = __uvHook;
+
+function __uvHook(window) {
     if ('__uv' in window && window.__uv instanceof Ultraviolet) return false;
 
     if (window.document && !!window.window) {
@@ -24,11 +26,11 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     const worker = !window.window;
     const master = '__uv';
     const methodPrefix = '__uv$';
-    const __uv = new Ultraviolet(config);
+    const __uv = new Ultraviolet(__uv$config);
 
-    if (typeof config.construct === 'function') {
+    /*if (typeof config.construct === 'function') {
         config.construct(__uv, worker ? 'worker' : 'window');
-    }
+    }*/
 
     const client = new UVClient(window);
     const {
@@ -66,8 +68,13 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         }
     );
 
-    __uv.bareData = window.__uv$bareData;
-    __uv.cookieStr = window.__uv$cookies || '';
+    try {
+        __uv.bareData = __uv$bareData;
+        __uv.cookieStr = __uv$cookies;
+        __uv.bareURL = __uv$bareURL;
+    } catch (err) {
+        throw new Error('Unable to load global UV data');
+    }
     __uv.meta.url = __uv.location;
     __uv.domain = __uv.meta.url.host;
     __uv.blobUrls = new window.Map();
@@ -76,14 +83,8 @@ function __uvHook(window, config = {}, bare = '/bare/') {
     __uv.localStorageObj = {};
     __uv.sessionStorageObj = {};
 
-    try {
-        __uv.bare = new URL(bare, window.location.href);
-    } catch (e) {
-        __uv.bare = window.parent.__uv.bare;
-    }
-
     // websockets
-    const bareClient = new Ultraviolet.BareClient(__uv.bare, __uv.bareData);
+    const bareClient = new Ultraviolet.BareClient(__uv.bareURL, __uv.bareData);
 
     if (__uv.location.href === 'about:srcdoc') {
         __uv.meta = window.parent.__uv.meta;
@@ -538,6 +539,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                     __uv.bundleScript,
                     __uv.clientScript,
                     __uv.configScript,
+                    __uv.bareURL,
                     __uv.bareData,
                     __uv.cookieStr,
                     window.location.href
@@ -707,7 +709,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
             try {
                 win.__uv$bareData = __uv.bareData;
                 win.__uv$cookies = __uv.cookieStr;
-                __uvHook(win, config, bare);
+                __uvHook(win);
             } catch (e) {
                 console.error('catastrophic failure');
                 console.error(e);
@@ -747,6 +749,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                         __uv.bundleScript,
                         __uv.clientScript,
                         __uv.configScript,
+                        __uv.bareURL,
                         __uv.bareData,
                         __uv.cookieStr,
                         window.location.href
@@ -858,6 +861,7 @@ function __uvHook(window, config = {}, bare = '/bare/') {
                     __uv.bundleScript,
                     __uv.clientScript,
                     __uv.configScript,
+                    __uv.bareURL,
                     __uv.bareData,
                     __uv.cookieStr,
                     window.location.href
@@ -1586,5 +1590,3 @@ function __uvHook(window, config = {}, bare = '/bare/') {
         }
     );
 }
-
-self.__uvHook = __uvHook;

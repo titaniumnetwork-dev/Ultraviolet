@@ -20,7 +20,8 @@ import {
     isStyle,
     text,
     injectHead,
-    createInjection,
+    createHtmlInject,
+    createJsInject,
 } from './rewrite.html.js';
 import { importStyle, url } from './rewrite.css.js';
 //import { call, destructureDeclaration, dynamicImport, getProperty, importDeclaration, setProperty, sourceMethods, wrapEval, wrapIdentifier } from './rewrite.script.js';
@@ -67,7 +68,8 @@ class Ultraviolet {
         this.master = '__uv';
         this.dataPrefix = '__uv$';
         this.attributePrefix = '__uv';
-        this.createHtmlInject = createInjection;
+        this.createHtmlInject = createHtmlInject;
+        this.createJsInject = createJsInject;
         this.attrs = {
             isUrl,
             isForbidden,

@@ -207,14 +207,29 @@ function injectHead(ctx) {
     });
 }
 
-function createInjection(
-    handler = '/uv.handler.js',
-    bundle = '/uv.bundle.js',
-    client = '/uv.client.js',
-    config = '/uv.config.js',
+function createJsInject(
+    bareURL = '',
     bareData = {},
     cookies = '',
     referrer = ''
+) {
+    return (
+        `self.__uv$bareData = ${JSON.stringify(bareData)};` +
+        `self.__uv$cookies = ${JSON.stringify(cookies)};` +
+        `self.__uv$referrer = ${JSON.stringify(referrer)};` +
+        `self.__uv$bareURL = ${JSON.stringify(bareURL)}; `
+    );
+}
+
+function createHtmlInject(
+    handlerScript,
+    bundleScript,
+    clientScript,
+    configScript,
+    bareURL,
+    bareData,
+    cookies,
+    referrer
 ) {
     return [
         {
@@ -223,11 +238,7 @@ function createInjection(
             childNodes: [
                 {
                     nodeName: '#text',
-                    value: `window.__uv$bareData = ${JSON.stringify(
-                        bareData
-                    )}; window.__uv$cookies = atob("${btoa(
-                        cookies
-                    )}");\nwindow.__uv$referrer = atob("${btoa(referrer)}");`,
+                    value: createJsInject(bareURL, bareData, cookies, referrer),
                 },
             ],
             attrs: [
@@ -244,7 +255,7 @@ function createInjection(
             nodeName: 'script',
             childNodes: [],
             attrs: [
-                { name: 'src', value: bundle, skip: true },
+                { name: 'src', value: bundleScript, skip: true },
                 {
                     name: '__uv-script',
                     value: '1',
@@ -257,7 +268,7 @@ function createInjection(
             nodeName: 'script',
             childNodes: [],
             attrs: [
-                { name: 'src', value: client, skip: true },
+                { name: 'src', value: clientScript, skip: true },
                 {
                     name: '__uv-script',
                     value: '1',
@@ -270,7 +281,7 @@ function createInjection(
             nodeName: 'script',
             childNodes: [],
             attrs: [
-                { name: 'src', value: config, skip: true },
+                { name: 'src', value: configScript, skip: true },
                 {
                     name: '__uv-script',
                     value: '1',
@@ -283,7 +294,7 @@ function createInjection(
             nodeName: 'script',
             childNodes: [],
             attrs: [
-                { name: 'src', value: handler, skip: true },
+                { name: 'src', value: handlerScript, skip: true },
                 {
                     name: '__uv-script',
                     value: '1',
@@ -316,7 +327,8 @@ function isSrcset(name) {
 
 export {
     attributes,
-    createInjection,
+    createHtmlInject,
+    createJsInject,
     text,
     isUrl,
     isEvent,

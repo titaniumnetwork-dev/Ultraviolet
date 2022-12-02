@@ -32,11 +32,11 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
         super();
         if (!config.bare) config.bare = '/bare/';
         if (!config.prefix) config.prefix = '/service/';
-        this.addresses =
-            typeof config.bare === 'string'
-                ? [new URL(config.bare, location)]
-                : config.bare.map((str) => new URL(str, location));
         this.config = config;
+        const addresses = (
+            Array.isArray(config.bare) ? config.bare : [config.bare]
+        ).map((str) => new URL(str, location).toString());
+        this.address = addresses[~~(Math.random() * addresses.length)];
         /**
          * @type {InstanceType<Ultraviolet['BareClient']>}
          */
@@ -52,7 +52,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             if (!request.url.startsWith(location.origin + this.config.prefix))
                 return await fetch(request);
 
-            const ultraviolet = new Ultraviolet(this.config);
+            const ultraviolet = new Ultraviolet(this.config, this.address);
 
             if (typeof this.config.construct === 'function') {
                 this.config.construct(ultraviolet, 'service');
@@ -183,7 +183,28 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                             ]
                                 .map((script) => JSON.stringify(script))
                                 .join(',');
-                            responseCtx.body = `if (!self.__uv && self.importScripts) importScripts(${scripts});\n`;
+                            responseCtx.body = `if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
+                                this.address,
+                                this.bareClient.data,
+                                ultraviolet.cookie.serialize(
+                                    cookies,
+                                    ultraviolet.meta,
+                                    true
+                                ),
+                                request.referrer
+                            )} importScripts(${scripts}); }\n`;
+                            console.log(
+                                `if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
+                                    this.address,
+                                    this.bareClient.data,
+                                    ultraviolet.cookie.serialize(
+                                        cookies,
+                                        ultraviolet.meta,
+                                        true
+                                    ),
+                                    request.referrer
+                                )} importScripts(${scripts}); }\n`
+                            );
                             responseCtx.body += ultraviolet.js.rewrite(
                                 await response.text()
                             );
@@ -211,6 +232,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                         ultraviolet.bundleScript,
                                         ultraviolet.clientScript,
                                         ultraviolet.configScript,
+                                        this.address,
                                         this.bareClient.data,
                                         ultraviolet.cookie.serialize(
                                             cookies,
@@ -243,11 +265,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 status: 500,
             });
         }
-    }
-    get address() {
-        return this.addresses[
-            Math.floor(Math.random() * this.addresses.length)
-        ];
     }
     static Ultraviolet = Ultraviolet;
 }
