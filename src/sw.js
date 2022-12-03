@@ -1,4 +1,4 @@
-/*global UVServiceWorker*/
+/*global UVServiceWorker,__uv$config*/
 /*
  * Stock service worker script.
  * Users can provide their own sw.js if they need to extend the functionality of the service worker.
@@ -7,7 +7,7 @@
  */
 importScripts('uv.bundle.js');
 importScripts('uv.config.js');
-importScripts('uv.sw.js');
+importScripts(__uv$config.sw || 'uv.sw.js');
 
 const sw = new UVServiceWorker();
 
