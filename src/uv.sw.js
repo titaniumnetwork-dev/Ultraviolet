@@ -193,18 +193,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                 ),
                                 request.referrer
                             )} importScripts(${scripts}); }\n`;
-                            console.log(
-                                `if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
-                                    this.address,
-                                    this.bareClient.data,
-                                    ultraviolet.cookie.serialize(
-                                        cookies,
-                                        ultraviolet.meta,
-                                        true
-                                    ),
-                                    request.referrer
-                                )} importScripts(${scripts}); }\n`
-                            );
                             responseCtx.body += ultraviolet.js.rewrite(
                                 await response.text()
                             );
