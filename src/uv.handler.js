@@ -1,5 +1,3 @@
-/*global __uv$config,__uv$bareData,__uv$bareURL,__uv$cookies*/
-
 /**
  * @type {import('./uv').UltravioletCtor}
  */
@@ -9,6 +7,33 @@ const Ultraviolet = globalThis.Ultraviolet;
  * @type {import('./uv').UVClientCtor}
  */
 const UVClient = globalThis.UVClient;
+
+/**
+ * @type {import('./uv').UVConfig}
+ */
+const __uv$config = globalThis.__uv$config;
+
+/**
+ * @type {import('@tomphttp/bare-client').BareManifest}
+ */
+const __uv$bareData = globalThis.__uv$bareData;
+
+/**
+ * @type {string}
+ */
+const __uv$bareURL = globalThis.__uv$bareURL;
+
+/**
+ * @type {string}
+ */
+const __uv$cookies = globalThis.__uv$cookies;
+
+if (
+    typeof __uv$bareData !== 'object' ||
+    typeof __uv$bareURL !== 'string' ||
+    typeof __uv$cookies !== 'string'
+)
+    throw new TypeError('Unable to load global UV data');
 
 if (!self.__uv) __uvHook(self);
 
@@ -68,13 +93,8 @@ function __uvHook(window) {
         }
     );
 
-    try {
-        __uv.bareData = __uv$bareData;
-        __uv.cookieStr = __uv$cookies;
-        __uv.bareURL = __uv$bareURL;
-    } catch (err) {
-        throw new Error('Unable to load global UV data');
-    }
+    let cookieStr = __uv$cookies;
+
     __uv.meta.url = __uv.location;
     __uv.domain = __uv.meta.url.host;
     __uv.blobUrls = new window.Map();
@@ -84,7 +104,7 @@ function __uvHook(window) {
     __uv.sessionStorageObj = {};
 
     // websockets
-    const bareClient = new Ultraviolet.BareClient(__uv.bareURL, __uv.bareData);
+    const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
 
     if (__uv.location.href === 'about:srcdoc') {
         __uv.meta = window.parent.__uv.meta;
@@ -271,7 +291,7 @@ function __uvHook(window) {
 
     // Cookies
     client.document.on('getCookie', (event) => {
-        event.data.value = __uv.cookieStr;
+        event.data.value = cookieStr;
     });
 
     client.document.on('setCookie', (event) => {
@@ -280,11 +300,7 @@ function __uvHook(window) {
         ).then(() => {
             __uv.cookie.db().then((db) => {
                 __uv.cookie.getCookies(db).then((cookies) => {
-                    __uv.cookieStr = __uv.cookie.serialize(
-                        cookies,
-                        __uv.meta,
-                        true
-                    );
+                    cookieStr = __uv.cookie.serialize(cookies, __uv.meta, true);
                 });
             });
         });
@@ -294,8 +310,8 @@ function __uvHook(window) {
         if (!cookie.domain) cookie.domain = __uv.meta.url.hostname;
 
         if (__uv.cookie.validateCookie(cookie, __uv.meta, true)) {
-            if (__uv.cookieStr.length) __uv.cookieStr += '; ';
-            __uv.cookieStr += `${cookie.name}=${cookie.value}`;
+            if (cookieStr.length) cookieStr += '; ';
+            cookieStr += `${cookie.name}=${cookie.value}`;
         }
 
         event.respondWith(event.data.value);
@@ -539,9 +555,9 @@ function __uvHook(window) {
                     __uv.bundleScript,
                     __uv.clientScript,
                     __uv.configScript,
-                    __uv.bareURL,
-                    __uv.bareData,
-                    __uv.cookieStr,
+                    __uv$bareURL,
+                    __uv$bareData,
+                    cookieStr,
                     window.location.href
                 ),
             });
@@ -707,8 +723,6 @@ function __uvHook(window) {
 
         if (!win.__uv)
             try {
-                win.__uv$bareData = __uv.bareData;
-                win.__uv$cookies = __uv.cookieStr;
                 __uvHook(win);
             } catch (e) {
                 console.error('catastrophic failure');
@@ -749,9 +763,9 @@ function __uvHook(window) {
                         __uv.bundleScript,
                         __uv.clientScript,
                         __uv.configScript,
-                        __uv.bareURL,
-                        __uv.bareData,
-                        __uv.cookieStr,
+                        __uv$bareURL,
+                        __uv$bareData,
+                        cookieStr,
                         window.location.href
                     ),
                 })
@@ -861,9 +875,9 @@ function __uvHook(window) {
                     __uv.bundleScript,
                     __uv.clientScript,
                     __uv.configScript,
-                    __uv.bareURL,
-                    __uv.bareData,
-                    __uv.cookieStr,
+                    __uv$bareURL,
+                    __uv$bareData,
+                    cookieStr,
                     window.location.href
                 ),
             });
@@ -1035,8 +1049,8 @@ function __uvHook(window) {
             requestHeaders['Origin'] = __uv.meta.url.origin;
             requestHeaders['User-Agent'] = navigator.userAgent;
 
-            if (__uv.cookieStr !== '')
-                requestHeaders['Cookie'] = __uv.cookieStr.toString();
+            if (cookieStr !== '')
+                requestHeaders['Cookie'] = cookieStr.toString();
 
             this.#socket = await bareClient.createWebSocket(
                 url,
