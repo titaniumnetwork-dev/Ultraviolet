@@ -37,7 +37,15 @@ import { openDB } from 'idb';
 import BareClient from '@tomphttp/bare-client';
 import EventEmitter from 'events';
 
+/**
+ * @typedef {import('../uv.js').UVConfig} UVConfig
+ */
+
 class Ultraviolet {
+    /**
+     *
+     * @param {UVConfig} [options]
+     */
     constructor(options = {}) {
         this.prefix = options.prefix || '/service/';
         //this.urlRegex = /^(#|about:|data:|mailto:|javascript:)/;
