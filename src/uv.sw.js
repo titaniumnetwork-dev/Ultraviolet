@@ -5,7 +5,7 @@
 /**
  * @type {import('./uv').UltravioletCtor}
  */
-const Ultraviolet = globalThis.Ultraviolet;
+const Ultraviolet = self.Ultraviolet;
 
 const cspHeaders = [
     'cross-origin-embedder-policy',

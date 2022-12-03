@@ -1,32 +1,32 @@
 /**
  * @type {import('./uv').UltravioletCtor}
  */
-const Ultraviolet = globalThis.Ultraviolet;
+const Ultraviolet = self.Ultraviolet;
 
 /**
  * @type {import('./uv').UVClientCtor}
  */
-const UVClient = globalThis.UVClient;
+const UVClient = self.UVClient;
 
 /**
  * @type {import('./uv').UVConfig}
  */
-const __uv$config = globalThis.__uv$config;
+const __uv$config = self.__uv$config;
 
 /**
  * @type {import('@tomphttp/bare-client').BareManifest}
  */
-const __uv$bareData = globalThis.__uv$bareData;
+const __uv$bareData = self.__uv$bareData;
 
 /**
  * @type {string}
  */
-const __uv$bareURL = globalThis.__uv$bareURL;
+const __uv$bareURL = self.__uv$bareURL;
 
 /**
  * @type {string}
  */
-const __uv$cookies = globalThis.__uv$cookies;
+const __uv$cookies = self.__uv$cookies;
 
 if (
     typeof __uv$bareData !== 'object' ||
