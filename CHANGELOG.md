@@ -1,3 +1,33 @@
+# v1.0.4-beta.x
+- Provide randomly chosen bare server URL & refactor (bare server load balancing)
+
+
+# v1.0.4-beta.6
+Fixes:
+
+- Cookies not being set (fixes Recaptcha, Google sign-in)
+- Source map errors (webpack)
+
+
+# v1.0.4-beta
+Experimental Bare Server v2 support
+
+- Accomplished by using @tomphttp/bare-client
+- More stable
+- Faster (caching)
+
+### Pre-Update (Memory)
+
+<img src="https://cdn.discordapp.com/attachments/951957740337643543/1043383736227598396/image.png">
+
+### Post Update (Memory)
+
+<img src="https://cdn.discordapp.com/attachments/959140616149794816/1048364779787530330/image.png">
+
+
+# v1.0.3
+Stable release.
+
 # v1.0.2
 
 This package now targets CommonJS.
