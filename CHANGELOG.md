@@ -5,22 +5,23 @@
 See the release on [GitHub](https://github.com/titaniumnetwork-dev/Ultraviolet/releases/tag/v1.0.4-beta) for more details.
 
 # v1.0.4-beta.x
-- Provide randomly chosen bare server URL & refactor (bare server load balancing)
 
+-   Provide randomly chosen bare server URL & refactor (bare server load balancing)
 
 # v1.0.4-beta.6
+
 Fixes:
 
-- Cookies not being set (fixes Recaptcha, Google sign-in)
-- Source map errors (webpack)
-
+-   Cookies not being set (fixes Recaptcha, Google sign-in)
+-   Source map errors (webpack)
 
 # v1.0.4-beta
+
 Experimental Bare Server v2 support
 
-- Accomplished by using @tomphttp/bare-client
-- More stable
-- Faster (caching)
+-   Accomplished by using @tomphttp/bare-client
+-   More stable
+-   Faster (caching)
 
 ### Pre-Update (Memory)
 
@@ -30,8 +31,8 @@ Experimental Bare Server v2 support
 
 <img src="https://cdn.discordapp.com/attachments/959140616149794816/1048364779787530330/image.png">
 
-
 # v1.0.3
+
 Stable release.
 
 # v1.0.2
