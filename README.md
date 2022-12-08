@@ -4,38 +4,38 @@
 
 <a href="https://www.npmjs.com/package/@titaniumnetwork-dev/ultraviolet"><img src="https://img.shields.io/npm/v/@titaniumnetwork-dev/ultraviolet.svg?maxAge=3600" alt="npm version" /></a>
 
-A highly advanced web proxy used for evading internet censorship or accessing websites in a controlled sandbox with security and performance in mind.
-
-Ultraviolet works by intercepting HTTP requests with a service worker script that follows the [TompHTTP specifications](https://github.com/tomphttp) and is the lead for innovative web proxy technologies.
+Ultraviolet is a highly advanced web proxy used for evading internet censorship or accessing websites in a controlled sandbox. It is designed with security and performance in mind. Ultraviolet intercepts HTTP requests with a service worker, while adhering to the [TompHTTP specifications](https://github.com/tomphttp) and is a leader in innovative web proxy technologies.
 
 ## Features
 
--   CAPTCHA support along with hCAPTCHA support
--   URL encoding settings to further hide activity when using Ultraviolet
--   Configuration all done on the client-side via service-workers
--   Speed in comparison to other web proxies that fully proxy content
--   Blacklist setting and more for easy hosting
--   Security in mind and leak prevention
--   Frequent updates to improve site support or fix security issues
--   Bare server load balancing and performance significantly increased
--   Improved resource usage and speed (allows for improved setups with seperation of the bare server on a dedicated instance)
+Ultraviolet offers several features that set it apart from its predecessors, including CAPTCHA and hCAPTCHA support, URL encoding settings for added security, client-side configuration via service-workers, high speed compared to other web proxies, blacklist settings and more for easy hosting, leak prevention, regular updates, and improved resource usage and speed for better setups with a dedicated server instance.
 
 ## Supported Sites
 
--   [Google Services](https://google.com)
--   [CAPTCHA/hCAPTCHA](https://www.captcha.net)
+Some of the popular websites that Ultraviolet supports include:
+
+-   [Google](https://google.com)
 -   [Youtube](https://www.youtube.com)
 -   [Spotify](https://spotify.com)
 -   [Discord](https://discord.com)
 -   [Reddit](https://reddit.com)
 -   [GeForce NOW](https://play.geforcenow.com/)
 -   [now.gg](https://now.gg)
--   All static sites
--   And more!
+
+## Used by
+
+-   [Holy Unblocker](https://github.com/holy-unblocker/website)
+-   [Hypertabs](https://hypertabs.cc/)
+-   [Terbium](https://github.com/TerbiumOS/webOS)
+-   [Incognito](https://github.com/caracal-js/Incognito)
+-   [Nebula](https://github.com/NebulaServices/Nebula)
+-   [Metallic](https://github.com/Metallic-Web/Metallic)
 
 --
 
-See the [changelog](./CHANGELOG.md).
+## Changelog
+
+Changes are documented in the [changelog](./CHANGELOG.md).
 
 ## Documentation
 
