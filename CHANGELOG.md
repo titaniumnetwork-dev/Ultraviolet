@@ -1,3 +1,9 @@
+# v1.0.4
+
+`uv.client.js` is now a bundle. Make sure this file is accounted for in any workflows (eg. extracting the tarball automatically).
+
+See the release on [GitHub](https://github.com/titaniumnetwork-dev/Ultraviolet/releases/tag/v1.0.4-beta) for more details.
+
 # v1.0.4-beta.x
 - Provide randomly chosen bare server URL & refactor (bare server load balancing)
 
