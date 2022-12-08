@@ -1,3 +1,7 @@
+# v1.0.5
+
+-   This version of Ultraviolet fixes a minor bug with `blob:` URLs.
+
 # v1.0.4
 
 -   This version of Ultraviolet introduces support for passing a list of Bare servers in the `uv.config.js` file. This allows users to specify multiple servers that the service worker can choose from, improving reliability and failover.
