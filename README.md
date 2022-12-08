@@ -37,6 +37,10 @@ Some of the popular websites that Ultraviolet supports include:
 
 Changes are documented in the [changelog](./CHANGELOG.md).
 
+## Deployment
+
+This repository can be built, but it can't be deployed to any services. See [Ultraviolet-Node](https://github.com/titaniumnetwork-dev/Ultraviolet-Node) for a complete and customizable Ultraviolet setup that you can deploy.
+
 ## Documentation
 
 Documentation can be found in the [wiki](https://github.com/titaniumnetwork-dev/Ultraviolet/wiki).
