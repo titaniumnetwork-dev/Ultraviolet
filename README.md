@@ -31,8 +31,6 @@ Some of the popular websites that Ultraviolet supports include:
 -   [Nebula](https://github.com/NebulaServices/Nebula)
 -   [Metallic](https://github.com/Metallic-Web/Metallic)
 
---
-
 ## Changelog
 
 Changes are documented in the [changelog](./CHANGELOG.md).
