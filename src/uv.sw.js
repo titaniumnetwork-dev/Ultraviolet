@@ -129,6 +129,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         location.origin !== requestCtx.address.origin
                             ? 'cors'
                             : requestCtx.mode,
+                    cache: requestCtx.cache,
                     redirect: requestCtx.redirect,
                 }
             );
@@ -303,6 +304,7 @@ class RequestContext {
         this.method = request.method;
         this.address = worker.address;
         this.body = body || null;
+        this.cache = request.cache;
         this.redirect = request.redirect;
         this.credentials = 'omit';
         this.mode = request.mode === 'cors' ? request.mode : 'same-origin';
