@@ -19,7 +19,7 @@
         "watch": "cross-env NODE_ENV=development webpack-cli --watch"
     },
     "dependencies": {
-        "@tomphttp/bare-client": "^1.1.2-beta.2",
+        "@tomphttp/bare-client": "^1.1.2-beta.3",
         "css-tree": "^2.0.4",
         "esotope-hammerhead": "^0.6.1",
         "events": "^3.3.0",
