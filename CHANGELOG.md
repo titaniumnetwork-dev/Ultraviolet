@@ -1,3 +1,7 @@
+# v1.0.6
+
+-   This version of Ultraviolet upgrades [@tomphttp/bare-client](https://www.npmjs.com/package/@tomphttp/bare-client). As a result, refreshing can fix errors with the Bare metadata being fetched.
+
 # v1.0.5
 
 -   This version of Ultraviolet fixes a minor bug with `blob:` URLs.
