@@ -1,3 +1,7 @@
+# v1.0.7
+
+-   This version of Ultraviolet correctly sets the `cache` option when making a request.
+
 # v1.0.6
 
 -   This version of Ultraviolet upgrades [@tomphttp/bare-client](https://www.npmjs.com/package/@tomphttp/bare-client). As a result, refreshing can fix errors with the Bare metadata being fetched.
