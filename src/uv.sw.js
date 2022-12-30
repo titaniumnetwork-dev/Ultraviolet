@@ -249,7 +249,11 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 statusText: responseCtx.statusText,
             });
         } catch (err) {
+            if (!['document', 'iframe'].includes(request.destination))
+                return new Response(undefined, { status: 500 });
+
             console.error(err);
+
             return new Response(err.toString(), {
                 status: 500,
             });
