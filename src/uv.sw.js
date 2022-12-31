@@ -48,6 +48,11 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
      * @returns
      */
     async fetch({ request }) {
+        /**
+         * @type {string|void}
+         */
+        let fetchedURL;
+
         try {
             if (!request.url.startsWith(location.origin + this.config.prefix))
                 return await fetch(request);
@@ -116,23 +121,22 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 
             if (reqEvent.intercepted) return reqEvent.returnValue;
 
-            const response = await this.bareClient.fetch(
-                requestCtx.blob
-                    ? 'blob:' + location.origin + requestCtx.url.pathname
-                    : requestCtx.url,
-                {
-                    headers: requestCtx.headers,
-                    method: requestCtx.method,
-                    body: requestCtx.body,
-                    credentials: requestCtx.credentials,
-                    mode:
-                        location.origin !== requestCtx.address.origin
-                            ? 'cors'
-                            : requestCtx.mode,
-                    cache: requestCtx.cache,
-                    redirect: requestCtx.redirect,
-                }
-            );
+            fetchedURL = requestCtx.blob
+                ? 'blob:' + location.origin + requestCtx.url.pathname
+                : requestCtx.url;
+
+            const response = await this.bareClient.fetch(fetchedURL, {
+                headers: requestCtx.headers,
+                method: requestCtx.method,
+                body: requestCtx.body,
+                credentials: requestCtx.credentials,
+                mode:
+                    location.origin !== requestCtx.address.origin
+                        ? 'cors'
+                        : requestCtx.mode,
+                cache: requestCtx.cache,
+                redirect: requestCtx.redirect,
+            });
 
             const responseCtx = new ResponseContext(requestCtx, response);
             const resEvent = new HookEvent(responseCtx, null, null);
@@ -254,9 +258,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 
             console.error(err);
 
-            return new Response(err.toString(), {
-                status: 500,
-            });
+            return renderError(err, fetchedURL, this.address);
         }
     }
     static Ultraviolet = Ultraviolet;
@@ -357,4 +359,186 @@ class HookEvent {
         this.#returnValue = input;
         this.#intercepted = true;
     }
+}
+
+/**
+ *
+ * @param {string} fetchedURL
+ * @param {string} bareServer
+ * @returns
+ */
+function hostnameErrorTemplate(fetchedURL, bareServer) {
+    const parsedFetchedURL = new URL(fetchedURL);
+    const script =
+        `remoteHostname.textContent = ${JSON.stringify(
+            parsedFetchedURL.hostname
+        )};` +
+        `bareServer.href = ${JSON.stringify(bareServer)};` +
+        `uvHostname.textContent = ${JSON.stringify(location.hostname)};` +
+        `reload.addEventListener("click", () => location.reload())`;
+
+    return (
+        '<!DOCTYPE html>' +
+        '<html>' +
+        '<head>' +
+        "<meta charset='utf-8' />" +
+        '<title>Error</title>' +
+        '</head>' +
+        '<body>' +
+        '<h1>This site can’t be reached</h1>' +
+        '<hr />' +
+        '<p><b id="remoteHostname"></b>’s server IP address could not be found.</p>' +
+        '<p>Try:</p>' +
+        '<ul>' +
+        '<li>Make sure you entered the correct address</li>' +
+        '<li>Clearing the site data</li>' +
+        '<li>Contact the administrator of <b id="uvHostname"></b></li>' +
+        "<li>Verify your <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
+        '</ul>' +
+        '<button id="reload">Reload</button>' +
+        `<script src="${
+            'data:application/javascript,' + encodeURIComponent(script)
+        }"></script>` +
+        '</body>' +
+        '</html>'
+    );
+}
+
+/**
+ *
+ * @param {string} title
+ * @param {string} code
+ * @param {string} id
+ * @param {string} message
+ * @param {string} trace
+ * @param {string} fetchedURL
+ * @param {string} bareServer
+ * @returns
+ */
+function errorTemplate(
+    title,
+    code,
+    id,
+    message,
+    trace,
+    fetchedURL,
+    bareServer
+) {
+    // produced by bare-server-node
+    if (message === 'The specified host could not be resolved.')
+        return hostnameErrorTemplate(fetchedURL, bareServer);
+
+    // turn script into a data URI so we don't have to escape any HTML values
+    const script =
+        `errorTitle.textContent = ${JSON.stringify(title)};` +
+        `errorCode.textContent = ${JSON.stringify(code)};` +
+        (id ? `errorId.textContent = ${JSON.stringify(id)};` : '') +
+        `errorMessage.textContent =  ${JSON.stringify(message)};` +
+        `errorTrace.value = ${JSON.stringify(trace)};` +
+        `fetchedURL.textContent = ${JSON.stringify(fetchedURL)};` +
+        `bareServer.href = ${JSON.stringify(bareServer)};` +
+        `uvHostname.textContent = ${JSON.stringify(location.hostname)};` +
+        `reload.addEventListener("click", () => location.reload());`;
+
+    return (
+        '<!DOCTYPE html>' +
+        '<html>' +
+        '<head>' +
+        "<meta charset='utf-8' />" +
+        '<title>Error</title>' +
+        '</head>' +
+        '<body>' +
+        "<h1 id='errorTitle'></h1>" +
+        '<hr />' +
+        '<p>Failed to load <b id="fetchedURL"></b></p>' +
+        '<p id="errorMessage"></p>' +
+        '<table><tbody>' +
+        '<tr><td>Code:</td><td id="errorCode"></td></tr>' +
+        (id ? '<tr><td>ID:</td><td id="errorId"></td></tr>' : '') +
+        '</tbody></table>' +
+        '<textarea id="errorTrace" cols="40" rows="10" readonly></textarea>' +
+        '<p>Try:</p>' +
+        '<ul>' +
+        '<li>Make sure you entered the correct address</li>' +
+        '<li>Clearing the site data</li>' +
+        '<li>Contact the administrator of <b id="uvHostname"></b></li>' +
+        "<li>Verify your <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
+        '</ul>' +
+        '<button id="reload">Reload</button>' +
+        `<script src="${
+            'data:application/javascript,' + encodeURIComponent(script)
+        }"></script>` +
+        '</body>' +
+        '</html>'
+    );
+}
+
+/**
+ * @typedef {import("@tomphttp/bare-client").BareError} BareError
+ */
+
+/**
+ *
+ * @param {unknown} err
+ * @returns {err is BareError}
+ */
+function isBareError(err) {
+    return err instanceof Error && typeof err.body === 'object';
+}
+
+/**
+ *
+ * @param {unknown} err
+ * @param {string} fetchedURL
+ * @param {string} bareServer
+ */
+function renderError(err, fetchedURL, bareServer) {
+    /**
+     * @type {number}
+     */
+    let status;
+    /**
+     * @type {string}
+     */
+    let title;
+    /**
+     * @type {string}
+     */
+    let code;
+    let id = '';
+    /**
+     * @type {string}
+     */
+    let message;
+
+    if (isBareError(err)) {
+        status = err.status;
+        title = 'Error communicating with the Bare server';
+        message = err.body.message;
+        code = err.body.code;
+        id = err.body.id;
+    } else {
+        status = 500;
+        title = 'Error processing your request';
+        message = 'Internal Server Error';
+        code = err instanceof Error ? err.name : 'UNKNOWN';
+    }
+
+    return new Response(
+        errorTemplate(
+            title,
+            code,
+            id,
+            message,
+            String(err),
+            fetchedURL,
+            bareServer
+        ),
+        {
+            status,
+            headers: {
+                'content-type': 'text/html',
+            },
+        }
+    );
 }
