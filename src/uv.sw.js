@@ -422,7 +422,6 @@ function hostnameErrorTemplate(fetchedURL, bareServer) {
         '<p><b id="remoteHostname"></b>’s server IP address could not be found.</p>' +
         '<p>Try:</p>' +
         '<ul>' +
-        '<li>Checking your internet connection</li>' +
         '<li>Verifying you entered the correct address</li>' +
         '<li>Clearing the site data</li>' +
         '<li>Contacting <b id="uvHostname"></b>\'s administrator</li>' +
