@@ -404,7 +404,10 @@ function hostnameErrorTemplate(fetchedURL, bareServer) {
         )};` +
         `bareServer.href = ${JSON.stringify(bareServer)};` +
         `uvHostname.textContent = ${JSON.stringify(location.hostname)};` +
-        `reload.addEventListener("click", () => location.reload())`;
+        `reload.addEventListener("click", () => location.reload());` +
+        `uvVersion.textContent = ${JSON.stringify(
+            process.env.ULTRAVIOLET_VERSION
+        )};`;
 
     return (
         '<!DOCTYPE html>' +
@@ -419,12 +422,14 @@ function hostnameErrorTemplate(fetchedURL, bareServer) {
         '<p><b id="remoteHostname"></b>’s server IP address could not be found.</p>' +
         '<p>Try:</p>' +
         '<ul>' +
-        '<li>Make sure you entered the correct address</li>' +
+        '<li>Verifying you entered the correct address</li>' +
         '<li>Clearing the site data</li>' +
-        '<li>Contact the administrator of <b id="uvHostname"></b></li>' +
-        "<li>Verify your <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
+        '<li>Contacting <b id="uvHostname"></b>\'s administrator</li>' +
+        "<li>Verifying the <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
         '</ul>' +
         '<button id="reload">Reload</button>' +
+        '<hr />' +
+        '<p><i>Ultraviolet v<span id="uvVersion"></span></i></p>' +
         `<script src="${
             'data:application/javascript,' + encodeURIComponent(script)
         }"></script>` +
@@ -466,8 +471,13 @@ function errorTemplate(
         `errorTrace.value = ${JSON.stringify(trace)};` +
         `fetchedURL.textContent = ${JSON.stringify(fetchedURL)};` +
         `bareServer.href = ${JSON.stringify(bareServer)};` +
-        `uvHostname.textContent = ${JSON.stringify(location.hostname)};` +
-        `reload.addEventListener("click", () => location.reload());`;
+        `for (const node of document.querySelectorAll("#uvHostname")) node.textContent = ${JSON.stringify(
+            location.hostname
+        )};` +
+        `reload.addEventListener("click", () => location.reload());` +
+        `uvVersion.textContent = ${JSON.stringify(
+            process.env.ULTRAVIOLET_VERSION
+        )};`;
 
     return (
         '<!DOCTYPE html>' +
@@ -488,12 +498,20 @@ function errorTemplate(
         '<textarea id="errorTrace" cols="40" rows="10" readonly></textarea>' +
         '<p>Try:</p>' +
         '<ul>' +
-        '<li>Make sure you entered the correct address</li>' +
+        '<li>Verifying you entered the correct address</li>' +
         '<li>Clearing the site data</li>' +
-        '<li>Contact the administrator of <b id="uvHostname"></b></li>' +
-        "<li>Verify your <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
+        '<li>Contacting <b id="uvHostname"></b>\'s administrator</li>' +
+        "<li>Verify the <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
+        '</ul>' +
+        '<p>If you\'re the administrator of <b id="uvHostname"></b>, try:</p>' +
+        '<ul>' +
+        '<li>Restarting your Bare server</li>' +
+        '<li>Updating Ultraviolet</li>' +
+        '<li>Troubleshooting the error on the <a href="https://github.com/titaniumnetwork-dev/Ultraviolet">GitHub repository</a></li>' +
         '</ul>' +
         '<button id="reload">Reload</button>' +
+        '<hr />' +
+        '<p><i>Ultraviolet v<span id="uvVersion"></span></i></p>' +
         `<script src="${
             'data:application/javascript,' + encodeURIComponent(script)
         }"></script>` +
