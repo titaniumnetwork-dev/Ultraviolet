@@ -154,6 +154,35 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 );
             }
 
+            // downloads
+            if (request.destination === 'document') {
+                const header = responseCtx.headers['content-disposition'];
+
+                console.log(
+                    { header },
+                    /filename=/i.test(header),
+                    /^\s*?attachment/i.test(header)
+                );
+
+                // validate header and test for filename
+                if (!/\s*?((inline|attachment);\s*?)filename=/i.test(header)) {
+                    // if filename= wasn't specified then maybe the remote specified to download this as an attachment?
+                    // if it's invalid then we can still possibly test for the attachment/inline type
+                    const type = /^\s*?attachment/i.test(header)
+                        ? 'attachment'
+                        : 'inline';
+
+                    // set the filename
+                    const [filename] = new URL(response.finalURL).pathname
+                        .split('/')
+                        .slice(-1);
+
+                    responseCtx.headers[
+                        'content-disposition'
+                    ] = `${type}; filename=${JSON.stringify(filename)}`;
+                }
+            }
+
             if (responseCtx.headers['set-cookie']) {
                 Promise.resolve(
                     ultraviolet.cookie.setCookies(
