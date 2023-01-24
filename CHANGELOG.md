@@ -1,3 +1,7 @@
+# v1.0.8
+
+-   This version of Ultraviolet improves error messages.
+
 # v1.0.7
 
 -   This version of Ultraviolet correctly sets the `cache` option when making a request.
