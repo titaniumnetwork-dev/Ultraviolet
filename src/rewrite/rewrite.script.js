@@ -263,7 +263,9 @@ function dynamicImport(ctx) {
     js.on(Syntax.ImportExpression, (node, data, type) => {
         if (type !== 'rewrite') return false;
         data.changes.push({
-            node: '__uv.rewriteUrl(',
+            // pass script URL to dynamicImport
+            // import() is always relative to script URL
+            node: `__uv.rewriteImport(${JSON.stringify(ctx.meta.url)},`,
             start: node.source.start,
             end: node.source.start,
         });

@@ -51,6 +51,7 @@ class Ultraviolet {
         //this.urlRegex = /^(#|about:|data:|mailto:|javascript:)/;
         this.urlRegex = /^(#|about:|data:|mailto:)/;
         this.rewriteUrl = options.rewriteUrl || this.rewriteUrl;
+        this.rewriteImport = options.rewriteImport || this.rewriteImport;
         this.sourceUrl = options.sourceUrl || this.sourceUrl;
         this.encodeUrl = options.encodeUrl || this.encodeUrl;
         this.decodeUrl = options.decodeUrl || this.decodeUrl;
@@ -96,6 +97,19 @@ class Ultraviolet {
             serialize,
             setCookie,
         };
+    }
+    /**
+     *
+     * @param {string} str Script being imported
+     * @param {string} src Script that is importing
+     * @param {*} meta
+     */
+    rewriteImport(str, src, meta = this.meta) {
+        // use importiing script as the base
+        return this.rewriteUrl(str, {
+            ...meta,
+            base: src,
+        });
     }
     rewriteUrl(str, meta = this.meta) {
         str = new String(str).trim();
