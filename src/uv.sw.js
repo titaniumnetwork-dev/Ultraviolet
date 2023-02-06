@@ -158,12 +158,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             if (request.destination === 'document') {
                 const header = responseCtx.headers['content-disposition'];
 
-                console.log(
-                    { header },
-                    /filename=/i.test(header),
-                    /^\s*?attachment/i.test(header)
-                );
-
                 // validate header and test for filename
                 if (!/\s*?((inline|attachment);\s*?)filename=/i.test(header)) {
                     // if filename= wasn't specified then maybe the remote specified to download this as an attachment?
