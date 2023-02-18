@@ -1,5 +1,5 @@
-const Ultraviolet: typeof import('./rewrite/index').default;
-const UVClient: typeof import('./client/index').default;
+const Ultraviolet: typeof import('./src/rewrite/index').default;
+const UVClient: typeof import('./src/client/index').default;
 
 export type UltravioletCtor = typeof Ultraviolet;
 export type UVClientCtor = typeof UVClient;
