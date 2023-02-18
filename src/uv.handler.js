@@ -1,15 +1,15 @@
 /**
- * @type {import('./uv').UltravioletCtor}
+ * @type {import('../uv').UltravioletCtor}
  */
 const Ultraviolet = self.Ultraviolet;
 
 /**
- * @type {import('./uv').UVClientCtor}
+ * @type {import('../uv').UVClientCtor}
  */
 const UVClient = self.UVClient;
 
 /**
- * @type {import('./uv').UVConfig}
+ * @type {import('../uv').UVConfig}
  */
 const __uv$config = self.__uv$config;
 
