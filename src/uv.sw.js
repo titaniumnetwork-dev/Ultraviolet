@@ -86,35 +86,51 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 );
             }
 
-            if (
+            const hasRef =
                 request.referrer &&
-                request.referrer.startsWith(location.origin)
+                request.referrer.startsWith(location.origin);
+
+            const ref = hasRef
+                ? new URL(ultraviolet.sourceUrl(request.referrer))
+                : ultraviolet.meta.url;
+
+            let cookies = '';
+
+            if (
+                !['iframe', 'document'].includes(request.destination) &&
+                ultraviolet.meta.url.origin === ref.origin
             ) {
-                const referer = new URL(
-                    ultraviolet.sourceUrl(request.referrer)
+                cookies = (await ultraviolet.cookie.getCookies(db)) || [];
+                const cookieStr = ultraviolet.cookie.serialize(
+                    cookies,
+                    ultraviolet.meta,
+                    false
                 );
 
-                if (
-                    requestCtx.headers.origin ||
-                    (ultraviolet.meta.url.origin !== referer.origin &&
-                        request.mode === 'cors')
-                ) {
-                    requestCtx.headers.origin = referer.origin;
+                if (cookieStr) {
+                    requestCtx.headers.cookie = cookieStr;
                 }
+            } /* else {
+                console.error(
+                    'Blocked cookies from',
+                    ultraviolet.meta.url.origin,
+                    'being sent to a',
+                    request.destination || 'request',
+                    'made by',
+                    ref.href
+                );
+            }*/
 
-                requestCtx.headers.referer = referer.href;
+            if (
+                requestCtx.headers.origin ||
+                (ultraviolet.meta.url.origin !== ref.origin &&
+                    request.mode === 'cors')
+            ) {
+                requestCtx.headers.origin = ref.origin;
             }
 
-            const cookies = (await ultraviolet.cookie.getCookies(db)) || [];
-            const cookieStr = ultraviolet.cookie.serialize(
-                cookies,
-                ultraviolet.meta,
-                false
-            );
-
+            if (hasRef) requestCtx.headers.referer = ref.href;
             requestCtx.headers['user-agent'] = navigator.userAgent;
-
-            if (cookieStr) requestCtx.headers.cookie = cookieStr;
 
             const reqEvent = new HookEvent(requestCtx, null, null);
             this.emit('request', reqEvent);
