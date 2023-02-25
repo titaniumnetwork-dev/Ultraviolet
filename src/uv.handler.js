@@ -409,6 +409,17 @@ function __uvHook(window) {
         event.data.url = __uv.rewriteUrl(event.data.url);
     });
 
+    // IDB
+    client.idb.on('idbFactoryOpen', (event) => {
+        event.data.name = `${__uv.meta.url.origin}@${event.data.name}`;
+    });
+
+    client.idb.on('idbFactoryName', (event) => {
+        event.data.value = event.data.value.slice(
+            __uv.meta.url.origin.length + 1 /*the @*/
+        );
+    });
+
     // History
     client.history.on('replaceState', (event) => {
         if (event.data.url)
@@ -1400,6 +1411,8 @@ function __uvHook(window) {
     //client.document.overrideQuerySelector();
     client.object.overrideGetPropertyNames();
     client.object.overrideGetOwnPropertyDescriptors();
+    client.idb.overrideName();
+    client.idb.overrideOpen();
     client.history.overridePushState();
     client.history.overrideReplaceState();
     client.eventSource.overrideConstruct();
