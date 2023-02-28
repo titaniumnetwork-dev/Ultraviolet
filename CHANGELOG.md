@@ -1,3 +1,7 @@
+# v1.0.10
+
+-   This version of Ultraviolet fixes an NPM versioning error.
+
 # v1.0.8
 
 -   This version of Ultraviolet improves error messages.
