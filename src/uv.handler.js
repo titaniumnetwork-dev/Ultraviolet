@@ -1,15 +1,15 @@
 /**
- * @type {import('./uv').UltravioletCtor}
+ * @type {import('../uv').UltravioletCtor}
  */
 const Ultraviolet = self.Ultraviolet;
 
 /**
- * @type {import('./uv').UVClientCtor}
+ * @type {import('../uv').UVClientCtor}
  */
 const UVClient = self.UVClient;
 
 /**
- * @type {import('./uv').UVConfig}
+ * @type {import('../uv').UVConfig}
  */
 const __uv$config = self.__uv$config;
 
@@ -407,6 +407,17 @@ function __uvHook(window) {
 
     client.eventSource.on('url', (event) => {
         event.data.url = __uv.rewriteUrl(event.data.url);
+    });
+
+    // IDB
+    client.idb.on('idbFactoryOpen', (event) => {
+        event.data.name = `${__uv.meta.url.origin}@${event.data.name}`;
+    });
+
+    client.idb.on('idbFactoryName', (event) => {
+        event.data.value = event.data.value.slice(
+            __uv.meta.url.origin.length + 1 /*the @*/
+        );
     });
 
     // History
@@ -1400,6 +1411,8 @@ function __uvHook(window) {
     //client.document.overrideQuerySelector();
     client.object.overrideGetPropertyNames();
     client.object.overrideGetOwnPropertyDescriptors();
+    client.idb.overrideName();
+    client.idb.overrideOpen();
     client.history.overridePushState();
     client.history.overrideReplaceState();
     client.eventSource.overrideConstruct();

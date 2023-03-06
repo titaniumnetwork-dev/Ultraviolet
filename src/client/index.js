@@ -16,6 +16,7 @@ import URLApi from './url.js';
 import EventEmitter from 'events';
 import StorageApi from './storage.js';
 import StyleApi from './dom/style.js';
+import IDBApi from './idb.js';
 
 class UVClient extends EventEmitter {
     constructor(window = self, worker = !window.window) {
@@ -43,6 +44,7 @@ class UVClient extends EventEmitter {
         this.worker = worker;
         this.fetch = new Fetch(this);
         this.xhr = new Xhr(this);
+        this.idb = new IDBApi(this);
         this.history = new History(this);
         this.element = new ElementApi(this);
         this.node = new NodeApi(this);
@@ -67,10 +69,19 @@ class UVClient extends EventEmitter {
             this.worker
         );
     }
+    /**
+     *
+     * @param {*} obj
+     * @param {*} prop
+     * @param {WrapFun} wrapper
+     * @param {*} construct
+     * @returns
+     */
     override(obj, prop, wrapper, construct) {
         // if (!(prop in obj)) return false;
         const wrapped = this.wrap(obj, prop, wrapper, construct);
-        return (obj[prop] = wrapped);
+        obj[prop] = wrapped;
+        return wrapped;
     }
     overrideDescriptor(obj, prop, wrapObj = {}) {
         const wrapped = this.wrapDescriptor(obj, prop, wrapObj);
@@ -78,6 +89,19 @@ class UVClient extends EventEmitter {
         this.nativeMethods.defineProperty(obj, prop, wrapped);
         return wrapped;
     }
+    /**
+     * @template {Function} [T=Function]
+     * @typedef {(fn: T, that: any, args: any[]) => {}} WrapFun
+     */
+    /**
+     *
+     * @template T
+     * @param {*} obj
+     * @param {*} prop
+     * @param {WrapFun<T>} wrap
+     * @param {boolean} construct
+     * @returns {T}
+     */
     wrap(obj, prop, wrap, construct) {
         const fn = obj[prop];
         if (!fn) return fn;
