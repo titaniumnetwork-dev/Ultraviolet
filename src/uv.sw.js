@@ -502,7 +502,7 @@ function errorTemplate(
         '<ul>' +
         '<li>Restarting your Bare server</li>' +
         '<li>Updating Ultraviolet</li>' +
-        '<li>Troubleshooting the error on the <a href="https://github.com/titaniumnetwork-dev/Ultraviolet">GitHub repository</a></li>' +
+        '<li>Troubleshooting the error on the <a href="https://github.com/titaniumnetwork-dev/Ultraviolet" target="_blank">GitHub repository</a></li>' +
         '</ul>' +
         '<button id="reload">Reload</button>' +
         '<hr />' +
