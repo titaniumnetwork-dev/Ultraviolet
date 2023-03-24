@@ -411,6 +411,8 @@ function __uvHook(window) {
 
     // IDB
     client.idb.on('idbFactoryOpen', (event) => {
+        // Don't modify the Ultraviolet cookie database
+        if (event.data.name === '__op') return;
         event.data.name = `${__uv.meta.url.origin}@${event.data.name}`;
     });
 
