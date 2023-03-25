@@ -295,15 +295,14 @@ function __uvHook(window) {
     });
 
     client.document.on('setCookie', (event) => {
-        Promise.resolve(
-            __uv.cookie.setCookies(event.data.value, __uv.db, __uv.meta)
-        ).then(() => {
-            __uv.cookie.db().then((db) => {
-                __uv.cookie.getCookies(db).then((cookies) => {
-                    cookieStr = __uv.cookie.serialize(cookies, __uv.meta, true);
-                });
+        __uv.cookie.db().then((db) => {
+            __uv.cookie.setCookies(event.data.value, db, __uv.meta);
+
+            __uv.cookie.getCookies(db).then((cookies) => {
+                cookieStr = __uv.cookie.serialize(cookies, __uv.meta, true);
             });
         });
+
         const cookie = __uv.cookie.setCookie(event.data.value)[0];
 
         if (!cookie.path) cookie.path = '/';
