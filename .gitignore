@@ -1,3 +1,6 @@
 node_modules/
 dist/
 *.tgz
+.git
+.github
+package-lock.json
