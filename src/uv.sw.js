@@ -267,7 +267,8 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 responseCtx.headers['content-type'] = 'text/event-stream';
             }
             if (crossOriginIsolated) {
-                responseCtx.headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
+                responseCtx.headers['Cross-Origin-Embedder-Policy'] =
+                    'require-corp';
             }
 
             this.emit('response', resEvent);
