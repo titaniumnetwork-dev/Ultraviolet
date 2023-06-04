@@ -6,7 +6,11 @@
         "es6": true,
         "node": true
     },
-    "globals": { "globalThis": true, "importScripts": true },
+    "globals": {
+        "globalThis": true,
+        "importScripts": true,
+        "crossOriginIsolated": true
+    },
     "parserOptions": { "sourceType": "module", "ecmaVersion": "latest" },
     "extends": ["eslint:recommended"]
 }
