@@ -34,7 +34,7 @@ import {
     wrapEval,
 } from './rewrite.script.js';
 import { openDB } from 'idb';
-import BareClient from '@tomphttp/bare-client';
+import { BareClient } from '@tomphttp/bare-client';
 import EventEmitter from 'events';
 
 /**

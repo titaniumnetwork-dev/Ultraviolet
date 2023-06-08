@@ -62,7 +62,10 @@ function __uvHook(window) {
         config.construct(__uv, worker ? 'worker' : 'window');
     }*/
 
-    const client = new UVClient(window);
+    // websockets
+    const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
+
+    const client = new UVClient(window, bareClient, worker);
     const {
         HTMLMediaElement,
         HTMLScriptElement,
@@ -107,11 +110,6 @@ function __uvHook(window) {
     __uv.cookies = [];
     __uv.localStorageObj = {};
     __uv.sessionStorageObj = {};
-
-    // websockets
-    const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
-
-    __uv.bareClient = bareClient;
 
     if (__uv.location.href === 'about:srcdoc') {
         __uv.meta = window.parent.__uv.meta;
@@ -1017,223 +1015,57 @@ function __uvHook(window) {
         }
     });
 
-    function eventTarget(target, event) {
-        const property = `on${event}`;
-        const listeners = new WeakMap();
+    client.websocket.on('websocket', async (event) => {
+        const requestHeaders = Object.create(null);
+        requestHeaders['Origin'] = __uv.meta.url.origin;
+        requestHeaders['User-Agent'] = navigator.userAgent;
 
-        Reflect.defineProperty(target, property, {
-            enumerable: true,
-            configurable: true,
-            get() {
-                if (listeners.has(this)) {
-                    return listeners.get(this);
-                } else {
-                    return null;
-                }
-            },
-            set(value) {
-                if (typeof value == 'function') {
-                    if (listeners.has(this)) {
-                        this.removeEventListener(event, listeners.get(this));
-                    }
+        if (cookieStr !== '') requestHeaders['Cookie'] = cookieStr.toString();
 
-                    listeners.set(this, value);
-                    this.addEventListener(event, value);
-                }
+        const socket = bareClient.createWebSocket(
+            event.data.args[0],
+            event.data.args[1],
+            requestHeaders,
+            (socket, getReadyState) => {
+                socket.__uv$getReadyState = getReadyState;
             },
+            (socket, getSendError) => {
+                socket.__uv$getSendError = getSendError;
+            },
+            event.target
+        );
+
+        socket.addEventListener('meta', (event) => {
+            event.preventDefault();
+            // prevent event from being exposed to clients
+            event.stopPropagation();
+            socket.__uv$socketMeta = event.meta;
         });
-    }
 
-    const wsProtocols = ['ws:', 'wss:'];
+        event.respondWith(socket);
+    });
 
-    class MockWebSocket extends EventTarget {
-        /**
-         * @type {import("@tomphttp/bare-client").BareWebSocket}
-         */
-        #socket;
-        #ready;
-        #binaryType = 'blob';
-        #protocol = '';
-        #extensions = '';
-        #url = '';
-        /**
-         *
-         * @param {URL} remote
-         * @param {any} protocol
-         */
-        async #open(url, protocol) {
-            const requestHeaders = {};
-            Reflect.setPrototypeOf(requestHeaders, null);
+    client.websocket.on('url', (event) => {
+        if ('__uv$socketMeta' in event.that)
+            event.data.value = event.that.__uv$socketMeta.url;
+    });
 
-            requestHeaders['Origin'] = __uv.meta.url.origin;
-            requestHeaders['User-Agent'] = navigator.userAgent;
+    client.websocket.on('protocol', (event) => {
+        if ('__uv$socketMeta' in event.that)
+            event.data.value = event.that.__uv$socketMeta.protocol;
+    });
 
-            if (cookieStr !== '')
-                requestHeaders['Cookie'] = cookieStr.toString();
+    client.websocket.on('readyState', (event) => {
+        if ('__uv$getReadyState' in event.that)
+            event.data.value = event.that.__uv$getReadyState();
+    });
 
-            this.#socket = await bareClient.createWebSocket(
-                url,
-                requestHeaders,
-                protocol
-            );
-
-            this.#socket.binaryType = this.#binaryType;
-
-            this.#socket.addEventListener('message', (event) => {
-                this.dispatchEvent(new MessageEvent('message', event));
-            });
-
-            this.#socket.addEventListener('open', async (event) => {
-                this.dispatchEvent(new Event('open', event));
-            });
-
-            this.#socket.addEventListener('error', (event) => {
-                this.dispatchEvent(new ErrorEvent('error', event));
-            });
-
-            this.#socket.addEventListener('close', (event) => {
-                this.dispatchEvent(new Event('close', event));
-            });
-
-            const meta = await this.#socket.meta;
-
-            if (meta.headers.has('sec-websocket-protocol'))
-                this.#protocol = meta.headers.get('sec-websocket-protocol');
-
-            if (meta.headers.has('sec-websocket-extensions'))
-                this.#extensions = meta.headers.get('sec-websocket-extensions');
-
-            let setCookie = meta.rawHeaders['set-cookie'] || [];
-            if (!Array.isArray(setCookie)) setCookie = [];
-            // trip the hook
-            for (const cookie of setCookie) document.cookie = cookie;
+    client.websocket.on('send', (event) => {
+        if ('__uv$getSendError' in event.that) {
+            const error = event.that.__uv$getSendError();
+            if (error) throw error;
         }
-        get url() {
-            return this.#url;
-        }
-        constructor(...args) {
-            super();
-
-            if (!args.length)
-                throw new DOMException(
-                    `Failed to construct 'WebSocket': 1 argument required, but only 0 present.`
-                );
-
-            const [url, protocol] = args;
-
-            let parsed;
-
-            try {
-                parsed = new URL(url);
-            } catch (err) {
-                throw new DOMException(
-                    `Faiiled to construct 'WebSocket': The URL '${url}' is invalid.`
-                );
-            }
-
-            if (!wsProtocols.includes(parsed.protocol)) {
-                throw new DOMException(
-                    `Failed to construct 'WebSocket': The URL's scheme must be either 'ws' or 'wss'. '${parsed.protocol}' is not allowed.`
-                );
-            }
-
-            this.#ready = this.#open(parsed, protocol);
-        }
-        get protocol() {
-            return this.#protocol;
-        }
-        get extensions() {
-            return this.#extensions;
-        }
-        get readyState() {
-            if (this.#socket) {
-                return this.#socket.readyState;
-            } else {
-                return MockWebSocket.CONNECTING;
-            }
-        }
-        get binaryType() {
-            return this.#binaryType;
-        }
-        set binaryType(value) {
-            this.#binaryType = value;
-
-            if (this.#socket) {
-                this.#socket.binaryType = value;
-            }
-        }
-        send(data) {
-            if (!this.#socket) {
-                throw new DOMException(
-                    `Failed to execute 'send' on 'WebSocket': Still in CONNECTING state.`
-                );
-            }
-            this.#socket.send(data);
-        }
-        close(code, reason) {
-            if (typeof code !== 'undefined') {
-                if (typeof code !== 'number') {
-                    code = 0;
-                }
-
-                if (code !== 1000 && (code < 3000 || code > 4999)) {
-                    throw new DOMException(
-                        `Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. ${code} is neither.`
-                    );
-                }
-            }
-
-            this.#ready.then(() => this.#socket.close(code, reason));
-        }
-    }
-
-    eventTarget(MockWebSocket.prototype, 'close');
-    eventTarget(MockWebSocket.prototype, 'open');
-    eventTarget(MockWebSocket.prototype, 'message');
-    eventTarget(MockWebSocket.prototype, 'error');
-
-    for (const hook of [
-        'url',
-        'protocol',
-        'extensions',
-        'readyState',
-        'binaryType',
-    ]) {
-        const officialDesc = Object.getOwnPropertyDescriptor(
-            window.WebSocket.prototype,
-            hook
-        );
-        const customDesc = Object.getOwnPropertyDescriptor(
-            MockWebSocket.prototype,
-            hook
-        );
-
-        if (customDesc?.get && officialDesc?.get)
-            client.emit('wrap', customDesc.get, officialDesc.get);
-
-        if (customDesc?.set && officialDesc?.set)
-            client.emit('wrap', customDesc.get, officialDesc.get);
-    }
-
-    client.emit(
-        'wrap',
-        window.WebSocket.prototype.send,
-        MockWebSocket.prototype.send
-    );
-    client.emit(
-        'wrap',
-        window.WebSocket.prototype.close,
-        MockWebSocket.prototype.close
-    );
-
-    client.override(
-        window,
-        'WebSocket',
-        (target, that, args) => new MockWebSocket(...args),
-        true
-    );
-
-    MockWebSocket.prototype.constructor = window.WebSocket;
+    });
 
     client.function.on('function', (event) => {
         event.data.script = __uv.rewriteJS(event.data.script);
@@ -1425,6 +1257,12 @@ function __uvHook(window) {
     client.history.overrideReplaceState();
     client.eventSource.overrideConstruct();
     client.eventSource.overrideUrl();
+    client.websocket.overrideWebSocket();
+    client.websocket.overrideProtocol();
+    client.websocket.overrideURL();
+    client.websocket.overrideReadyState();
+    client.websocket.overrideProtocol();
+    client.websocket.overrideSend();
     client.url.overrideObjectURL();
     client.document.overrideCookie();
     client.message.overridePostMessage();

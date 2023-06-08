@@ -17,12 +17,19 @@ import EventEmitter from 'events';
 import StorageApi from './storage.js';
 import StyleApi from './dom/style.js';
 import IDBApi from './idb.js';
+import WebSocketApi from './requests/websocket.js';
 
 class UVClient extends EventEmitter {
-    constructor(window = self, worker = !window.window) {
+    /**
+     *
+     * @param {typeof globalThis} window
+     * @param {import('@tomphttp/bare-client').BareClient} bareClient
+     * @param {boolean} worker
+     */
+    constructor(window = self, bareClient, worker = !window.window) {
         super();
         /**
-         * @type {typeof self}
+         * @type {typeof globalThis}
          */
         this.window = window;
         this.nativeMethods = {
@@ -42,6 +49,7 @@ class UVClient extends EventEmitter {
             Proxy: this.window.Proxy,
         };
         this.worker = worker;
+        this.bareClient = bareClient;
         this.fetch = new Fetch(this);
         this.xhr = new Xhr(this);
         this.idb = new IDBApi(this);
@@ -51,6 +59,7 @@ class UVClient extends EventEmitter {
         this.document = new DocumentHook(this);
         this.function = new FunctionHook(this);
         this.object = new ObjectHook(this);
+        this.websocket = new WebSocketApi(this);
         this.message = new MessageApi(this);
         this.navigator = new NavigatorApi(this);
         this.eventSource = new EventSourceApi(this);
