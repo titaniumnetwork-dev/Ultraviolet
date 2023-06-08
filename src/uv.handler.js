@@ -111,6 +111,8 @@ function __uvHook(window) {
     // websockets
     const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
 
+    __uv.bareClient = bareClient;
+
     if (__uv.location.href === 'about:srcdoc') {
         __uv.meta = window.parent.__uv.meta;
     }
