@@ -39,6 +39,11 @@ if (!self.__uv) __uvHook(self);
 
 self.__uvHook = __uvHook;
 
+/**
+ *
+ * @param {typeof globalThis} window
+ * @returns
+ */
 function __uvHook(window) {
     if ('__uv' in window && window.__uv instanceof Ultraviolet) return false;
 
