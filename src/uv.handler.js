@@ -89,7 +89,7 @@ function __uvHook(window) {
     __uv.meta.origin = location.origin;
     __uv.location = client.location.emulate(
         (href) => {
-            if (href === 'about:srcdoc') return new URL(href);
+            if (href.startsWith('about:')) return new URL(href);
             if (href.startsWith('blob:')) href = href.slice('blob:'.length);
             return new URL(__uv.sourceUrl(href));
         },
@@ -110,10 +110,6 @@ function __uvHook(window) {
 
     // websockets
     const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
-
-    if (__uv.location.href === 'about:srcdoc') {
-        __uv.meta = window.parent.__uv.meta;
-    }
 
     if (window.EventTarget) {
         __uv.addEventListener = window.EventTarget.prototype.addEventListener;
@@ -519,7 +515,7 @@ function __uvHook(window) {
     });
 
     client.node.on('baseURI', (event) => {
-        if (event.data.value.startsWith(window.location.origin))
+        if (event.data.value.startsWith(__uv.meta.origin))
             event.data.value = __uv.sourceUrl(event.data.value);
     });
 
@@ -735,31 +731,229 @@ function __uvHook(window) {
             'contentWindow'
         ).get;
 
-    function uvInject(that) {
-        const win = contentWindowGet.call(that);
-
+    /**
+     *
+     * @param {typeof globalThis} win
+     */
+    function uvInject(win) {
         if (!win.__uv)
             try {
                 __uvHook(win);
-            } catch (e) {
+            } catch (err) {
                 console.error('catastrophic failure');
-                console.error(e);
+                console.error(err);
             }
     }
 
     client.element.hookProperty(HTMLIFrameElement, 'contentWindow', {
         get: (target, that) => {
-            uvInject(that);
-            return target.call(that);
+            const win = contentWindowGet.call(that);
+            uvInject(win);
+            return sandboxWindow(win);
         },
     });
 
     client.element.hookProperty(HTMLIFrameElement, 'contentDocument', {
         get: (target, that) => {
-            uvInject(that);
-            return target.call(that);
+            const win = contentWindowGet.call(that);
+            uvInject(win);
+            try {
+                return sandboxWindow(win).document;
+            } catch (err) {
+                // we are sandboxed, return null
+                return null;
+            }
         },
     });
+
+    const sandboxed = new WeakMap();
+
+    function illegalSandbox() {
+        throw new DOMException(
+            `Blocked a frame with "${__uv.location.origin}" from accessing a cross-origin frame.`
+        );
+    }
+
+    /**
+     *
+     * @template T
+     * @param {T} object
+     * @returns {T}
+     */
+    function sandboxObject(object) {
+        lockProperties(object);
+        const target = {};
+        Reflect.setPrototypeOf(target, null);
+        return new Proxy(target, {
+            get: (target, prop, receiver) => {
+                const descriptor = Reflect.getOwnPropertyDescriptor(
+                    object,
+                    prop
+                );
+
+                if (
+                    !(prop in object) ||
+                    (!('value' in descriptor) &&
+                        typeof descriptor.get !== 'function')
+                )
+                    illegalSandbox();
+
+                return Reflect.get(target, prop, receiver);
+            },
+            set: (target, prop, value) => {
+                const descriptor = Reflect.getOwnPropertyDescriptor(
+                    object,
+                    prop
+                );
+
+                if (!(prop in object) || typeof descriptor.set !== 'function')
+                    illegalSandbox();
+
+                return Reflect.set(target, prop, value);
+            },
+            defineProperty: () => {
+                illegalSandbox();
+            },
+            getOwnPropertyDescriptor: (target, prop, descriptor) => {
+                if (!(prop in object)) illegalSandbox();
+
+                return Reflect.getOwnPropertyDescriptor(
+                    target,
+                    prop,
+                    descriptor
+                );
+            },
+            setPrototypeOf: () => {
+                illegalSandbox();
+            },
+            has: (target, prop) => {
+                if (!(prop in object)) illegalSandbox();
+
+                return true;
+            },
+        });
+    }
+
+    const unknownSandboxed = [
+        'then',
+        Symbol.toStringTag,
+        Symbol.hasInstance,
+        Symbol.isConcatSpreadable,
+    ];
+
+    function lockProperties(object) {
+        Reflect.setPrototypeOf(object, null);
+
+        for (const unknown of unknownSandboxed)
+            Reflect.defineProperty(object, unknown, {
+                value: undefined,
+                writable: false,
+                enumerable: false,
+                configurable: false,
+            });
+
+        for (const [key, descriptor] of Object.entries(
+            Object.getOwnPropertyDescriptors(object)
+        )) {
+            if (!descriptor.configurable) continue;
+
+            descriptor.enumerable = false;
+            descriptor.configurable = true;
+
+            if ('value' in descriptor) {
+                descriptor.writable = false;
+                /*if (typeof descriptor.value === 'function')
+                    restrict(descriptor.value);*/
+            }
+
+            /*
+            if ('get' in descriptor && typeof descriptor.get === 'function')
+                descriptor.get = restrict(descriptor.get);
+
+            if ('set' in descriptor && typeof descriptor.set === 'function')
+                descriptor.set = restrict(descriptor.set);
+            */
+
+            Reflect.defineProperty(object, key, descriptor);
+        }
+    }
+
+    /**
+     *
+     * @param {typeof globalThis} win
+     * @returns {Location}
+     */
+    function sandboxLocation(win) {
+        return sandboxObject({
+            set href(value) {
+                win.__uv.location.href = value;
+            },
+            replace(value) {
+                win.__uv.location.replace(value);
+            },
+        });
+    }
+
+    /**
+     *
+     * @param {typeof globalThis} win
+     * @returns {typeof globalThis}
+     */
+    function sandboxWindow(win) {
+        if (sandboxed.has(win)) return sandboxed.get(win);
+        if (
+            new URL(win.__uv.meta.base).origin ===
+            new URL(window.__uv.meta.base).origin
+        )
+            return win;
+
+        const obj = {
+            get window() {
+                return sandboxedWin;
+            },
+            get location() {
+                return loc;
+            },
+            set location(value) {
+                win.__uv.location.href = value;
+            },
+            get closed() {
+                return win.closed;
+            },
+            get frames() {
+                return sandboxedWin;
+            },
+            get length() {
+                return win.length;
+            },
+            get top() {
+                return win[__uv.methods.top];
+            },
+            get opener() {
+                return sandboxWindow(win.opener);
+            },
+            get parent() {
+                return sandboxWindow(win.parent);
+            },
+            blur() {
+                win.blur();
+            },
+            close() {
+                win.close();
+            },
+            focus() {
+                win.focus();
+            },
+            postMessage(...args) {
+                // todo: remove old workaround for postMessage
+                win.__uv$setSource(__uv).postMessage(...args);
+            },
+        };
+        const loc = sandboxLocation(win.location);
+
+        const sandboxedWin = sandboxObject(obj);
+        return sandboxedWin;
+    }
 
     client.element.hookProperty(HTMLIFrameElement, 'srcdoc', {
         get: (target, that) => {
@@ -1562,7 +1756,7 @@ function __uvHook(window) {
 
                 if (this === window) {
                     try {
-                        return '__uv' in val ? val : this;
+                        return '__uv' in val ? sandboxWindow(val) : this;
                     } catch (e) {
                         return this;
                     }
