@@ -1,6 +1,6 @@
 {
     "name": "@titaniumnetwork-dev/ultraviolet",
-    "version": "1.0.11",
+    "version": "2.0.0-beta",
     "description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
     "main": "lib/index.cjs",
     "license": "MIT",
