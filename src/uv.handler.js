@@ -1025,14 +1025,28 @@ function __uvHook(window) {
         const socket = bareClient.createWebSocket(
             event.data.args[0],
             event.data.args[1],
-            requestHeaders,
-            (socket, getReadyState) => {
-                socket.__uv$getReadyState = getReadyState;
-            },
-            (socket, getSendError) => {
-                socket.__uv$getSendError = getSendError;
-            },
-            event.target
+            {
+                headers: requestHeaders,
+                readyStateHook: (socket, getReadyState) => {
+                    socket.__uv$getReadyState = getReadyState;
+                },
+                sendErrorHook: (socket, getSendError) => {
+                    socket.__uv$getSendError = getSendError;
+                },
+                urlHook: (socket, url) => {
+                    socket.__uv$socketUrl = url;
+                },
+                protocolHook: (socket, getProtocol) => {
+                    socket.__uv$getProtocol = getProtocol;
+                },
+                setCookiesCallback: (setCookies) => {
+                    // document.cookie is hooked
+                    // so we can just call it
+                    for (const cookie of setCookies)
+                        window.document.cookie = cookie;
+                },
+                webSocketImpl: event.target,
+            }
         );
 
         socket.addEventListener('meta', (event) => {
@@ -1045,16 +1059,6 @@ function __uvHook(window) {
         event.respondWith(socket);
     });
 
-    client.websocket.on('url', (event) => {
-        if ('__uv$socketMeta' in event.that)
-            event.data.value = event.that.__uv$socketMeta.url;
-    });
-
-    client.websocket.on('protocol', (event) => {
-        if ('__uv$socketMeta' in event.that)
-            event.data.value = event.that.__uv$socketMeta.protocol;
-    });
-
     client.websocket.on('readyState', (event) => {
         if ('__uv$getReadyState' in event.that)
             event.data.value = event.that.__uv$getReadyState();
@@ -1065,6 +1069,16 @@ function __uvHook(window) {
             const error = event.that.__uv$getSendError();
             if (error) throw error;
         }
+    });
+
+    client.websocket.on('url', (event) => {
+        if ('__uv$socketUrl' in event.that)
+            event.data.value = event.that.__uv$socketUrl.toString();
+    });
+
+    client.websocket.on('protocol', (event) => {
+        if ('__uv$getProtocol' in event.that)
+            event.data.value = event.that.__uv$getProtocol();
     });
 
     client.function.on('function', (event) => {
