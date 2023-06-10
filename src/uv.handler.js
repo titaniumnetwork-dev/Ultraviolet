@@ -1022,10 +1022,8 @@ function __uvHook(window) {
 
         if (cookieStr !== '') requestHeaders['Cookie'] = cookieStr.toString();
 
-        const socket = bareClient.createWebSocket(
-            event.data.args[0],
-            event.data.args[1],
-            {
+        event.respondWith(
+            bareClient.createWebSocket(event.data.args[0], event.data.args[1], {
                 headers: requestHeaders,
                 readyStateHook: (socket, getReadyState) => {
                     socket.__uv$getReadyState = getReadyState;
@@ -1046,17 +1044,8 @@ function __uvHook(window) {
                         window.document.cookie = cookie;
                 },
                 webSocketImpl: event.target,
-            }
+            })
         );
-
-        socket.addEventListener('meta', (event) => {
-            event.preventDefault();
-            // prevent event from being exposed to clients
-            event.stopPropagation();
-            socket.__uv$socketMeta = event.meta;
-        });
-
-        event.respondWith(socket);
     });
 
     client.websocket.on('readyState', (event) => {
