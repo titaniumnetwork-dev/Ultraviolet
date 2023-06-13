@@ -11,7 +11,7 @@
     "files": [
         "dist",
         "lib",
-        "uv.d.ts"
+        "client.d.ts"
     ],
     "type": "module",
     "scripts": {
