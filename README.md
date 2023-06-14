@@ -31,6 +31,22 @@ Some of the popular websites that Ultraviolet supports include:
 -   [Nebula](https://github.com/NebulaServices/Nebula)
 -   [Metallic](https://github.com/Metallic-Web/Metallic)
 
+## Upgrading
+
+A guide for updating from v1 to v2 can be found [here](./docs/V2-UPGRADE-GUIDE.md).
+
+## Older Bare servers
+
+Starting from v2, Ultraviolet only supports Bare servers v3+.
+
+If you operate an outdated Bare server, we encourage you to update. If you're using an outdated Bare server, we encourage you to find an updated Bare server or host your own.
+
+If you're too lazy to do either of the above, you can install an outdated and unsupported version of Ultraviolet.
+
+```sh
+npm install @titaniumnetwork-dev/ultraviolet@1
+```
+
 ## Changelog
 
 Changes are documented in the [changelog](./CHANGELOG.md).
