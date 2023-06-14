@@ -19,6 +19,17 @@ import StyleApi from './dom/style.js';
 import IDBApi from './idb.js';
 import WebSocketApi from './requests/websocket.js';
 
+/**
+ * @template {Function} [T=Function]
+ * @typedef {(fn: T, that: any, args: any[]) => {}} WrapFun
+ */
+
+/**
+ * @typedef {object} WrapPropertyDescriptor
+ * @property {WrapFun} [get]
+ * @property {WrapFun} [set]
+ */
+
 class UVClient extends EventEmitter {
     /**
      *
@@ -73,9 +84,9 @@ class UVClient extends EventEmitter {
     /**
      *
      * @param {*} obj
-     * @param {*} prop
+     * @param {PropertyKey} prop
      * @param {WrapFun} wrapper
-     * @param {*} construct
+     * @param {boolean} [construct]
      * @returns
      */
     override(obj, prop, wrapper, construct) {
@@ -84,26 +95,30 @@ class UVClient extends EventEmitter {
         obj[prop] = wrapped;
         return wrapped;
     }
+    /**
+     *
+     * @param {*} obj
+     * @param {PropertyKey} prop
+     * @param {WrapPropertyDescriptor} [wrapObj]
+     * @returns
+     */
     overrideDescriptor(obj, prop, wrapObj = {}) {
         const wrapped = this.wrapDescriptor(obj, prop, wrapObj);
         if (!wrapped) return {};
         this.nativeMethods.defineProperty(obj, prop, wrapped);
         return wrapped;
     }
-    /**
-     * @template {Function} [T=Function]
-     * @typedef {(fn: T, that: any, args: any[]) => {}} WrapFun
-     */
+
     /**
      *
      * @template T
      * @param {*} obj
-     * @param {*} prop
+     * @param {PropertyKey} prop
      * @param {WrapFun<T>} wrap
-     * @param {boolean} construct
+     * @param {boolean} [construct]
      * @returns {T}
      */
-    wrap(obj, prop, wrap, construct) {
+    wrap(obj, prop, wrap, construct = false) {
         const fn = obj[prop];
         if (!fn) return fn;
         const wrapped =
@@ -122,10 +137,17 @@ class UVClient extends EventEmitter {
             wrapped.prototype.constructor = wrapped;
         }
 
-        this.emit('wrap', fn, wrapped, !!construct);
+        this.emit('wrap', fn, wrapped, construct);
 
         return wrapped;
     }
+    /**
+     *
+     * @param {*} obj
+     * @param {PropertyKey} prop
+     * @param {WrapPropertyDescriptor} [wrapObj]
+     * @returns
+     */
     wrapDescriptor(obj, prop, wrapObj = {}) {
         const descriptor = this.nativeMethods.getOwnPropertyDescriptor(
             obj,
