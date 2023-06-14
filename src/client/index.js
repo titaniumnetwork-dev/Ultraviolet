@@ -70,14 +70,6 @@ class UVClient extends EventEmitter {
         this.storage = new StorageApi(this);
         this.style = new StyleApi(this);
     }
-    initLocation(rewriteUrl, sourceUrl) {
-        this.location = new LocationApi(
-            this,
-            sourceUrl,
-            rewriteUrl,
-            this.worker
-        );
-    }
     /**
      *
      * @param {*} obj
