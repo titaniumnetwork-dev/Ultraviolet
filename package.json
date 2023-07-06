@@ -17,7 +17,8 @@
     "type": "module",
     "scripts": {
         "build": "node build.js",
-        "dev": "node build.js --dev"
+        "dev": "node build.js --dev",
+        "prepack": "npm run build"
     },
     "devDependencies": {
         "@tomphttp/bare-client": "^2.0.1",
