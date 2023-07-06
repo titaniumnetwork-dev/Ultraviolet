@@ -21,7 +21,7 @@
         "watch": "cross-env NODE_ENV=development webpack-cli --watch"
     },
     "devDependencies": {
-        "@tomphttp/bare-client": "^2.0.0",
+        "@tomphttp/bare-client": "^2.0.1",
         "copy-webpack-plugin": "^11.0.0",
         "cross-env": "^7.0.3",
         "css-tree": "^2.3.1",
