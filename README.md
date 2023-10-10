@@ -63,4 +63,4 @@ This repository can be built for ultraviolet scripts that you can add to your ow
 
 ## Documentation
 
-Documentation for can be found in the [wiki](https://github.com/titaniumnetwork-dev/Ultraviolet/wiki).
+Documentation can be found in the [wiki](https://github.com/titaniumnetwork-dev/Ultraviolet/wiki).
