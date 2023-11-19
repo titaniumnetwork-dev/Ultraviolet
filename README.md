@@ -29,6 +29,7 @@ Some of the popular websites that Ultraviolet supports include:
 -   [Terbium](https://github.com/TerbiumOS/webOS)
 -   [Incognito](https://github.com/caracal-js/Incognito)
 -   [Nebula](https://github.com/NebulaServices/Nebula)
+-   [Noctura](https://github.com/NebulaServices/Noctura)
 -   [Metallic](https://github.com/Metallic-Web/Metallic)
 
 ## Upgrading
