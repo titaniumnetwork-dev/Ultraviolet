@@ -2,7 +2,7 @@ import HTML from './html.js';
 import CSS from './css.js';
 import JS from './js.js';
 import setCookie from 'set-cookie-parser';
-import { xor, base64, plain } from './codecs.js';
+import { xor, base64, plain, aes } from './codecs.js';
 import * as mimeTypes from './mime.js';
 import {
     validateCookie,
@@ -186,7 +186,7 @@ class Ultraviolet {
     get sourceJS() {
         return this.js.source.bind(this.js);
     }
-    static codec = { xor, base64, plain };
+    static codec = { xor, base64, plain, aes };
     static mime = mimeTypes;
     static setCookie = setCookie;
     static openDB = openDB;

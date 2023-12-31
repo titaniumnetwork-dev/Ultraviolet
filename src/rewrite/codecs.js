@@ -2,6 +2,8 @@
 // WARNING: this file is used by both the client and the server.
 // Do not use any browser or node-specific API!
 // -------------------------------------------------------------
+import { enc, dec } from "./aes";
+
 export const xor = {
     encode(str) {
         if (!str) return str;
@@ -29,6 +31,19 @@ export const xor = {
         );
     },
 };
+
+export const aes = {
+    encode: (str) => {
+        if (!str) return str;
+
+        return encodeURIComponent(enc(str, 'BC4845476DD3DD54CC17347AD5ACB').substring(10));
+    },
+    decode: (str) => {
+        if (!str) return str;
+
+        return dec('U2FsdGVkX1' + decodeURIComponent(str), 'BC4845476DD3DD54CC17347AD5ACB');
+    }
+}
 
 export const plain = {
     encode(str) {
