@@ -1,6 +1,6 @@
 {
     "name": "@nebula-services/ultraviolet",
-    "version": "1.0.11.patch.3",
+    "version": "1.0.11.patch.5",
     "description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
     "main": "lib/index.cjs",
     "license": "MIT",
@@ -16,7 +16,8 @@
     "scripts": {
         "build": "cross-env NODE_ENV=production webpack-cli",
         "dev": "cross-env NODE_ENV=development webpack-cli",
-        "watch": "cross-env NODE_ENV=development webpack-cli --watch"
+        "watch": "cross-env NODE_ENV=development webpack-cli --watch",
+        "publish": "npm run build && npm publish --access public"
     },
     "dependencies": {
         "@tomphttp/bare-client": "^1.1.2-beta.3",
