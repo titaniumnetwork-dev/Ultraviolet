@@ -1,12 +1,12 @@
 {
-    "name": "@titaniumnetwork-dev/ultraviolet",
-    "version": "1.0.11",
+    "name": "@nebula-services/ultraviolet",
+    "version": "1.0.11.patch",
     "description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
     "main": "lib/index.cjs",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/titaniumnetwork-dev/Ultraviolet.git"
+        "url": "https://github.com/NebulaServices/Ultraviolet.git"
     },
     "files": [
         "dist",
