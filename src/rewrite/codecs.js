@@ -3,8 +3,9 @@
 // Do not use any browser or node-specific API!
 // -------------------------------------------------------------
 import AES from '../../node_modules/crypto-js/aes.js';
+import enc from '../../node_modules/crypto-js/enc-utf8.js';
 
-var aesKey = 'superSecureKeyGuys';
+var aesKey = location.origin + navigator.userAgent;
 
 export const xor = {
     encode(str) {
@@ -38,12 +39,12 @@ export const aes = {
     encode: (str) => {
         if (!str) return str;
 
-        return AES.encrypt(str, aesKey).toString();
+        return AES.encrypt(str, aesKey).toString(enc);
     },
     decode: (str) => {
         if (!str) return str;
 
-        return AES.decrypt(str, aesKey).toString();
+        return AES.decrypt(str, aesKey).toString(enc);
     },
 };
 
