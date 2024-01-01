@@ -2,10 +2,9 @@
 // WARNING: this file is used by both the client and the server.
 // Do not use any browser or node-specific API!
 // -------------------------------------------------------------
-import AES from '../../node_modules/crypto-js/aes.js';
-import enc from '../../node_modules/crypto-js/enc-utf8.js';
+import CryptoJS from 'crypto-js';
 
-var aesKey = location.origin + navigator.userAgent;
+var aesKey = locaiton.origin + navigator.userAgent;
 
 export const xor = {
     encode(str) {
@@ -39,12 +38,12 @@ export const aes = {
     encode: (str) => {
         if (!str) return str;
 
-        return AES.encrypt(str, aesKey).toString(enc);
+        return CryptoJS.AES.encrypt(str, aesKey).toString();
     },
     decode: (str) => {
         if (!str) return str;
 
-        return AES.decrypt(str, aesKey).toString(enc);
+        return CryptoJS.AES.decrypt(str, aesKey).toString(CryptoJS.enc.Utf8);
     },
 };
 
