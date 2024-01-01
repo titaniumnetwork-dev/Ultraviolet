@@ -4,7 +4,7 @@
 // -------------------------------------------------------------
 import CryptoJS from 'crypto-js';
 
-var aesKey = locaiton.origin + navigator.userAgent;
+var aesKey = location.origin + navigator.userAgent;
 
 export const xor = {
     encode(str) {
@@ -38,12 +38,14 @@ export const aes = {
     encode: (str) => {
         if (!str) return str;
 
-        return CryptoJS.AES.encrypt(str, aesKey).toString();
+        return CryptoJS.AES.encrypt(str, aesKey).toString().substring(10);
     },
     decode: (str) => {
         if (!str) return str;
 
-        return CryptoJS.AES.decrypt(str, aesKey).toString(CryptoJS.enc.Utf8);
+        return CryptoJS.AES.decrypt('U2FsdGVkX1' + str, aesKey).toString(
+            CryptoJS.enc.Utf8
+        );
     },
 };
 
