@@ -2,9 +2,9 @@
 // WARNING: this file is used by both the client and the server.
 // Do not use any browser or node-specific API!
 // -------------------------------------------------------------
-import AES from '../../node_modules/crypto-js/aes.js';
+import CryptoJS from "crypto-js"
 
-var aesKey = 'superSecureKeyGuys';
+var aesKey = "superSecureKeyGuys";
 
 export const xor = {
     encode(str) {
@@ -38,14 +38,14 @@ export const aes = {
     encode: (str) => {
         if (!str) return str;
 
-        return AES.encrypt(str, aesKey).toString();
+        return CryptoJS.AES.encrypt(str, aesKey).toString().substring(10);
     },
     decode: (str) => {
         if (!str) return str;
 
-        return AES.decrypt(str, aesKey).toString();
-    },
-};
+        return CryptoJS.AES.decrypt("U2FsdGVkX1" + str, aesKey).toString(CryptoJS.enc.Utf8);
+    }
+}
 
 export const plain = {
     encode(str) {
