@@ -23,6 +23,7 @@
         "@tomphttp/bare-client": "^1.1.2-beta.3",
         "crypto-js": "^4.2.0",
         "css-tree": "^2.0.4",
+        "esbuild": "^0.19.11",
         "esotope-hammerhead": "^0.6.1",
         "events": "^3.3.0",
         "idb": "^7.1.1",
