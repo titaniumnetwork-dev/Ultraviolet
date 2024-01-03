@@ -14,9 +14,8 @@
     ],
     "type": "module",
     "scripts": {
-        "build": "cross-env NODE_ENV=production webpack-cli",
-        "dev": "cross-env NODE_ENV=development webpack-cli",
-        "watch": "cross-env NODE_ENV=development webpack-cli --watch",
+        "build": "node build.js",
+        "dev": "node build.js --dev",
         "publish": "npm run build && npm publish --access public"
     },
     "dependencies": {
