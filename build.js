@@ -31,6 +31,7 @@ rimraf('dist', async () => { //rimraf was being a meanie to me
             ),
         },
         bundle: true,
+        logLevel: 'info',
         outdir: 'dist/',
     });
 });
