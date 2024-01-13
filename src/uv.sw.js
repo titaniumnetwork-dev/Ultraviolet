@@ -136,6 +136,8 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         : requestCtx.mode,
                 cache: requestCtx.cache,
                 redirect: requestCtx.redirect,
+                proxyIp: this.config.proxyIp,
+                proxyPort: this.config.proxyPort,
             });
 
             const responseCtx = new ResponseContext(requestCtx, response);

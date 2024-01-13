@@ -1074,7 +1074,9 @@ function __uvHook(window) {
             this.#socket = await bareClient.createWebSocket(
                 url,
                 requestHeaders,
-                protocol
+                protocol,
+                __uv$config.proxyIp,
+                __uv$config.proxyPort
             );
 
             this.#socket.binaryType = this.#binaryType;

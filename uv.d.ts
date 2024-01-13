@@ -101,4 +101,6 @@ export interface UVConfig {
      * @defaultValue `Ultraviolet.codec.xor.decode`
      */
     decodeUrl?: UVDecode;
+    proxyIp?: string;
+    proxyPort?: number;
 }
