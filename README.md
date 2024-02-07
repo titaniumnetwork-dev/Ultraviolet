@@ -24,7 +24,7 @@ Some of the popular websites that Ultraviolet supports include:
 
 ## Used by
 
--   [Holy Unblocker](https://github.com/holy-unblocker/website)
+-   [Holy Unblocker](https://github.com/holy-unblocker/website.
 -   [Hypertabs](https://hypertabs.cc/)
 -   [Terbium](https://github.com/TerbiumOS/webOS)
 -   [Incognito](https://github.com/caracal-js/Incognito)
