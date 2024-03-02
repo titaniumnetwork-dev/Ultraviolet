@@ -19,7 +19,7 @@
         "publish": "npm run build && npm publish --access public"
     },
     "dependencies": {
-        "@nebula-services/bare-client": "^1.1.2-beta.3-patch.1",
+        "@mercuryworkshop/bare-mux": "workspace: *",
         "crypto-js": "^4.2.0",
         "css-tree": "^2.0.4",
         "esbuild": "^0.19.11",
@@ -29,6 +29,7 @@
         "meriyah": "^4.3.3",
         "mime-db": "^1.51.0",
         "parse5": "^7.1.2",
+        "rimraf": "^5.0.5",
         "set-cookie-parser": "^2.4.8"
     },
     "devDependencies": {

@@ -58,6 +58,8 @@ function __uvHook(window) {
     const methodPrefix = '__uv$';
     const __uv = new Ultraviolet(__uv$config);
 
+    const OldWebSocket = WebSocket;
+
     /*if (typeof config.construct === 'function') {
         config.construct(__uv, worker ? 'worker' : 'window');
     }*/
@@ -109,7 +111,7 @@ function __uvHook(window) {
     __uv.sessionStorageObj = {};
 
     // websockets
-    const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
+    const bareClient = new Ultraviolet.BareClient();
 
     __uv.bareClient = bareClient;
 
@@ -480,19 +482,19 @@ function __uvHook(window) {
         event.respondWith(
             worker
                 ? call(
-                      event.target,
-                      [event.data.message, event.data.transfer],
-                      event.that
-                  )
+                    event.target,
+                    [event.data.message, event.data.transfer],
+                    event.that
+                )
                 : call(
-                      event.target,
-                      [
-                          event.data.message,
-                          event.data.origin,
-                          event.data.transfer,
-                      ],
-                      event.that
-                  )
+                    event.target,
+                    [
+                        event.data.message,
+                        event.data.origin,
+                        event.data.transfer,
+                    ],
+                    event.that
+                )
         );
     });
 
@@ -1073,10 +1075,9 @@ function __uvHook(window) {
 
             this.#socket = await bareClient.createWebSocket(
                 url,
-                requestHeaders,
                 protocol,
-                __uv$config.proxyIp,
-                __uv$config.proxyPort
+                OldWebSocket,
+                requestHeaders
             );
 
             this.#socket.binaryType = this.#binaryType;
@@ -1097,18 +1098,16 @@ function __uvHook(window) {
                 this.dispatchEvent(new Event('close', event));
             });
 
-            const meta = await this.#socket.meta;
-
-            if (meta.headers.has('sec-websocket-protocol'))
-                this.#protocol = meta.headers.get('sec-websocket-protocol');
-
-            if (meta.headers.has('sec-websocket-extensions'))
-                this.#extensions = meta.headers.get('sec-websocket-extensions');
-
-            let setCookie = meta.rawHeaders['set-cookie'] || [];
-            if (!Array.isArray(setCookie)) setCookie = [];
-            // trip the hook
-            for (const cookie of setCookie) document.cookie = cookie;
+            // const meta = await this.#socket.meta;
+            //
+            // if (meta && meta.headers['sec-websocket-protocol'])
+            //     this.#protocol = meta.headers['sec-websocket-protocol'];
+            //
+            //
+            // let setCookie = meta.rawHeaders['set-cookie'] || [];
+            // if (!Array.isArray(setCookie)) setCookie = [];
+            // // trip the hook
+            // for (const cookie of setCookie) document.cookie = cookie;
         }
         get url() {
             return this.#url;
@@ -1142,10 +1141,10 @@ function __uvHook(window) {
             this.#ready = this.#open(parsed, protocol);
         }
         get protocol() {
-            return this.#protocol;
+            return this.#socket.protocol;
         }
         get extensions() {
-            return this.#extensions;
+            return this.#socket.extensions;
         }
         get readyState() {
             if (this.#socket) {
@@ -1465,13 +1464,13 @@ function __uvHook(window) {
         return target.call(that, url);
     });
 
-    __uv.$wrap = function (name) {
+    __uv.$wrap = function(name) {
         if (name === 'location') return __uv.methods.location;
         if (name === 'eval') return __uv.methods.eval;
         return name;
     };
 
-    __uv.$get = function (that) {
+    __uv.$get = function(that) {
         if (that === window.location) return __uv.location;
         if (that === window.eval) return __uv.eval;
         if (that === window.parent) {
@@ -1492,11 +1491,11 @@ function __uvHook(window) {
         return target.call(that, script);
     });
 
-    __uv.call = function (target, args, that) {
+    __uv.call = function(target, args, that) {
         return that ? target.apply(that, args) : target(...args);
     };
 
-    __uv.call$ = function (obj, prop, args = []) {
+    __uv.call$ = function(obj, prop, args = []) {
         return obj[prop].apply(obj, args);
     };
 
@@ -1511,7 +1510,7 @@ function __uvHook(window) {
         window.Object.prototype,
         __uv.methods.setSource,
         {
-            value: function (source) {
+            value: function(source) {
                 if (!client.nativeMethods.isExtensible(this)) return this;
 
                 client.nativeMethods.defineProperty(this, __uv.methods.source, {

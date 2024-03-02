@@ -40,7 +40,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
         /**
          * @type {InstanceType<Ultraviolet['BareClient']>}
          */
-        this.bareClient = new Ultraviolet.BareClient(this.address);
+        this.bareClient = new Ultraviolet.BareClient();
     }
     /**
      *
@@ -187,8 +187,8 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         ultraviolet.meta
                     )
                 ).then(() => {
-                    self.clients.matchAll().then(function (clients) {
-                        clients.forEach(function (client) {
+                    self.clients.matchAll().then(function(clients) {
+                        clients.forEach(function(client) {
                             client.postMessage({
                                 msg: 'updateCookies',
                                 url: ultraviolet.meta.url.href,
@@ -430,8 +430,7 @@ function hostnameErrorTemplate(fetchedURL, bareServer) {
         '<button id="reload">Reload</button>' +
         '<hr />' +
         '<p><i>Ultraviolet v<span id="uvVersion"></span></i></p>' +
-        `<script src="${
-            'data:application/javascript,' + encodeURIComponent(script)
+        `<script src="${'data:application/javascript,' + encodeURIComponent(script)
         }"></script>` +
         '</body>' +
         '</html>'
@@ -513,8 +512,7 @@ function errorTemplate(
         '<button id="reload">Reload</button>' +
         '<hr />' +
         '<p><i>Ultraviolet v<span id="uvVersion"></span></i></p>' +
-        `<script src="${
-            'data:application/javascript,' + encodeURIComponent(script)
+        `<script src="${'data:application/javascript,' + encodeURIComponent(script)
         }"></script>` +
         '</body>' +
         '</html>'
