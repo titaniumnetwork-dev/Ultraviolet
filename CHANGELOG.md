@@ -1,3 +1,12 @@
+# 3.0.0
+
+-   This version of Ultraviolet has support for using [bare-mux](https://github.com/MercuryWorkshop/bare-mux) transports, allowing for use for other implementations like [EpoxyTransport](https://github.com/MercuryWorkshop/EpoxyTransport), [CurlTransport](https://github.com/MercuryWorkshop/CurlTransport), and the existing implementation [Bare-Client](https://github.com/MercuryWorkshop/Bare-as-module3).
+
+# v2.0.0
+
+-   This version of Ultraviolet has support for Bare server v3
+-   Support for older Bare servers was dropped.
+
 # v1.0.10
 
 -   This version of Ultraviolet fixes an NPM versioning error.
