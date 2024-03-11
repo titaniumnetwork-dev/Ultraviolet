@@ -3,6 +3,12 @@ import { parseScript } from 'meriyah';
 import { generate } from 'esotope-hammerhead';
 import EventEmitter from 'events';
 
+import init, { greet, recast } from "../../rewriter/out/rewriter.js";
+
+init("rewriter_bg.wasm").then(() => {
+    greet("skibi");
+    console.log(greet);
+});
 class JS extends EventEmitter {
     constructor() {
         super();
@@ -35,46 +41,47 @@ class JS extends EventEmitter {
         return this.recast(str, data, 'source');
     }
     recast(str, data = {}, type = '') {
-        try {
-            const output = [];
-            const ast = this.parse(str, this.parseOptions);
-            const meta = {
-                data,
-                changes: [],
-                input: str,
-                ast,
-                get slice() {
-                    return slice;
-                },
-            };
-            let slice = 0;
-
-            this.iterate(ast, (node, parent = null) => {
-                if (parent && parent.inTransformer) node.isTransformer = true;
-                node.parent = parent;
-
-                this.emit(node.type, node, meta, type);
-            });
-
-            meta.changes.sort((a, b) => a.start - b.start || a.end - b.end);
-
-            for (const change of meta.changes) {
-                if ('start' in change && typeof change.start === 'number')
-                    output.push(str.slice(slice, change.start));
-                if (change.node)
-                    output.push(
-                        typeof change.node === 'string'
-                            ? change.node
-                            : generate(change.node, this.generationOptions)
-                    );
-                if ('end' in change && typeof change.end === 'number')
-                    slice = change.end;
-            }
-            output.push(str.slice(slice));
-            return output.join('');
-        } catch (e) {
-            return str;
-        }
+        return recast(str, data, type);
+        // try {
+        //     const output = [];
+        //     const ast = this.parse(str, this.parseOptions);
+        //     const meta = {
+        //         data,
+        //         changes: [],
+        //         input: str,
+        //         ast,
+        //         get slice() {
+        //             return slice;
+        //         },
+        //     };
+        //     let slice = 0;
+        //
+        //     this.iterate(ast, (node, parent = null) => {
+        //         if (parent && parent.inTransformer) node.isTransformer = true;
+        //         node.parent = parent;
+        //
+        //         this.emit(node.type, node, meta, type);
+        //     });
+        //
+        //     meta.changes.sort((a, b) => a.start - b.start || a.end - b.end);
+        //
+        //     for (const change of meta.changes) {
+        //         if ('start' in change && typeof change.start === 'number')
+        //             output.push(str.slice(slice, change.start));
+        //         if (change.node)
+        //             output.push(
+        //                 typeof change.node === 'string'
+        //                     ? change.node
+        //                     : generate(change.node, this.generationOptions)
+        //             );
+        //         if ('end' in change && typeof change.end === 'number')
+        //             slice = change.end;
+        //     }
+        //     output.push(str.slice(slice));
+        //     return output.join('');
+        // } catch (e) {
+        //     return str;
+        // }
     }
     iterate(ast, handler) {
         if (typeof ast != 'object' || !handler) return;
