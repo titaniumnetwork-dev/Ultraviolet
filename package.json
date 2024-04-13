@@ -10,7 +10,9 @@
     },
     "files": [
         "dist",
-        "lib"
+        "lib",
+        "uv.d.ts",
+        "client.d.ts"
     ],
     "type": "module",
     "scripts": {
