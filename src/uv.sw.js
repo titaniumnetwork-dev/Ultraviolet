@@ -556,7 +556,12 @@ function renderError(err, fetchedURL, bareServer) {
      * @type {string}
      */
     let message;
-
+    let headers = {
+        'content-type': 'text/html',
+    };
+    if (crossOriginIsolated) {
+        headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
+    }
     if (isBareError(err)) {
         status = err.status;
         title = 'Error communicating with the Bare server';
@@ -582,9 +587,7 @@ function renderError(err, fetchedURL, bareServer) {
         ),
         {
             status,
-            headers: {
-                'content-type': 'text/html',
-            },
+            headers: headers,
         }
     );
 }
