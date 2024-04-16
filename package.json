@@ -18,7 +18,8 @@
     "scripts": {
         "build": "rimraf dist/ && node build.js",
         "dev": "rimraf dist/ && node build.js --dev",
-        "publish": "npm run build && npm publish --access public"
+        "publish": "npm run build && npm publish --access public",
+        "pack": "npm run build && npm pack"
     },
     "dependencies": {
         "@mercuryworkshop/bare-mux": "^1.0.7",
