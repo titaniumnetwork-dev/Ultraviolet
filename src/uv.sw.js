@@ -415,6 +415,9 @@ function hostnameErrorTemplate(fetchedURL, bareServer) {
         '<head>' +
         "<meta charset='utf-8' />" +
         '<title>Error</title>' +
+        '<style>' +
+        '* { background-color: white }' +
+        '</style>' +
         '</head>' +
         '<body>' +
         '<h1>This site can’t be reached</h1>' +
@@ -484,6 +487,9 @@ function errorTemplate(
         '<head>' +
         "<meta charset='utf-8' />" +
         '<title>Error</title>' +
+        '<style>' +
+        '* { background-color: white }' +
+        '</style>' +
         '</head>' +
         '<body>' +
         "<h1 id='errorTitle'></h1>" +
