@@ -1,3 +1,12 @@
+# v3.0.1
+
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with websockets not being opened properly.
+-   This version of Ultraviolet allows error messages to be iframed on cross origin isolated pages.
+
+# v3.0.0
+
+-   This version of Ultraviolet has support for using [bare-mux](https://github.com/MercuryWorkshop/bare-mux) transports, allowing for use for other implementations like [EpoxyTransport](https://github.com/MercuryWorkshop/EpoxyTransport), [CurlTransport](https://github.com/MercuryWorkshop/CurlTransport), and the existing implementation [Bare-Client](https://github.com/MercuryWorkshop/Bare-as-module3).
+
 # v2.0.0
 
 -   This version of Ultraviolet has support for Bare server v3

@@ -40,7 +40,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
         /**
          * @type {InstanceType<Ultraviolet['BareClient']>}
          */
-        this.bareClient = new Ultraviolet.BareClient(this.address);
+        this.bareClient = new Ultraviolet.BareClient();
     }
     /**
      *
@@ -297,7 +297,7 @@ class ResponseContext {
     /**
      *
      * @param {RequestContext} request
-     * @param {import("@tomphttp/bare-client").BareResponseFetch} response
+     * @param {import("@mercuryworkshop/bare-mux").BareResponseFetch} response
      */
     constructor(request, response) {
         this.request = request;
@@ -413,6 +413,9 @@ function hostnameErrorTemplate(fetchedURL, bareServer) {
         '<head>' +
         "<meta charset='utf-8' />" +
         '<title>Error</title>' +
+        '<style>' +
+        '* { background-color: white }' +
+        '</style>' +
         '</head>' +
         '<body>' +
         '<h1>This site can’t be reached</h1>' +
@@ -483,6 +486,9 @@ function errorTemplate(
         '<head>' +
         "<meta charset='utf-8' />" +
         '<title>Error</title>' +
+        '<style>' +
+        '* { background-color: white }' +
+        '</style>' +
         '</head>' +
         '<body>' +
         "<h1 id='errorTitle'></h1>" +
@@ -520,7 +526,7 @@ function errorTemplate(
 }
 
 /**
- * @typedef {import("@tomphttp/bare-client").BareError} BareError
+ * @typedef {import("@mercuryworkshop/bare-mux").BareError} BareError
  */
 
 /**
@@ -556,6 +562,12 @@ function renderError(err, fetchedURL, bareServer) {
      * @type {string}
      */
     let message;
+    let headers = {
+        'content-type': 'text/html',
+    };
+    if (crossOriginIsolated) {
+        headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
+    }
 
     if (isBareError(err)) {
         status = err.status;
@@ -582,9 +594,7 @@ function renderError(err, fetchedURL, bareServer) {
         ),
         {
             status,
-            headers: {
-                'content-type': 'text/html',
-            },
+            headers: headers
         }
     );
 }

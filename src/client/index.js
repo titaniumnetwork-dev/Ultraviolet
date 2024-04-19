@@ -34,7 +34,7 @@ class UVClient extends EventEmitter {
     /**
      *
      * @param {typeof globalThis} window
-     * @param {import('@tomphttp/bare-client').BareClient} bareClient
+     * @param {import('@mercuryworkshop/bare-mux').BareClient} bareClient
      * @param {boolean} worker
      */
     constructor(window = self, bareClient, worker = !window.window) {

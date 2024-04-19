@@ -14,7 +14,7 @@ const UVClient = self.UVClient;
 const __uv$config = self.__uv$config;
 
 /**
- * @type {import('@tomphttp/bare-client').BareManifest}
+ * @type {import('@mercuryworkshop/bare-mux').BareManifest}
  */
 const __uv$bareData = self.__uv$bareData;
 
@@ -63,7 +63,7 @@ function __uvHook(window) {
     }*/
 
     // websockets
-    const bareClient = new Ultraviolet.BareClient(__uv$bareURL, __uv$bareData);
+    const bareClient = new Ultraviolet.BareClient();
 
     const client = new UVClient(window, bareClient, worker);
     const {
@@ -1023,28 +1023,12 @@ function __uvHook(window) {
         if (cookieStr !== '') requestHeaders['Cookie'] = cookieStr.toString();
 
         event.respondWith(
-            bareClient.createWebSocket(event.data.args[0], event.data.args[1], {
-                headers: requestHeaders,
-                readyStateHook: (socket, getReadyState) => {
-                    socket.__uv$getReadyState = getReadyState;
-                },
-                sendErrorHook: (socket, getSendError) => {
-                    socket.__uv$getSendError = getSendError;
-                },
-                urlHook: (socket, url) => {
-                    socket.__uv$socketUrl = url;
-                },
-                protocolHook: (socket, getProtocol) => {
-                    socket.__uv$getProtocol = getProtocol;
-                },
-                setCookiesCallback: (setCookies) => {
-                    // document.cookie is hooked
-                    // so we can just call it
-                    for (const cookie of setCookies)
-                        window.document.cookie = cookie;
-                },
-                webSocketImpl: event.target,
-            })
+            bareClient.createWebSocket(
+                event.data.args[0],
+                event.data.args[1],
+                event.target,
+                requestHeaders,
+            )
         );
     });
 

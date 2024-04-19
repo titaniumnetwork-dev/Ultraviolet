@@ -31,5 +31,6 @@ await build({
         ),
     },
     bundle: true,
+    logLevel: 'info',
     outdir: 'dist/',
 });
