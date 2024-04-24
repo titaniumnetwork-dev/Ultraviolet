@@ -1,3 +1,7 @@
+# v3.0.2
+
+-   This version of Ultraviolet fixes an NPM versioning error.
+
 # v3.0.1
 
 -   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with websockets not being opened properly.
