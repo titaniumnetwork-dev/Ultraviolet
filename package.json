@@ -23,7 +23,7 @@
         "pack": "npm run build && npm pack"
     },
     "devDependencies": {
-        "@mercuryworkshop/bare-mux": "^1.0.8",
+        "@mercuryworkshop/bare-mux": "^1.0.9",
         "css-tree": "^2.3.1",
         "esbuild": "^0.18.11",
         "eslint": "^8.28.0",
