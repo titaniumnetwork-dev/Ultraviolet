@@ -1,3 +1,7 @@
+# v3.1.1
+
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with the bare clients not being found.
+
 # v3.1.0
 
 -   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with websockets not reporting the ready state correctly, causing incompatibilities on websites.
