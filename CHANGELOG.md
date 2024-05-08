@@ -1,3 +1,25 @@
+# 3.1.2
+
+- This version of Ultraviolet cleans up some service worker code to make it faster, and also simplifies the service worker by adding `uv.route()` which allows the service worker to easily detect if the worker should route this request.
+```js
+importScripts('uv.bundle.js');
+importScripts('uv.config.js');
+importScripts(__uv$config.sw || 'uv.sw.js');
+
+const uv = new UVServiceWorker();
+
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        (async ()=>{
+            if (uv.route(event)) {
+                return await uv.fetch(event);
+            }
+            return await fetch(event.request);
+        })()
+    );
+});
+```
+
 # v3.1.1
 
 -   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with the bare clients not being found.
