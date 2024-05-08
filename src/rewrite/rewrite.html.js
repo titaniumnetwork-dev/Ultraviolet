@@ -209,16 +209,12 @@ export function injectHead(ctx) {
 }
 
 export function createJsInject(
-    bareURL = '',
-    bareData = {},
     cookies = '',
     referrer = ''
 ) {
     return (
-        `self.__uv$bareData = ${JSON.stringify(bareData)};` +
         `self.__uv$cookies = ${JSON.stringify(cookies)};` +
-        `self.__uv$referrer = ${JSON.stringify(referrer)};` +
-        `self.__uv$bareURL = ${JSON.stringify(bareURL)}; `
+        `self.__uv$referrer = ${JSON.stringify(referrer)};`
     );
 }
 
@@ -227,8 +223,6 @@ export function createHtmlInject(
     bundleScript,
     clientScript,
     configScript,
-    bareURL,
-    bareData,
     cookies,
     referrer
 ) {
@@ -239,7 +233,7 @@ export function createHtmlInject(
             childNodes: [
                 {
                     nodeName: '#text',
-                    value: createJsInject(bareURL, bareData, cookies, referrer),
+                    value: createJsInject(cookies, referrer),
                 },
             ],
             attrs: [

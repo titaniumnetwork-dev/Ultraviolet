@@ -30,17 +30,21 @@ const emptyMethods = ['GET', 'HEAD'];
 class UVServiceWorker extends Ultraviolet.EventEmitter {
     constructor(config = __uv$config) {
         super();
-        if (!config.bare) config.bare = '/bare/';
         if (!config.prefix) config.prefix = '/service/';
         this.config = config;
-        const addresses = (
-            Array.isArray(config.bare) ? config.bare : [config.bare]
-        ).map((str) => new URL(str, location).toString());
-        this.address = addresses[~~(Math.random() * addresses.length)];
         /**
          * @type {InstanceType<Ultraviolet['BareClient']>}
          */
         this.bareClient = new Ultraviolet.BareClient();
+    }
+    /**
+     *
+     * @param {Event & {request: Request}} param0
+     * @returns
+     */
+    route({ request }) {
+        if (request.url.startsWith(location.origin + this.config.prefix)) return true;
+        else return false;
     }
     /**
      *
@@ -57,7 +61,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             if (!request.url.startsWith(location.origin + this.config.prefix))
                 return await fetch(request);
 
-            const ultraviolet = new Ultraviolet(this.config, this.address);
+            const ultraviolet = new Ultraviolet(this.config);
 
             if (typeof this.config.construct === 'function') {
                 this.config.construct(ultraviolet, 'service');
@@ -72,7 +76,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 
             const requestCtx = new RequestContext(
                 request,
-                this,
                 ultraviolet,
                 !emptyMethods.includes(request.method.toUpperCase())
                     ? await request.blob()
@@ -130,10 +133,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                 method: requestCtx.method,
                 body: requestCtx.body,
                 credentials: requestCtx.credentials,
-                mode:
-                    location.origin !== requestCtx.address.origin
-                        ? 'cors'
-                        : requestCtx.mode,
+                mode: requestCtx.mode,
                 cache: requestCtx.cache,
                 redirect: requestCtx.redirect,
             });
@@ -212,8 +212,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                 .map((script) => JSON.stringify(script))
                                 .join(',');
                             responseCtx.body = `if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
-                                this.address,
-                                this.bareClient.manifest,
                                 ultraviolet.cookie.serialize(
                                     cookies,
                                     ultraviolet.meta,
@@ -248,8 +246,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                         ultraviolet.bundleScript,
                                         ultraviolet.clientScript,
                                         ultraviolet.configScript,
-                                        this.address,
-                                        this.bareClient.manifest,
                                         ultraviolet.cookie.serialize(
                                             cookies,
                                             ultraviolet.meta,
@@ -326,16 +322,14 @@ class RequestContext {
     /**
      *
      * @param {Request} request
-     * @param {UVServiceWorker} worker
      * @param {Ultraviolet} ultraviolet
      * @param {BodyInit} body
      */
-    constructor(request, worker, ultraviolet, body = null) {
+    constructor(request, ultraviolet, body = null) {
         this.ultraviolet = ultraviolet;
         this.request = request;
         this.headers = Object.fromEntries(request.headers.entries());
         this.method = request.method;
-        this.address = worker.address;
         this.body = body || null;
         this.cache = request.cache;
         this.redirect = request.redirect;

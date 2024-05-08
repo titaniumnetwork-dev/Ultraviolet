@@ -14,7 +14,7 @@ const uv = new UVServiceWorker();
 self.addEventListener('fetch', event => {
     event.respondWith(
         (async ()=>{
-            if(event.request.url.startsWith(location.origin + __uv$config.prefix)) {
+            if (uv.route(event)) {
                 return await uv.fetch(event);
             }
             return await fetch(event.request);

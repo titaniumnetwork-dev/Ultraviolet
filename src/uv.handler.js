@@ -13,15 +13,6 @@ const UVClient = self.UVClient;
  */
 const __uv$config = self.__uv$config;
 
-/**
- * @type {import('@mercuryworkshop/bare-mux').BareManifest}
- */
-const __uv$bareData = self.__uv$bareData;
-
-/**
- * @type {string}
- */
-const __uv$bareURL = self.__uv$bareURL;
 
 /**
  * @type {string}
@@ -29,8 +20,6 @@ const __uv$bareURL = self.__uv$bareURL;
 const __uv$cookies = self.__uv$cookies;
 
 if (
-    typeof __uv$bareData !== 'object' ||
-    typeof __uv$bareURL !== 'string' ||
     typeof __uv$cookies !== 'string'
 )
     throw new TypeError('Unable to load global UV data');
@@ -572,8 +561,6 @@ function __uvHook(window) {
                     __uv.bundleScript,
                     __uv.clientScript,
                     __uv.configScript,
-                    __uv$bareURL,
-                    __uv$bareData,
                     cookieStr,
                     window.location.href
                 ),
@@ -780,8 +767,6 @@ function __uvHook(window) {
                         __uv.bundleScript,
                         __uv.clientScript,
                         __uv.configScript,
-                        __uv$bareURL,
-                        __uv$bareData,
                         cookieStr,
                         window.location.href
                     ),
@@ -892,8 +877,6 @@ function __uvHook(window) {
                     __uv.bundleScript,
                     __uv.clientScript,
                     __uv.configScript,
-                    __uv$bareURL,
-                    __uv$bareData,
                     cookieStr,
                     window.location.href
                 ),
