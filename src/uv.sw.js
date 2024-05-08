@@ -285,7 +285,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 
             console.error(err);
 
-            return renderError(err, fetchedURL, this.address);
+            return renderError(err, fetchedURL);
         }
     }
     static Ultraviolet = Ultraviolet;
@@ -390,178 +390,75 @@ class HookEvent {
 
 /**
  *
- * @param {string} fetchedURL
- * @param {string} bareServer
- * @returns
- */
-function hostnameErrorTemplate(fetchedURL, bareServer) {
-    const parsedFetchedURL = new URL(fetchedURL);
-    const script =
-        `remoteHostname.textContent = ${JSON.stringify(
-            parsedFetchedURL.hostname
-        )};` +
-        `bareServer.href = ${JSON.stringify(bareServer)};` +
-        `uvHostname.textContent = ${JSON.stringify(location.hostname)};` +
-        `reload.addEventListener("click", () => location.reload());` +
-        `uvVersion.textContent = ${JSON.stringify(
-            process.env.ULTRAVIOLET_VERSION
-        )};`;
-
-    return (
-        '<!DOCTYPE html>' +
-        '<html>' +
-        '<head>' +
-        "<meta charset='utf-8' />" +
-        '<title>Error</title>' +
-        '<style>' +
-        '* { background-color: white }' +
-        '</style>' +
-        '</head>' +
-        '<body>' +
-        '<h1>This site can’t be reached</h1>' +
-        '<hr />' +
-        '<p><b id="remoteHostname"></b>’s server IP address could not be found.</p>' +
-        '<p>Try:</p>' +
-        '<ul>' +
-        '<li>Verifying you entered the correct address</li>' +
-        '<li>Clearing the site data</li>' +
-        '<li>Contacting <b id="uvHostname"></b>\'s administrator</li>' +
-        "<li>Verifying the <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
-        '</ul>' +
-        '<button id="reload">Reload</button>' +
-        '<hr />' +
-        '<p><i>Ultraviolet v<span id="uvVersion"></span></i></p>' +
-        `<script src="${
-            'data:application/javascript,' + encodeURIComponent(script)
-        }"></script>` +
-        '</body>' +
-        '</html>'
-    );
-}
-
-/**
- *
- * @param {string} title
- * @param {string} code
- * @param {string} id
- * @param {string} message
  * @param {string} trace
  * @param {string} fetchedURL
- * @param {string} bareServer
  * @returns
  */
 function errorTemplate(
-    title,
-    code,
-    id,
-    message,
     trace,
     fetchedURL,
-    bareServer
 ) {
-    // produced by bare-server-node
-    if (message === 'The specified host could not be resolved.')
-        return hostnameErrorTemplate(fetchedURL, bareServer);
-
     // turn script into a data URI so we don't have to escape any HTML values
-    const script =
-        `errorTitle.textContent = ${JSON.stringify(title)};` +
-        `errorCode.textContent = ${JSON.stringify(code)};` +
-        (id ? `errorId.textContent = ${JSON.stringify(id)};` : '') +
-        `errorMessage.textContent =  ${JSON.stringify(message)};` +
-        `errorTrace.value = ${JSON.stringify(trace)};` +
-        `fetchedURL.textContent = ${JSON.stringify(fetchedURL)};` +
-        `bareServer.href = ${JSON.stringify(bareServer)};` +
-        `for (const node of document.querySelectorAll("#uvHostname")) node.textContent = ${JSON.stringify(
+    const script = `
+        errorTrace.value = ${JSON.stringify(trace)};
+        fetchedURL.textContent = ${JSON.stringify(fetchedURL)};
+        for (const node of document.querySelectorAll("#uvHostname")) node.textContent = ${JSON.stringify(
             location.hostname
-        )};` +
-        `reload.addEventListener("click", () => location.reload());` +
-        `uvVersion.textContent = ${JSON.stringify(
+        )};
+        reload.addEventListener("click", () => location.reload());
+        uvVersion.textContent = ${JSON.stringify(
             process.env.ULTRAVIOLET_VERSION
-        )};`;
+        )};
+    `
 
     return (
-        '<!DOCTYPE html>' +
-        '<html>' +
-        '<head>' +
-        "<meta charset='utf-8' />" +
-        '<title>Error</title>' +
-        '<style>' +
-        '* { background-color: white }' +
-        '</style>' +
-        '</head>' +
-        '<body>' +
-        "<h1 id='errorTitle'></h1>" +
-        '<hr />' +
-        '<p>Failed to load <b id="fetchedURL"></b></p>' +
-        '<p id="errorMessage"></p>' +
-        '<table><tbody>' +
-        '<tr><td>Code:</td><td id="errorCode"></td></tr>' +
-        (id ? '<tr><td>ID:</td><td id="errorId"></td></tr>' : '') +
-        '</tbody></table>' +
-        '<textarea id="errorTrace" cols="40" rows="10" readonly></textarea>' +
-        '<p>Try:</p>' +
-        '<ul>' +
-        '<li>Checking your internet connection</li>' +
-        '<li>Verifying you entered the correct address</li>' +
-        '<li>Clearing the site data</li>' +
-        '<li>Contacting <b id="uvHostname"></b>\'s administrator</li>' +
-        "<li>Verify the <a id='bareServer' title='Bare server'>Bare server</a> isn't censored</li>" +
-        '</ul>' +
-        '<p>If you\'re the administrator of <b id="uvHostname"></b>, try:</p>' +
-        '<ul>' +
-        '<li>Restarting your Bare server</li>' +
-        '<li>Updating Ultraviolet</li>' +
-        '<li>Troubleshooting the error on the <a href="https://github.com/titaniumnetwork-dev/Ultraviolet" target="_blank">GitHub repository</a></li>' +
-        '</ul>' +
-        '<button id="reload">Reload</button>' +
-        '<hr />' +
-        '<p><i>Ultraviolet v<span id="uvVersion"></span></i></p>' +
-        `<script src="${
+        `<!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset='utf-8' />
+        <title>Error</title>
+        <style>
+        * { background-color: white }
+        </style>
+        </head>
+        <body>
+        <h1 id='errorTitle'>Error processing your request</h1>
+        <hr />
+        <p>Failed to load <b id="fetchedURL"></b></p>
+        <p id="errorMessage">Internal Server Error</p>
+        <textarea id="errorTrace" cols="40" rows="10" readonly></textarea>
+        <p>Try:</p>
+        <ul>
+        <li>Checking your internet connection</li>
+        <li>Verifying you entered the correct address</li>
+        <li>Clearing the site data</li>
+        <li>Contacting <b id="uvHostname"></b>'s administrator</li>
+        <li>Verify the server isn't censored</li>
+        </ul>
+        <p>If you're the administrator of <b id="uvHostname"></b>, try:</p>
+        <ul>
+        <li>Restarting your server</li>
+        <li>Updating Ultraviolet</li>
+        <li>Troubleshooting the error on the <a href="https://github.com/titaniumnetwork-dev/Ultraviolet" target="_blank">GitHub repository</a></li>
+        </ul>
+        <button id="reload">Reload</button>
+        <hr />
+        <p><i>Ultraviolet v<span id="uvVersion"></span></i></p>
+        <script src="${
             'data:application/javascript,' + encodeURIComponent(script)
-        }"></script>` +
-        '</body>' +
-        '</html>'
+        }"></script>
+        </body>
+        </html>
+        `
     );
-}
-
-/**
- * @typedef {import("@mercuryworkshop/bare-mux").BareError} BareError
- */
-
-/**
- *
- * @param {unknown} err
- * @returns {err is BareError}
- */
-function isBareError(err) {
-    return err instanceof Error && typeof err.body === 'object';
 }
 
 /**
  *
  * @param {unknown} err
  * @param {string} fetchedURL
- * @param {string} bareServer
  */
-function renderError(err, fetchedURL, bareServer) {
-    /**
-     * @type {number}
-     */
-    let status;
-    /**
-     * @type {string}
-     */
-    let title;
-    /**
-     * @type {string}
-     */
-    let code;
-    let id = '';
-    /**
-     * @type {string}
-     */
-    let message;
+function renderError(err, fetchedURL) {
     let headers = {
         'content-type': 'text/html',
     };
@@ -569,31 +466,13 @@ function renderError(err, fetchedURL, bareServer) {
         headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
     }
 
-    if (isBareError(err)) {
-        status = err.status;
-        title = 'Error communicating with the Bare server';
-        message = err.body.message;
-        code = err.body.code;
-        id = err.body.id;
-    } else {
-        status = 500;
-        title = 'Error processing your request';
-        message = 'Internal Server Error';
-        code = err instanceof Error ? err.name : 'UNKNOWN';
-    }
-
     return new Response(
         errorTemplate(
-            title,
-            code,
-            id,
-            message,
             String(err),
-            fetchedURL,
-            bareServer
+            fetchedURL
         ),
         {
-            status,
+            status: 500,
             headers: headers
         }
     );
