@@ -790,7 +790,8 @@ function __uvHook(window) {
                 event.data.value = __uv.sourceCSS(event.data.value);
                 break;
             default:
-                event.data.value = __uv.sourceHtml(event.data.value);
+               // Interferes with HTML Character Entities.
+               // event.data.value = __uv.sourceHtml(event.data.value);
         }
     });
 
@@ -803,7 +804,8 @@ function __uvHook(window) {
                 event.data.value = __uv.rewriteCSS(event.data.value);
                 break;
             default:
-                event.data.value = __uv.rewriteHtml(event.data.value);
+               // Interferes with HTML Character Entities.
+               //  event.data.value = __uv.rewriteHtml(event.data.value);
         }
     });
 
