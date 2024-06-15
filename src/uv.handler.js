@@ -782,14 +782,28 @@ function __uvHook(window) {
     });
 
     client.node.on('getTextContent', (event) => {
-        if (event.that.tagName === 'SCRIPT') {
-            event.data.value = __uv.js.source(event.data.value);
+       switch (event.that.tagName) {
+            case 'SCRIPT':
+                event.data.value = __uv.js.source(event.data.value);
+                break;
+            case 'STYLE':
+                event.data.value = __uv.sourceCSS(event.data.value);
+                break;
+            default:
+                event.data.value = __uv.sourceHtml(event.data.value);
         }
     });
 
     client.node.on('setTextContent', (event) => {
-        if (event.that.tagName === 'SCRIPT') {
-            event.data.value = __uv.js.rewrite(event.data.value);
+        switch (event.that.tagName) {
+            case 'SCRIPT':
+                event.data.value = __uv.js.rewrite(event.data.value);
+                break;
+            case 'STYLE':
+                event.data.value = __uv.rewriteCSS(event.data.value);
+                break;
+            default:
+                event.data.value = __uv.rewriteHtml(event.data.value);
         }
     });
 
