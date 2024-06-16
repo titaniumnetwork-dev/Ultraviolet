@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+assignees: 
+  - "e9x"
+  - "Percslol"
+  - "BinBashBanana"
