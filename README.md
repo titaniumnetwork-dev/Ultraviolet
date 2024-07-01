@@ -24,10 +24,10 @@ Some of the popular websites that Ultraviolet supports include:
 
 ## Used by
 
+-   [Holy Unblocker](https://github.com/holy-unblocker/website)
 -   [Alu](https://github.com/titaniumnetwork-dev/Alu)
 -   [AnuraOS](https://github.com/MercuryWorkshop/anuraOS)
 -   [Nebula](https://github.com/NebulaServices/Nebula)
--   [Holy Unblocker](https://github.com/holy-unblocker/website)
 -   [Terbium](https://github.com/TerbiumOS/webOS)
 -   [Incognito](https://github.com/caracal-js/Incognito)
 -   [Metallic](https://github.com/Metallic-Web/Metallic)
