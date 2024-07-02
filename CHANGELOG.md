@@ -1,3 +1,7 @@
+# 3.1.4
+
+-   This version of Ultraviolet fixes an NPM versioning error.
+
 # 3.1.3
 
 -   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with the types and exports being incorrect.
