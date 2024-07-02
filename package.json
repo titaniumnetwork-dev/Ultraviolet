@@ -18,7 +18,7 @@
     "scripts": {
         "build": "node build.js",
         "dev": "node build.js --dev",
-        "publish": "npm run build && npm publish --access public",
+        "publish": "npm run build",
         "pack": "npm run build && npm pack"
     },
     "devDependencies": {
