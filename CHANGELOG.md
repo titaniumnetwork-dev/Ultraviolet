@@ -1,3 +1,7 @@
+# 3.1.3
+
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This solves an issue with the types and exports being incorrect.
+
 # 3.1.2
 
 - This version of Ultraviolet cleans up some service worker code to make it faster, and also simplifies the service worker by adding `uv.route()` which allows the service worker to easily detect if the worker should route this request.
