@@ -1,3 +1,7 @@
+# 3.1.5
+
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This allows the websocket to be properly closed by windows.
+
 # 3.1.4
 
 -   This version of Ultraviolet fixes an NPM versioning error.

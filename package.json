@@ -1,6 +1,6 @@
 {
     "name": "@titaniumnetwork-dev/ultraviolet",
-    "version": "3.1.4",
+    "version": "3.1.5",
     "description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
     "main": "lib/index.cjs",
     "license": "MIT",
@@ -21,7 +21,7 @@
         "prepare": "npm run build"
     },
     "devDependencies": {
-        "@mercuryworkshop/bare-mux": "^1.1.2",
+        "@mercuryworkshop/bare-mux": "^1.1.3",
         "css-tree": "^2.3.1",
         "esbuild": "^0.18.11",
         "eslint": "^8.28.0",
