@@ -24,7 +24,6 @@ Some of the popular websites that Ultraviolet supports include:
 
 ## Used by
 
--   [Holy Unblocker](https://github.com/holy-unblocker/website)
 -   [Alu](https://github.com/titaniumnetwork-dev/Alu)
 -   [AnuraOS](https://github.com/MercuryWorkshop/anuraOS)
 -   [Nebula](https://github.com/NebulaServices/Nebula)
