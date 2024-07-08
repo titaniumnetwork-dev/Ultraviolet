@@ -1,3 +1,7 @@
+# 3.2.0
+
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This moves all of the bare client logic to a shared worker.
+
 # 3.1.5
 
 -   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This allows the websocket to be properly closed by windows.
