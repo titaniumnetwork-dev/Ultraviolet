@@ -1,3 +1,7 @@
+# 3.2.1
+
+-   This version of Ultraviolet fixes a bug where network requests were not being correctly processed in worker contexts.
+
 # 3.2.0
 
 -   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This moves all of the bare client logic to a shared worker.
