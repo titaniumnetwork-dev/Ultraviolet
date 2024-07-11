@@ -1,3 +1,7 @@
+# 3.2.2
+
+-   This version of Ultraviolet fixes a bug where scripts were not being rewritten properly.
+
 # 3.2.1
 
 -   This version of Ultraviolet fixes a bug where network requests were not being correctly processed in worker contexts.

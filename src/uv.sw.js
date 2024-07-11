@@ -200,6 +200,10 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             if (responseCtx.body) {
                 switch (request.destination) {
                     case 'script':
+                        responseCtx.body = ultraviolet.js.rewrite(
+                            await response.text()
+                        );
+                        break;
                     case 'worker':
                         {
                             // craft a JS-safe list of arguments
