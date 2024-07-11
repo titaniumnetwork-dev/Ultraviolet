@@ -211,17 +211,18 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                             ]
                                 .map((script) => JSON.stringify(script))
                                 .join(',');
-                            responseCtx.body = `if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
+                            responseCtx.body = `(async ()=>{if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
                                 ultraviolet.cookie.serialize(
                                     cookies,
                                     ultraviolet.meta,
                                     true
                                 ),
                                 request.referrer
-                            )} importScripts(${scripts}); }\n`;
+                            )} importScripts(${scripts}); await __uv$promise;}\n`;
                             responseCtx.body += ultraviolet.js.rewrite(
                                 await response.text()
                             );
+							responseCtx.body += "\n})()";
                         }
                         break;
                     case 'style':
