@@ -155,7 +155,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             }
 
             // downloads
-            if (request.destination === 'document') {
+            if (["document", "iframe"].includes(request.destination)) {
                 const header = responseCtx.headers['content-disposition'];
 
                 // validate header and test for filename
