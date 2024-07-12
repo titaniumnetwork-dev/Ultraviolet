@@ -1,5 +1,3 @@
-import { Syntax } from 'esotope-hammerhead';
-
 /**
  * @typedef {import('./index').default} Ultraviolet
  */
@@ -108,7 +106,7 @@ function property(ctx) {
             !node.computed &&
             node.property.name === '__uv$setSource' &&
             type === 'source' &&
-            node.parent.type === Syntax.CallExpression
+            node.parent.type === "CallExpression"
         ) {
             const { parent, property } = node;
             data.changes.push({
@@ -137,57 +135,57 @@ function identifier(ctx) {
         const { parent } = node;
         if (!['location', 'eval', 'parent', 'top'].includes(node.name))
             return false;
-        if (parent.type === Syntax.VariableDeclarator && parent.id === node)
+        if (parent.type === "VariableDeclarator" && parent.id === node)
             return false;
         if (
-            (parent.type === Syntax.AssignmentExpression ||
-                parent.type === Syntax.AssignmentPattern) &&
+            (parent.type === "AssignmentExpression" ||
+                parent.type === "AssignmentPattern") &&
             parent.left === node
         )
             return false;
         if (
-            (parent.type === Syntax.FunctionExpression ||
-                parent.type === Syntax.FunctionDeclaration) &&
+            (parent.type === "FunctionExpression" ||
+                parent.type === "FunctionDeclaration") &&
             parent.id === node
         )
             return false;
         if (
-            parent.type === Syntax.MemberExpression &&
+            parent.type === "MemberExpression" &&
             parent.property === node &&
             !parent.computed
         )
             return false;
         if (
             node.name === 'eval' &&
-            parent.type === Syntax.CallExpression &&
+            parent.type === "CallExpression" &&
             parent.callee === node
         )
             return false;
-        if (parent.type === Syntax.Property && parent.key === node)
+        if (parent.type === "Property" && parent.key === node)
             return false;
         if (
-            parent.type === Syntax.Property &&
+            parent.type === "Property" &&
             parent.value === node &&
             parent.shorthand
         )
             return false;
         if (
-            parent.type === Syntax.UpdateExpression &&
+            parent.type === "UpdateExpression" &&
             (parent.operator === '++' || parent.operator === '--')
         )
             return false;
         if (
-            (parent.type === Syntax.FunctionExpression ||
-                parent.type === Syntax.FunctionDeclaration ||
-                parent.type === Syntax.ArrowFunctionExpression) &&
+            (parent.type === "FunctionExpression" ||
+                parent.type === "FunctionDeclaration" ||
+                parent.type === "ArrowFunctionExpression") &&
             parent.params.indexOf(node) !== -1
         )
             return false;
-        if (parent.type === Syntax.MethodDefinition) return false;
-        if (parent.type === Syntax.ClassDeclaration) return false;
-        if (parent.type === Syntax.RestElement) return false;
-        if (parent.type === Syntax.ExportSpecifier) return false;
-        if (parent.type === Syntax.ImportSpecifier) return false;
+        if (parent.type === "MethodDefinition") return false;
+        if (parent.type === "ClassDeclaration") return false;
+        if (parent.type === "RestElement") return false;
+        if (parent.type === "ExportSpecifier") return false;
+        if (parent.type === "ImportSpecifier") return false;
 
         data.changes.push({
             start: node.start,
@@ -232,12 +230,12 @@ function wrapEval(ctx) {
  */
 function importDeclaration(ctx) {
     const { js } = ctx;
-    js.on(Syntax.Literal, (node, data, type) => {
+    js.on("Literal", (node, data, type) => {
         if (
             !(
-                (node.parent.type === Syntax.ImportDeclaration ||
-                    node.parent.type === Syntax.ExportAllDeclaration ||
-                    node.parent.type === Syntax.ExportNamedDeclaration) &&
+                (node.parent.type === "ImportDeclaration" ||
+                    node.parent.type === "ExportAllDeclaration" ||
+                    node.parent.type === "ExportNamedDeclaration") &&
                 node.parent.source === node
             )
         )
@@ -260,7 +258,7 @@ function importDeclaration(ctx) {
  */
 function dynamicImport(ctx) {
     const { js } = ctx;
-    js.on(Syntax.ImportExpression, (node, data, type) => {
+    js.on("ImportExpression", (node, data, type) => {
         if (type !== 'rewrite') return false;
         data.changes.push({
             // pass script URL to dynamicImport
@@ -294,7 +292,7 @@ function unwrap(ctx) {
                 {
                     if (
                         !node.arguments ||
-                        node.parent.type !== Syntax.MemberExpression ||
+                        node.parent.type !== "MemberExpression" ||
                         node.parent.property !== node
                     )
                         return false;
@@ -351,9 +349,9 @@ function unwrap(ctx) {
 }
 
 function isWrapped(node) {
-    if (node.type !== Syntax.MemberExpression) return false;
+    if (node.type !== "MemberExpression") return false;
     if (node.property.name === 'rewrite' && isWrapped(node.object)) return true;
-    if (node.object.type !== Syntax.Identifier || node.object.name !== '__uv')
+    if (node.object.type !== "Identifier" || node.object.name !== '__uv')
         return false;
     if (!['js', '$get', '$wrap', 'rewriteUrl'].includes(node.property.name))
         return false;

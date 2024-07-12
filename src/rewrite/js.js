@@ -1,6 +1,6 @@
 import { parseScript } from 'meriyah';
 // import { parse } from 'acorn-hammerhead';
-import { generate } from 'esotope-hammerhead';
+import { generate } from 'astring';
 import EventEmitter from 'events';
 
 class JS extends EventEmitter {

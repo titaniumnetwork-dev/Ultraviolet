@@ -236,12 +236,8 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        if (
-                            isHtml(
-                                ultraviolet.meta.url,
-                                responseCtx.headers['content-type'] || ''
-                            )
-                        ) {
+                        console.log(responseCtx.headers["content-type"])
+                        if (responseCtx.headers["content-type"].startsWith("text/html")) {
                             responseCtx.body = ultraviolet.rewriteHtml(
                                 await response.text(),
                                 {
@@ -261,6 +257,9 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                 }
                             );
                         }
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -354,15 +353,6 @@ class RequestContext {
     set base(val) {
         this.ultraviolet.meta.base = val;
     }
-}
-
-function isHtml(url, contentType = '') {
-    return (
-        (
-            Ultraviolet.mime.contentType(contentType || url.pathname) ||
-            'text/html'
-        ).split(';')[0] === 'text/html'
-    );
 }
 
 class HookEvent {
