@@ -1,5 +1,5 @@
 import { rimraf } from 'rimraf';
-import { copyFile, mkdir, readFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { build } from 'esbuild';
 
 // read version from package.json
@@ -15,7 +15,7 @@ await mkdir('dist');
 await copyFile('src/sw.js', 'dist/sw.js');
 await copyFile('src/uv.config.js', 'dist/uv.config.js');
 
-await build({
+let builder = await build({
     platform: 'browser',
     sourcemap: true,
     minify: !isDevelopment,
@@ -31,6 +31,11 @@ await build({
         ),
     },
     bundle: true,
+    treeShaking: true,
+    metafile: isDevelopment,
     logLevel: 'info',
     outdir: 'dist/',
 });
+if (isDevelopment) {
+    await writeFile('metafile.json', JSON.stringify(builder.metafile));
+}
