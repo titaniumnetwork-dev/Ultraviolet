@@ -87,24 +87,20 @@ class HTML extends EventEmitter {
         return ast;
     }
     wrapSrcset(str, meta = this.ctx.meta) {
-        return str
-            .split(',')
-            .map((src) => {
-                const parts = src.trimStart().split(' ');
-                if (parts[0]) parts[0] = this.ctx.rewriteUrl(parts[0], meta);
-                return parts.join(' ');
-            })
-            .join(', ');
+        const regex = /(https:\/\/(?:[^x]+\.[^\/\s]+)[^ ]+)(?=\s\d+[xyhw])/g;
+        const output = str.replace(regex, (match) => {
+            return this.ctx.rewriteUrl(match, meta);
+        });
+
+        return output;
     }
     unwrapSrcset(str, meta = this.ctx.meta) {
-        return str
-            .split(',')
-            .map((src) => {
-                const parts = src.trimStart().split(' ');
-                if (parts[0]) parts[0] = this.ctx.sourceUrl(parts[0], meta);
-                return parts.join(' ');
-            })
-            .join(', ');
+       const regex = /(https:\/\/(?:[^x]+\.[^\/\s]+)[^ ]+)(?=\s\d+[xyhw])/g; 
+        const output = str.replace(regex, (match) => {
+            return this.ctx.sourceUrl(match, meta);
+        });
+
+        return output;
     }
     static parse = parse;
     static parseFragment = parseFragment;
