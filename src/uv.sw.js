@@ -155,7 +155,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             }
 
             // downloads
-            if (request.destination === 'document') {
+            if (["document", "iframe"].includes(request.destination)) {
                 const header = responseCtx.headers['content-disposition'];
 
                 // validate header and test for filename
@@ -200,6 +200,10 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
             if (responseCtx.body) {
                 switch (request.destination) {
                     case 'script':
+                        responseCtx.body = ultraviolet.js.rewrite(
+                            await response.text()
+                        );
+                        break;
                     case 'worker':
                         {
                             // craft a JS-safe list of arguments
@@ -211,17 +215,18 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                             ]
                                 .map((script) => JSON.stringify(script))
                                 .join(',');
-                            responseCtx.body = `if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
+                            responseCtx.body = `(async ()=>{if (!self.__uv && self.importScripts) { ${ultraviolet.createJsInject(
                                 ultraviolet.cookie.serialize(
                                     cookies,
                                     ultraviolet.meta,
                                     true
                                 ),
                                 request.referrer
-                            )} importScripts(${scripts}); }\n`;
+                            )} importScripts(${scripts}); await __uv$promise;}\n`;
                             responseCtx.body += ultraviolet.js.rewrite(
                                 await response.text()
                             );
+							responseCtx.body += "\n})()";
                         }
                         break;
                     case 'style':
@@ -231,12 +236,8 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        if (
-                            isHtml(
-                                ultraviolet.meta.url,
-                                responseCtx.headers['content-type'] || ''
-                            )
-                        ) {
+                        console.log(responseCtx.headers["content-type"])
+                        if (responseCtx.headers["content-type"].startsWith("text/html")) {
                             responseCtx.body = ultraviolet.rewriteHtml(
                                 await response.text(),
                                 {
@@ -256,6 +257,9 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                                 }
                             );
                         }
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -349,15 +353,6 @@ class RequestContext {
     set base(val) {
         this.ultraviolet.meta.base = val;
     }
-}
-
-function isHtml(url, contentType = '') {
-    return (
-        (
-            Ultraviolet.mime.contentType(contentType || url.pathname) ||
-            'text/html'
-        ).split(';')[0] === 'text/html'
-    );
 }
 
 class HookEvent {

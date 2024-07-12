@@ -1,4 +1,4 @@
-import { parse, walk, generate } from 'css-tree';
+
 import EventEmitter from 'events';
 
 class CSS extends EventEmitter {
@@ -6,9 +6,6 @@ class CSS extends EventEmitter {
         super();
         this.ctx = ctx;
         this.meta = ctx.meta;
-        this.parse = parse;
-        this.walk = walk;
-        this.generate = generate;
     }
     rewrite(str, options) {
         return this.recast(str, options, 'rewrite');
@@ -19,18 +16,13 @@ class CSS extends EventEmitter {
     recast(str, options, type) {
         if (!str) return str;
         str = new String(str).toString();
-        try {
-            const ast = this.parse(str, {
-                ...options,
-                parseCustomProperty: true,
-            });
-            this.walk(ast, (node) => {
-                this.emit(node.type, node, options, type);
-            });
-            return this.generate(ast);
-        } catch (e) {
-            return str;
-        }
+        str = str.replace(/(?<=url\("?'?)[^"'][\S]*[^"'](?="?'?\);?)/gm, (match) => {
+            return type === "rewrite" ? this.ctx.rewriteUrl(match) : this.ctx.sourceUrl(match);
+        });
+        str = str.replace(/@import\s+(['"])?([^'"\);]+)\1?\s*(?:;|$)/gm, (match, quote, url) => {
+            return `@import ${quote || ""}${type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url)}${quote || ""};`;
+        });
+        return str;
     }
 }
 
