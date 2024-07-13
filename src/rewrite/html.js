@@ -87,7 +87,7 @@ class HTML extends EventEmitter {
         return ast;
     }
     wrapSrcset(str, meta = this.ctx.meta) {
-        const regex = /(https:\/\/(?:[^x]+\.[^\/\s]+)[^ ]+)(?=\s\d+[xyhw])/g;
+        const regex = /(https?:\/)?(\/[^\/\s]+)+(?=\b(?!2\d+)[xyhw]?)/g;
         const output = str.replace(regex, (match) => {
             return this.ctx.rewriteUrl(match, meta);
         });
@@ -95,7 +95,7 @@ class HTML extends EventEmitter {
         return output;
     }
     unwrapSrcset(str, meta = this.ctx.meta) {
-       const regex = /(https:\/\/(?:[^x]+\.[^\/\s]+)[^ ]+)(?=\s\d+[xyhw])/g; 
+        const regex = /(https?:\/)?(\/[^\/\s]+)+(?=\b(?!2\d+)[xyhw]?)/g;
         const output = str.replace(regex, (match) => {
             return this.ctx.sourceUrl(match, meta);
         });
