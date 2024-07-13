@@ -14,6 +14,7 @@ class CSS extends EventEmitter {
         return this.recast(str, options, 'source');
     }
     recast(str, options, type) {
+        // CSS Rewriting from Meteor (https://github.com/meteorproxy/meteor)
         const regex =
         /(@import\s+(?!url\())?\s*url\(\s*(['"]?)([^'")]+)\2\s*\)|@import\s+(['"])([^'"]+)\4/g
 
