@@ -1,3 +1,8 @@
+# 3.2.3
+
+-   This version of Ultraviolet improves performance and reduced bundle size by removing `css-tree`, `esotope-hammerhead`, and `mime-db`.
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This fixes issues with support in safari.
+
 # 3.2.2
 
 -   This version of Ultraviolet fixes a bug where scripts were not being rewritten properly.

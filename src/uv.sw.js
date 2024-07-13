@@ -236,7 +236,6 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        console.log(responseCtx.headers["content-type"])
                         if (responseCtx.headers["content-type"].startsWith("text/html")) {
                             responseCtx.body = ultraviolet.rewriteHtml(
                                 await response.text(),
