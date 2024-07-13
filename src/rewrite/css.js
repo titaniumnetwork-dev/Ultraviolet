@@ -14,15 +14,34 @@ class CSS extends EventEmitter {
         return this.recast(str, options, 'source');
     }
     recast(str, options, type) {
+        const regex =
+        /(@import\s+(?!url\())?\s*url\(\s*(['"]?)([^'")]+)\2\s*\)|@import\s+(['"])([^'"]+)\4/g
+
         if (!str) return str;
         str = new String(str).toString();
-        str = str.replace(/(?<=url\("?'?)[^"'][\S]*[^"'](?="?'?\);?)/gm, (match) => {
-            return type === "rewrite" ? this.ctx.rewriteUrl(match) : this.ctx.sourceUrl(match);
+        return str.replace(
+            regex,
+            (
+                match,
+                importStatement,
+                urlQuote,
+                urlContent,
+                importQuote,
+                importContent
+            ) => {
+                const url = urlContent || importContent
+                const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
+    
+                if (importStatement) {
+                    return `@import url(${urlQuote}${encodedUrl}${urlQuote})`
+                }
+    
+                if (importQuote) {
+                    return `@import ${importQuote}${encodedUrl}${importQuote}`
+                }
+    
+                return `url(${urlQuote}${encodedUrl}${urlQuote})`
         });
-        str = str.replace(/@import\s+(['"])?([^'"\);]+)\1?\s*(?:;|$)/gm, (match, quote, url) => {
-            return `@import ${quote || ""}${type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url)}${quote || ""};`;
-        });
-        return str;
     }
 }
 
