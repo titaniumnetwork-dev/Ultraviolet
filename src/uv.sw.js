@@ -156,7 +156,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 
             // downloads
             if (["document", "iframe"].includes(request.destination)) {
-                const header = responseCtx.headers['content-disposition'];
+                const header = responseCtx.getHeader("content-disposition");
 
                 // validate header and test for filename
                 if (!/\s*?((inline|attachment);\s*?)filename=/i.test(header)) {
@@ -236,7 +236,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        if (responseCtx.headers["content-type"].startsWith("text/html")) {
+                        if (responseCtx.getHeader("content-type").startsWith("text/html")) {
                             responseCtx.body = ultraviolet.rewriteHtml(
                                 await response.text(),
                                 {
@@ -318,6 +318,14 @@ class ResponseContext {
     }
     set base(val) {
         this.request.base = val;
+    }
+    //the header value might be an array, so this function is used to 
+    //retrieve the value when it needs to be compared against a string
+    getHeader(key) {
+        if (Array.isArray(this.headers[key])) {
+            return this.headers[key][0];
+        }
+        return this.headers[key];
     }
 }
 
