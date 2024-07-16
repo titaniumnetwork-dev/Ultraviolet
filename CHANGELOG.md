@@ -1,3 +1,7 @@
+# 3.2.4
+
+-   This version of Ultraviolet fixes an issue with headers not being rewritten properly.
+
 # 3.2.3
 
 -   This version of Ultraviolet improves performance and reduced bundle size by removing `css-tree`, `esotope-hammerhead`, and `mime-db`.
