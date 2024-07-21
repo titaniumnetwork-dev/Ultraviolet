@@ -236,7 +236,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        if (responseCtx.getHeader("content-type").startsWith("text/html")) {
+                        if (responseCtx.getHeader("content-type") && responseCtx.getHeader("content-type").startsWith("text/html")) {
                             let modifiedResponse = await response.text();
                             if (Array.isArray(this.config.inject)) {
                                 const headPosition = modifiedResponse.indexOf('</head>');
