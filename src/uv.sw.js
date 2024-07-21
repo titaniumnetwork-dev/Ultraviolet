@@ -237,8 +237,43 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                     case 'iframe':
                     case 'document':
                         if (responseCtx.getHeader("content-type").startsWith("text/html")) {
+                            let modifiedResponse = await response.text();
+                            if (Array.isArray(this.config.inject)) {
+                                const headPosition = modifiedResponse.indexOf('</head>');
+                                const upperHead = modifiedResponse.indexOf('</HEAD>');
+                                const bodyPosition = modifiedResponse.indexOf('</body>');
+                                const upperBody = modifiedResponse.indexOf('</BODY>');
+                                const url = new URL(fetchedURL)
+                                const injectArray = this.config.inject;
+                                for (const inject of injectArray) {
+                                    const regex = new RegExp(inject.host)
+                                    if (regex.test(url.host)) {
+                                        if (inject.injectTo === "head") {
+                                            if (headPosition !== -1 || upperHead !== -1) {
+                                                modifiedResponse =
+                                                    modifiedResponse.slice(
+                                                        0,
+                                                        headPosition
+                                                    ) +
+                                                    `${inject.html}` +
+                                                    modifiedResponse.slice(headPosition);
+                                            }
+                                        } else if (inject.injectTo === "body") {
+                                            if (bodyPosition !== -1 || upperBody !== -1) {
+                                                modifiedResponse =
+                                                    modifiedResponse.slice(
+                                                        0,
+                                                        bodyPosition
+                                                    ) +
+                                                    `${inject.html}` +
+                                                    modifiedResponse.slice(bodyPosition);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             responseCtx.body = ultraviolet.rewriteHtml(
-                                await response.text(),
+                                modifiedResponse,
                                 {
                                     document: true,
                                     injectHead: ultraviolet.createHtmlInject(
