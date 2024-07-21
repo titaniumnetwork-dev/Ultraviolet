@@ -156,7 +156,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 
             // downloads
             if (["document", "iframe"].includes(request.destination)) {
-                const header = responseCtx.headers['content-disposition'];
+                const header = responseCtx.getHeader("content-disposition");
 
                 // validate header and test for filename
                 if (!/\s*?((inline|attachment);\s*?)filename=/i.test(header)) {
@@ -236,9 +236,44 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        if (responseCtx.headers["content-type"].startsWith("text/html")) {
+                        if (responseCtx.getHeader("content-type").startsWith("text/html")) {
+                            let modifiedResponse = await response.text();
+                            if (Array.isArray(this.config.inject)) {
+                                const headPosition = modifiedResponse.indexOf('</head>');
+                                const upperHead = modifiedResponse.indexOf('</HEAD>');
+                                const bodyPosition = modifiedResponse.indexOf('</body>');
+                                const upperBody = modifiedResponse.indexOf('</BODY>');
+                                const url = new URL(fetchedURL)
+                                const injectArray = this.config.inject;
+                                for (const inject of injectArray) {
+                                    const regex = new RegExp(inject.host)
+                                    if (regex.test(url.host)) {
+                                        if (inject.injectTo === "head") {
+                                            if (headPosition !== -1 || upperHead !== -1) {
+                                                modifiedResponse =
+                                                    modifiedResponse.slice(
+                                                        0,
+                                                        headPosition
+                                                    ) +
+                                                    `${inject.html}` +
+                                                    modifiedResponse.slice(headPosition);
+                                            }
+                                        } else if (inject.injectTo === "body") {
+                                            if (bodyPosition !== -1 || upperBody !== -1) {
+                                                modifiedResponse =
+                                                    modifiedResponse.slice(
+                                                        0,
+                                                        bodyPosition
+                                                    ) +
+                                                    `${inject.html}` +
+                                                    modifiedResponse.slice(bodyPosition);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             responseCtx.body = ultraviolet.rewriteHtml(
-                                await response.text(),
+                                modifiedResponse,
                                 {
                                     document: true,
                                     injectHead: ultraviolet.createHtmlInject(
@@ -318,6 +353,14 @@ class ResponseContext {
     }
     set base(val) {
         this.request.base = val;
+    }
+    //the header value might be an array, so this function is used to 
+    //retrieve the value when it needs to be compared against a string
+    getHeader(key) {
+        if (Array.isArray(this.headers[key])) {
+            return this.headers[key][0];
+        }
+        return this.headers[key];
     }
 }
 

@@ -1,3 +1,12 @@
+# 3.2.5
+
+-   This version of Ultraviolet fixes an issue with headers not being rewritten properly.
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This update allows transferrables to be sent while setting the transport.
+
+# 3.2.4
+
+-   This version of Ultraviolet fixes an issue with headers not being rewritten properly.
+
 # 3.2.3
 
 -   This version of Ultraviolet improves performance and reduced bundle size by removing `css-tree`, `esotope-hammerhead`, and `mime-db`.
