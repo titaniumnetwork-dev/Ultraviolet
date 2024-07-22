@@ -18,6 +18,7 @@ import StorageApi from './storage.js';
 import StyleApi from './dom/style.js';
 import IDBApi from './idb.js';
 import WebSocketApi from './requests/websocket.js';
+import Error from "./error.js"
 
 /**
  * @template {Function} [T=Function]
@@ -65,6 +66,7 @@ class UVClient extends EventEmitter {
         this.xhr = new Xhr(this);
         this.idb = new IDBApi(this);
         this.history = new History(this);
+        this.error = new Error(this);
         this.element = new ElementApi(this);
         this.node = new NodeApi(this);
         this.document = new DocumentHook(this);
