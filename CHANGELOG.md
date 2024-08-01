@@ -1,3 +1,8 @@
+# 3.2.7
+
+-   This version of Ultraviolet updates the XOR and Base64 codecs to be more efficient and fast by removing unneccesary code.
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This update allows remote transports to be set (transports that run in the window).
+
 # 3.2.6
 
 -   This version of Ultraviolet fixes an issue with the `Content-Type` header not being rewritten properly.
