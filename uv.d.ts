@@ -21,6 +21,23 @@ export type UVEncode = (input: Coded) => string;
  */
 export type UVDecode = (input: Coded) => string;
 
+export type UVInject = {
+    /**
+     * The host(s) to inject the HTML on.
+     * This is a regex that's tested against the proxied URL's host.
+     */
+    host: RegExp;
+    /**
+     * Where to inject the HTML
+     * Possible values: `"head" | "body"`
+     */
+    injectTo: "head" | "body";
+    /**
+     * The HTML to inject.
+     */
+    html: string;
+}
+
 /**
  * The Ultraviolet configuration object.
  * This interface defines the configuration options for the Ultraviolet library.
@@ -88,4 +105,9 @@ export interface UVConfig {
      * @defaultValue `Ultraviolet.codec.xor.decode`
      */
     decodeUrl?: UVDecode;
+    /**
+     * HTML inject settings.
+     * This property expects an array of `UVInject`.
+     */
+    inject?: UVInject[];
 }

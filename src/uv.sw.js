@@ -236,13 +236,13 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
                         break;
                     case 'iframe':
                     case 'document':
-                        if (responseCtx.getHeader("content-type").startsWith("text/html")) {
+                        if (responseCtx.getHeader("content-type") && responseCtx.getHeader("content-type").startsWith("text/html")) {
                             let modifiedResponse = await response.text();
                             if (Array.isArray(this.config.inject)) {
-                                const headPosition = modifiedResponse.indexOf('</head>');
-                                const upperHead = modifiedResponse.indexOf('</HEAD>');
-                                const bodyPosition = modifiedResponse.indexOf('</body>');
-                                const upperBody = modifiedResponse.indexOf('</BODY>');
+                                const headPosition = modifiedResponse.indexOf('<head>');
+                                const upperHead = modifiedResponse.indexOf('<HEAD>');
+                                const bodyPosition = modifiedResponse.indexOf('<body>');
+                                const upperBody = modifiedResponse.indexOf('<BODY>');
                                 const url = new URL(fetchedURL)
                                 const injectArray = this.config.inject;
                                 for (const inject of injectArray) {
