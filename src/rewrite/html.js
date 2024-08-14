@@ -109,7 +109,7 @@ class HTML extends EventEmitter {
         // Rewrite anyways original regex would have captured stuff already
         // This is just to get anything that has not been captured.
         if (output === str) {
-            return this.ctx.rewriteUrl(str, meta);
+            return this.ctx.sourceUrl(str, meta);
         }
         
         return output;
