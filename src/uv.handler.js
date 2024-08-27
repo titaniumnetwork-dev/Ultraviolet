@@ -28,30 +28,12 @@ if (!self.__uv) __uvHook(self);
 
 self.__uvHook = __uvHook;
 
-function __uvHook(window) {
-	if (!window.window) {
-		window.__uv$promise = new Promise(resolve => {
-			window.onmessage = (e)=>{
-				if (e.data.__data instanceof MessagePort) {
-					__uvHookReal(window, new Ultraviolet.BareClient(e.data.__data));
-					delete window.onmessage;
-					resolve();
-				} else {
-					throw new Error("unreachable: e.data !== MessagePort");
-				}
-			}
-		});
-	} else {
-		__uvHookReal(window, new Ultraviolet.BareClient());
-	}
-}
-
 /**
  *
  * @param {typeof globalThis} window
  * @returns
  */
-function __uvHookReal(window, bareClient) {
+function __uvHook(window) {
     if ('__uv' in window && window.__uv instanceof Ultraviolet) return false;
 
     if (window.document && !!window.window) {
@@ -68,6 +50,9 @@ function __uvHookReal(window, bareClient) {
     /*if (typeof config.construct === 'function') {
         config.construct(__uv, worker ? 'worker' : 'window');
     }*/
+   
+    // websockets
+    const bareClient = new Ultraviolet.BareClient();
 
     const client = new UVClient(window, bareClient, worker);
     const {
