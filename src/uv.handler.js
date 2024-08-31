@@ -50,9 +50,21 @@ function __uvHook(window) {
     /*if (typeof config.construct === 'function') {
         config.construct(__uv, worker ? 'worker' : 'window');
     }*/
-   
-    // websockets
-    const bareClient = new Ultraviolet.BareClient();
+    let bareClient;
+    if (!worker) {
+        // websockets
+        bareClient = new Ultraviolet.BareClient();
+    } else {
+        bareClient = new Ultraviolet.BareClient(
+            new Promise(resolve => {
+                addEventListener("message", (e) => {
+                    if (e.data instanceof MessagePort) {
+                        resolve(e.data);
+                    }
+                })
+            })
+        );
+    }
 
     const client = new UVClient(window, bareClient, worker);
     const {

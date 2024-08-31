@@ -21,7 +21,7 @@
         "prepare": "npm run build"
     },
     "devDependencies": {
-        "@mercuryworkshop/bare-mux": "^2.0.4",
+        "@mercuryworkshop/bare-mux": "link:../bare-mux",
         "astring": "^1.8.6",
         "esbuild": "^0.18.11",
         "eslint": "^8.28.0",
