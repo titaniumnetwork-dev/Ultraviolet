@@ -39,10 +39,10 @@ class Workers extends EventEmitter {
                     ...[event.data.url, event.data.options]
                 );
                 const conn = new BareMuxConnection();
-				(async ()=>{
-					const port = await conn.getInnerPort();
-					worker.postMessage(port, [port]);
-				})();
+                (async () => {
+                    const port = await conn.getInnerPort();
+                    worker.postMessage(port, [port]);
+                })();
                 return worker;
             },
             true
