@@ -1240,11 +1240,6 @@ function __uvHook(window) {
     client.eventSource.overrideConstruct();
     client.eventSource.overrideUrl();
     client.websocket.overrideWebSocket();
-    client.websocket.overrideProtocol();
-    client.websocket.overrideURL();
-    client.websocket.overrideReadyState();
-    client.websocket.overrideProtocol();
-    client.websocket.overrideSend();
     client.url.overrideObjectURL();
     client.document.overrideCookie();
     client.message.overridePostMessage();

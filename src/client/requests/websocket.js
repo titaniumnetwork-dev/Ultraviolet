@@ -15,20 +15,6 @@ class WebSocketApi extends EventEmitter {
         this.ctx = ctx;
         this.window = ctx.window;
         this.WebSocket = this.window.WebSocket || {};
-        this.wsProto = this.WebSocket.prototype || {};
-        this.url = ctx.nativeMethods.getOwnPropertyDescriptor(
-            this.wsProto,
-            'url'
-        );
-        this.protocol = ctx.nativeMethods.getOwnPropertyDescriptor(
-            this.wsProto,
-            'protocol'
-        );
-        this.readyState = ctx.nativeMethods.getOwnPropertyDescriptor(
-            this.wsProto,
-            'readyState'
-        );
-        this.send = this.wsProto.send;
         this.CONNECTING = WebSocket.CONNECTING;
         this.OPEN = WebSocket.OPEN;
         this.CLOSING = WebSocket.CLOSING;
@@ -55,53 +41,6 @@ class WebSocketApi extends EventEmitter {
         this.window.WebSocket.OPEN = this.OPEN;
         this.window.WebSocket.CLOSING = this.CLOSING;
         this.window.WebSocket.CLOSED = this.CLOSED;
-    }
-    overrideURL() {
-        this.ctx.overrideDescriptor(this.wsProto, 'url', {
-            get: (target, that) => {
-                const event = new HookEvent(
-                    { value: target.call(that) },
-                    target,
-                    that
-                );
-                this.emit('url', event);
-                return event.data.value;
-            },
-        });
-    }
-    overrideProtocol() {
-        this.ctx.overrideDescriptor(this.wsProto, 'protocol', {
-            get: (target, that) => {
-                const event = new HookEvent(
-                    { value: target.call(that) },
-                    target,
-                    that
-                );
-                this.emit('protocol', event);
-                return event.data.value;
-            },
-        });
-    }
-    overrideReadyState() {
-        this.ctx.overrideDescriptor(this.wsProto, 'readyState', {
-            get: (target, that) => {
-                const event = new HookEvent(
-                    { value: target.call(that) },
-                    target,
-                    that
-                );
-                this.emit('readyState', event);
-                return event.data.value;
-            },
-        });
-    }
-    overrideSend() {
-        this.ctx.override(this.wsProto, 'send', (target, that, args) => {
-            const event = new HookEvent({ args }, target, that);
-            this.emit('send', event);
-            if (event.intercepted) return event.returnValue;
-            return event.target.call(event.that, event.data.args);
-        });
     }
 }
 
