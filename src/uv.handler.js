@@ -1023,6 +1023,7 @@ function __uvHook(window) {
                 event.data.args[1],
                 event.target,
                 requestHeaders,
+                ArrayBuffer.prototype
             )
         );
     });
