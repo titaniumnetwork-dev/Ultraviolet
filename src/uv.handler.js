@@ -56,10 +56,14 @@ function __uvHook(window) {
         bareClient = new Ultraviolet.BareClient();
     } else {
         bareClient = new Ultraviolet.BareClient(
-            new Promise(resolve => {
-                addEventListener("message", (e) => {
-                    if (e.data instanceof MessagePort) {
-                        resolve(e.data);
+            new Promise((resolve) => {
+                addEventListener("message", ({ data }) => {
+                    if (typeof data !== "object") return;
+                    if (
+                        "__uv$type" in data &&
+                        data.__uv$type === "baremuxinit"
+                    ) {
+                        resolve(data.port);
                     }
                 })
             })
