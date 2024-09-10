@@ -50,9 +50,25 @@ function __uvHook(window) {
     /*if (typeof config.construct === 'function') {
         config.construct(__uv, worker ? 'worker' : 'window');
     }*/
-   
-    // websockets
-    const bareClient = new Ultraviolet.BareClient();
+    let bareClient;
+    if (!worker) {
+        // websockets
+        bareClient = new Ultraviolet.BareClient();
+    } else {
+        bareClient = new Ultraviolet.BareClient(
+            new Promise((resolve) => {
+                addEventListener("message", ({ data }) => {
+                    if (typeof data !== "object") return;
+                    if (
+                        "__uv$type" in data &&
+                        data.__uv$type === "baremuxinit"
+                    ) {
+                        resolve(data.port);
+                    }
+                })
+            })
+        );
+    }
 
     const client = new UVClient(window, bareClient, worker);
     const {
@@ -1033,6 +1049,7 @@ function __uvHook(window) {
                 event.data.args[1],
                 event.target,
                 requestHeaders,
+                ArrayBuffer.prototype
             )
         );
     });
@@ -1250,11 +1267,6 @@ function __uvHook(window) {
     client.eventSource.overrideConstruct();
     client.eventSource.overrideUrl();
     client.websocket.overrideWebSocket();
-    client.websocket.overrideProtocol();
-    client.websocket.overrideURL();
-    client.websocket.overrideReadyState();
-    client.websocket.overrideProtocol();
-    client.websocket.overrideSend();
     client.url.overrideObjectURL();
     client.document.overrideCookie();
     client.message.overridePostMessage();

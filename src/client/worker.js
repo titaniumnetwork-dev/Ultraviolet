@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import HookEvent from './hook.js';
+import { BareMuxConnection } from '@mercuryworkshop/bare-mux';
 
 /**
  * @typedef {import('./index').default} UVClient
@@ -34,9 +35,20 @@ class Workers extends EventEmitter {
                 this.emit('worker', event);
 
                 if (event.intercepted) return event.returnValue;
-                return new event.target(
+                const worker = new event.target(
                     ...[event.data.url, event.data.options]
                 );
+
+                const conn = new BareMuxConnection();
+                (async () => {
+                    const port = await conn.getInnerPort();
+                    worker.postMessage({
+                        "__uv$type": "baremuxinit",
+                        port
+                    }, [port]);
+                })();
+
+                return worker;
             },
             true
         );
