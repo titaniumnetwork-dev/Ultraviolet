@@ -87,32 +87,24 @@ class HTML extends EventEmitter {
         return ast;
     }
     wrapSrcset(str, meta = this.ctx.meta) {
-        const regex = /(https?:\/)?(\/[^\/\s]+)+(?=\b(?!2\d+)[xyhw]?)/g;
-        const output = str.replace(regex, (match) => {
-            return this.ctx.rewriteUrl(match, meta);
-        });
+        const regex = /(.*?)\s\d\.?\d?[xyhw].?/g
+        const match = str.matchAll(regex);
 
-        // Rewrite anyways original regex would have captured stuff already
-        // This is just to get anything that has not been captured.
-        if (output === str) {
-            return this.ctx.rewriteUrl(str, meta);
-        }
+        for (const point of match) {
+            str = str.replace(point[1], this.ctx.rewriteUrl(point[1], meta));
+        };
 
-        return output;
+        return str;
     }
     unwrapSrcset(str, meta = this.ctx.meta) {
-        const regex = /(https?:\/)?(\/[^\/\s]+)+(?=\b(?!2\d+)[xyhw]?)/g;
-        const output = str.replace(regex, (match) => {
-            return this.ctx.sourceUrl(match, meta);
-        });
+        const regex = /(.*?)\s\d\.?\d?[xyhw].?/g
+        const match = str.matchAll(regex);
 
-        // Rewrite anyways original regex would have captured stuff already
-        // This is just to get anything that has not been captured.
-        if (output === str) {
-            return this.ctx.sourceUrl(str, meta);
-        }
-        
-        return output;
+        for (const point of match) {
+            str = str.replace(point[1], this.ctx.sourceUrl(point[1], meta));
+        };
+
+        return str;
     }
     static parse = parse;
     static parseFragment = parseFragment;
