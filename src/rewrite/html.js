@@ -87,7 +87,7 @@ class HTML extends EventEmitter {
         return ast;
     }
     wrapSrcset(str, meta = this.ctx.meta) {
-        const regex = /(.*?)\s\d\.?\d?[xyhw].?/g
+        const regex = /(.*?)\s\d+\.?\d?[xyhw].?/g
         const match = str.matchAll(regex);
 
         for (const point of match) {
@@ -97,7 +97,7 @@ class HTML extends EventEmitter {
         return str;
     }
     unwrapSrcset(str, meta = this.ctx.meta) {
-        const regex = /(.*?)\s\d\.?\d?[xyhw].?/g
+        const regex = /(.*?)\s\d+\.?\d?[xyhw].?/g
         const match = str.matchAll(regex);
 
         for (const point of match) {
