@@ -97,7 +97,7 @@ class HTML extends EventEmitter {
         };
 
         if (matched !== true) {
-            str = this.ctx.rewriteUrl(src, meta);  
+            str = this.ctx.rewriteUrl(str, meta);  
         };
 
         return str;
@@ -113,7 +113,7 @@ class HTML extends EventEmitter {
         };
 
         if (matched !== true) {
-            src = this.ctx.sourceUrl(src, meta);
+            str = this.ctx.sourceUrl(str, meta);
         };
 
         return str;
