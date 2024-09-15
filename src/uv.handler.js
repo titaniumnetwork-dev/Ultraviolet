@@ -345,6 +345,9 @@ function __uvHook(window) {
             case 'SCRIPT':
                 event.data.value = __uv.js.source(event.data.value);
                 break;
+            case 'STYLE':
+                event.data.value = __uv.sourceCSS(event.data.value);
+                break;
             default:
                 event.data.value = __uv.sourceHtml(event.data.value);
         }
@@ -677,23 +680,26 @@ function __uvHook(window) {
         },
     });
 
-    client.element.hookProperty([HTMLImageElement], 'srcset', {
-        get: (target, that) => {
-            return (
-                client.element.getAttribute.call(
+    client.element.hookProperty(
+        [HTMLImageElement, HTMLSourceElement], 
+        'srcset', 
+        {
+            get: (target, that) => {
+                return (
+                        client.element.getAttribute.call(
+                        that,
+                        __uv.attributePrefix + '-attr-srcset'
+                     ) || target.call(that)
+                );
+            },
+            set: (target, that, [val]) => {
+                client.element.setAttribute.call(
                     that,
-                    __uv.attributePrefix + '-attr-srcset'
-                ) || target.call(that)
-            );
-        },
-        set: (target, that, [val]) => {
-            client.element.setAttribute.call(
-                that,
-                __uv.attributePrefix + '-attr-srcset',
-                val
-            );
-            target.call(that, __uv.html.wrapSrcset(val.toString()));
-        },
+                    __uv.attributePrefix + '-attr-srcset',
+                    val
+                );
+                target.call(that, __uv.html.wrapSrcset(val.toString()));
+            },
     });
 
     client.element.hookProperty(HTMLScriptElement, 'integrity', {
@@ -792,14 +798,30 @@ function __uvHook(window) {
     });
 
     client.node.on('getTextContent', (event) => {
-        if (event.that.tagName === 'SCRIPT') {
-            event.data.value = __uv.js.source(event.data.value);
+       switch (event.that.tagName) {
+            case 'SCRIPT':
+                event.data.value = __uv.js.source(event.data.value);
+                break;
+            case 'STYLE':
+                event.data.value = __uv.sourceCSS(event.data.value);
+                break;
+            default:
+               // Interferes with HTML Character Entities.
+               // event.data.value = __uv.sourceHtml(event.data.value);
         }
     });
 
     client.node.on('setTextContent', (event) => {
-        if (event.that.tagName === 'SCRIPT') {
-            event.data.value = __uv.js.rewrite(event.data.value);
+        switch (event.that.tagName) {
+            case 'SCRIPT':
+                event.data.value = __uv.js.rewrite(event.data.value);
+                break;
+            case 'STYLE':
+                event.data.value = __uv.rewriteCSS(event.data.value);
+                break;
+            default:
+               // Interferes with HTML Character Entities.
+               //  event.data.value = __uv.rewriteHtml(event.data.value);
         }
     });
 

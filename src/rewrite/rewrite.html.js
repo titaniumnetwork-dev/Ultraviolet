@@ -317,5 +317,5 @@ export function isStyle(name) {
 }
 
 export function isSrcset(name) {
-    return name === 'srcset' || name === 'imagesrcset';
+    return name === 'srcSet' || name === 'srcset' || name === 'imagesrcset';
 }

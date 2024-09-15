@@ -87,24 +87,36 @@ class HTML extends EventEmitter {
         return ast;
     }
     wrapSrcset(str, meta = this.ctx.meta) {
-        return str
-            .split(',')
-            .map((src) => {
-                const parts = src.trimStart().split(' ');
-                if (parts[0]) parts[0] = this.ctx.rewriteUrl(parts[0], meta);
-                return parts.join(' ');
-            })
-            .join(', ');
+        const regex = /(.*?)\s\d+\.?\d?[xyhw].?/g
+        const match = str.matchAll(regex);
+        var matched = false;
+
+        for (const point of match) {
+            matched = true;
+            str = str.replace(point[1], this.ctx.rewriteUrl(point[1], meta));
+        };
+
+        if (matched !== true) {
+            str = this.ctx.rewriteUrl(str, meta);  
+        };
+
+        return str;
     }
     unwrapSrcset(str, meta = this.ctx.meta) {
-        return str
-            .split(',')
-            .map((src) => {
-                const parts = src.trimStart().split(' ');
-                if (parts[0]) parts[0] = this.ctx.sourceUrl(parts[0], meta);
-                return parts.join(' ');
-            })
-            .join(', ');
+        const regex = /(.*?)\s\d+\.?\d?[xyhw].?/g
+        const match = str.matchAll(regex);
+        var matched = false;
+
+        for (const point of match) {
+            matched = true;
+            str = str.replace(point[1], this.ctx.sourceUrl(point[1], meta));
+        };
+
+        if (matched !== true) {
+            str = this.ctx.sourceUrl(str, meta);
+        };
+
+        return str;
     }
     static parse = parse;
     static parseFragment = parseFragment;
