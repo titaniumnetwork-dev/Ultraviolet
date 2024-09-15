@@ -89,9 +89,15 @@ class HTML extends EventEmitter {
     wrapSrcset(str, meta = this.ctx.meta) {
         const regex = /(.*?)\s\d+\.?\d?[xyhw].?/g
         const match = str.matchAll(regex);
+        var matched = false;
 
         for (const point of match) {
+            matched = true;
             str = str.replace(point[1], this.ctx.rewriteUrl(point[1], meta));
+        };
+
+        if (matched !== true) {
+            str = this.ctx.rewriteUrl(src, meta);  
         };
 
         return str;
@@ -99,9 +105,15 @@ class HTML extends EventEmitter {
     unwrapSrcset(str, meta = this.ctx.meta) {
         const regex = /(.*?)\s\d+\.?\d?[xyhw].?/g
         const match = str.matchAll(regex);
+        var matched = false;
 
         for (const point of match) {
+            matched = true;
             str = str.replace(point[1], this.ctx.sourceUrl(point[1], meta));
+        };
+
+        if (matched !== true) {
+            src = this.ctx.sourceUrl(src, meta);
         };
 
         return str;
