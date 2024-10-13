@@ -17,6 +17,7 @@ import EventEmitter from 'events';
 import StorageApi from './storage.js';
 import StyleApi from './dom/style.js';
 import IDBApi from './idb.js';
+import WebSocketApi from './requests/websocket.js';
 
 /**
  * @template {Function} [T=Function]
@@ -69,6 +70,7 @@ class UVClient extends EventEmitter {
         this.document = new DocumentHook(this);
         this.function = new FunctionHook(this);
         this.object = new ObjectHook(this);
+        this.websocket = new WebSocketApi(this);
         this.message = new MessageApi(this);
         this.navigator = new NavigatorApi(this);
         this.eventSource = new EventSourceApi(this);
