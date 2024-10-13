@@ -442,6 +442,9 @@ function errorTemplate(
         uvVersion.textContent = ${JSON.stringify(
             process.env.ULTRAVIOLET_VERSION
         )};
+        uvBuild.textContent = ${JSON.stringify(
+            process.env.ULTRAVIOLET_COMMIT_HASH
+        )};
     `
 
     return (
@@ -476,7 +479,7 @@ function errorTemplate(
         </ul>
         <button id="reload">Reload</button>
         <hr />
-        <p><i>Ultraviolet v<span id="uvVersion"></span></i></p>
+        <p><i>Ultraviolet v<span id="uvVersion"></span> (build <span id="uvBuild"></span>)</i></p>
         <script src="${
             'data:application/javascript,' + encodeURIComponent(script)
         }"></script>

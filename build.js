@@ -1,6 +1,7 @@
 import { rimraf } from 'rimraf';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { build } from 'esbuild';
+import { execSync } from "node:child_process";
 
 // read version from package.json
 const pkg = JSON.parse(await readFile('package.json'));
@@ -29,6 +30,19 @@ let builder = await build({
         'process.env.ULTRAVIOLET_VERSION': JSON.stringify(
             process.env.ULTRAVIOLET_VERSION
         ),
+        'process.env.ULTRAVIOLET_COMMIT_HASH': (() => {
+			try {
+				let hash = JSON.stringify(
+					execSync("git rev-parse --short HEAD", {
+						encoding: "utf-8",
+					}).replace(/\r?\n|\r/g, "")
+				);
+
+				return hash;
+			} catch (e) {
+				return "unknown";
+			}
+		})(),
     },
     bundle: true,
     treeShaking: true,
