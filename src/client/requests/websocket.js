@@ -56,15 +56,12 @@ class WebSocketApi extends EventEmitter {
                     url: args[0],
                     binaryType: "blob",
                     barews,
-    
-                    captureListeners: {},
-                    listeners: {},
                 };
 
                 function fakeEventSend(fakeev) {
-                    console.log(fakeev)
+                    // console.log(fakeev)
                     if (state["on" + fakeev.type]) {
-                        state["on" + fakeev.type](trustEvent(fakeev));
+                        state["on"  + fakeev.type](trustEvent(fakeev));
                     }
                     fakeWebSocket.dispatchEvent(fakeev);
                 }
