@@ -1036,45 +1036,6 @@ function __uvHook(window) {
         }
     });
 
-    client.websocket.on('websocket', async (event) => {
-        const requestHeaders = Object.create(null);
-        requestHeaders['Origin'] = __uv.meta.url.origin;
-        requestHeaders['User-Agent'] = navigator.userAgent;
-
-        if (cookieStr !== '') requestHeaders['Cookie'] = cookieStr.toString();
-
-        event.respondWith(
-            bareClient.createWebSocket(
-                event.data.args[0],
-                event.data.args[1],
-                event.target,
-                requestHeaders,
-                ArrayBuffer.prototype
-            )
-        );
-    });
-
-    client.websocket.on('readyState', (event) => {
-        if ('__uv$getReadyState' in event.that)
-            event.data.value = event.that.__uv$getReadyState();
-    });
-
-    client.websocket.on('send', (event) => {
-        if ('__uv$getSendError' in event.that) {
-            const error = event.that.__uv$getSendError();
-            if (error) throw error;
-        }
-    });
-
-    client.websocket.on('url', (event) => {
-        if ('__uv$socketUrl' in event.that)
-            event.data.value = event.that.__uv$socketUrl.toString();
-    });
-
-    client.websocket.on('protocol', (event) => {
-        if ('__uv$getProtocol' in event.that)
-            event.data.value = event.that.__uv$getProtocol();
-    });
 
     client.function.on('function', (event) => {
         event.data.script = __uv.rewriteJS(event.data.script);
@@ -1266,7 +1227,7 @@ function __uvHook(window) {
     client.history.overrideReplaceState();
     client.eventSource.overrideConstruct();
     client.eventSource.overrideUrl();
-    client.websocket.overrideWebSocket();
+    client.websocket.overrideWebSocket(bareClient);
     client.url.overrideObjectURL();
     client.document.overrideCookie();
     client.message.overridePostMessage();
