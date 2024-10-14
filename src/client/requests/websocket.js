@@ -96,6 +96,18 @@ class WebSocketApi extends EventEmitter {
             true
         );
 
+        this.ctx.overrideDescriptor(this.wsProto, 'binaryType', {
+            get: (target, that) => {
+                const ws = this.socketmap.get(that);
+
+                return ws.binaryType;
+            },
+            set: (target, that, value) => {
+                const ws = this.socketmap.get(that);
+                if (value[0] === "blob" || value[0] === "arraybuffer") ws.binaryType = value[0];
+            },
+        });
+
         this.ctx.overrideDescriptor(this.wsProto, 'bufferedAmount', {
             get: (target, that) => {
                 return 0;
