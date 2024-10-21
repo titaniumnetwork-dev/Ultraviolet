@@ -77,12 +77,14 @@ class WebSocketApi extends EventEmitter {
                     if (typeof payload === "string") {
                         // DO NOTHING
                     } else if ("byteLength" in payload) {
+                        // arraybuffer, convert to blob if needed or set the proper prototype
                         if (state.binaryType === "blob") {
                             payload = new Blob([payload]);
                         } else {
                             Object.setPrototypeOf(payload, ArrayBuffer.prototype);
                         }
                     } else if ("arrayBuffer" in payload) {
+                        // blob, convert to arraybuffer if neccesary.
                         if (state.binaryType === "arraybuffer") {
                             payload = await payload.arrayBuffer();
                             Object.setPrototypeOf(payload, ArrayBuffer.prototype);
