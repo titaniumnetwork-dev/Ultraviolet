@@ -59,10 +59,7 @@ class WebSocketApi extends EventEmitter {
                 };
 
                 function fakeEventSend(fakeev) {
-                    // console.log(fakeev)
-                    if (state["on" + fakeev.type]) {
-                        state["on"  + fakeev.type](trustEvent(fakeev));
-                    }
+                    state["on" + fakeev.type]?.(trustEvent(fakeev));
                     fakeWebSocket.dispatchEvent(fakeev);
                 }
     
