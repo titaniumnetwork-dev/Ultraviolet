@@ -45,12 +45,12 @@ export const base64 = {
         if (!str) return str;
         str = str.toString();
 
-        return decodeURIComponent(btoa(str));
+        return btoa(encodeURIComponent(str));
     },
     decode(str) {
         if (!str) return str;
         str = str.toString()
 
-        return atob(str);
+        return decodeURIComponent(atob(str));
     },
 };
