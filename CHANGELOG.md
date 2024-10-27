@@ -1,3 +1,7 @@
+# v3.2.10
+
+-   This version of Ultraviolet fixes an NPM versioning error.
+
 # v3.2.9
 
 -   This version of Ultraviolet fixes an oversight in the css rewriter.
