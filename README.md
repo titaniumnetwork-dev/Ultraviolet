@@ -14,23 +14,23 @@ Ultraviolet offers several features that set it apart from its predecessors, inc
 
 Some of the popular websites that Ultraviolet supports include:
 
--   [Google](https://google.com)
--   [Youtube](https://www.youtube.com)
--   [Spotify](https://spotify.com)
--   [Discord](https://discord.com)
--   [Reddit](https://reddit.com)
--   [GeForce NOW](https://play.geforcenow.com/)
--   [now.gg](https://now.gg)
+- [Google](https://google.com)
+- [Youtube](https://www.youtube.com)
+- [Spotify](https://spotify.com)
+- [Discord](https://discord.com)
+- [Reddit](https://reddit.com)
+- [GeForce NOW](https://play.geforcenow.com/)
+- [now.gg](https://now.gg)
 
 ## Used by
 
--   [Holy Unblocker LTS](https://github.com/QuiteAFancyEmerald/Holy-Unblocker)
--   [Alu](https://github.com/titaniumnetwork-dev/Alu)
--   [Incognito](https://github.com/titaniumnetwork-dev/Incognito)
--   [Nebula](https://github.com/NebulaServices/Nebula)
--   [AnuraOS](https://github.com/MercuryWorkshop/anuraOS)
--   [Terbium](https://github.com/TerbiumOS/webOS)
--   [Metallic](https://github.com/Metallic-Web/Metallic)
+- [Holy Unblocker LTS](https://github.com/QuiteAFancyEmerald/Holy-Unblocker)
+- [Alu](https://github.com/titaniumnetwork-dev/Alu)
+- [Incognito](https://github.com/titaniumnetwork-dev/Incognito)
+- [Nebula](https://github.com/NebulaServices/Nebula)
+- [AnuraOS](https://github.com/MercuryWorkshop/anuraOS)
+- [Terbium](https://github.com/TerbiumOS/webOS)
+- [Metallic](https://github.com/Metallic-Web/Metallic)
 
 ## Upgrading
 

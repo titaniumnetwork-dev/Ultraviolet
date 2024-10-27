@@ -1,38 +1,41 @@
 {
-    "name": "@titaniumnetwork-dev/ultraviolet",
-    "version": "3.2.10",
-    "description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
-    "main": "lib/index.cjs",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/titaniumnetwork-dev/Ultraviolet.git"
-    },
-    "files": [
-        "dist",
-        "lib",
-        "uv.d.ts",
-        "client.d.ts"
-    ],
-    "type": "module",
-    "scripts": {
-        "build": "node build.js",
-        "dev": "node build.js --dev",
-        "prepack": "npm run build"
-    },
-    "devDependencies": {
-        "esbuild": "^0.24.0",
-        "eslint": "^9.13.0",
-        "prettier": "^3.3.3",
-        "rimraf": "^6.0.1"
-    },
-    "dependencies": {
-        "@mercuryworkshop/bare-mux": "^2.1.6",
-        "astring": "^1.9.0",
-        "events": "^3.3.0",
-        "idb": "^8.0.0",
-        "meriyah": "^6.0.2",
-        "parse5": "^7.2.0",
-        "set-cookie-parser": "^2.7.1"
-    }
+	"name": "@titaniumnetwork-dev/ultraviolet",
+	"version": "3.2.10",
+	"description": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!",
+	"main": "lib/index.cjs",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/titaniumnetwork-dev/Ultraviolet.git"
+	},
+	"files": [
+		"dist",
+		"lib",
+		"uv.d.ts",
+		"client.d.ts"
+	],
+	"type": "module",
+	"scripts": {
+		"build": "node build.js",
+		"dev": "node build.js --dev",
+		"prepack": "npm run build",
+		"format": "prettier --config .prettierrc.js --write .",
+		"lint": "eslint ./src/",
+		"lint:fix": "eslint ./src/ --fix"
+	},
+	"devDependencies": {
+		"esbuild": "^0.24.0",
+		"eslint": "^9.13.0",
+		"prettier": "^3.3.3",
+		"rimraf": "^6.0.1"
+	},
+	"dependencies": {
+		"@mercuryworkshop/bare-mux": "^2.1.6",
+		"astring": "^1.9.0",
+		"events": "^3.3.0",
+		"idb": "^8.0.0",
+		"meriyah": "^6.0.2",
+		"parse5": "^7.2.0",
+		"set-cookie-parser": "^2.7.1"
+	}
 }
