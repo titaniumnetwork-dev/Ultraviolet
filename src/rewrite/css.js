@@ -25,22 +25,21 @@ class CSS extends EventEmitter {
             url
         ) => {
             const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
-            return match.replace(url, encodedUrl)
+            return match.replace(url, encodedUrl);
         });
-
         str = str.replace(
             Atruleregex,
             (
-                _,
+                match,
                 importStatement,
             ) => {
-                return importStatement.replace(/^(url\(['"]?|['"]|)(.+?)(['"]|['"]?\)|)$/gm, (match, firstQuote, url, endQuote) => {
+                return match.replace(importStatement, importStatement.replace(/^(url\(['"]?|['"]|)(.+?)(['"]|['"]?\)|)$/gm, (match, firstQuote, url, endQuote) => {
                     if (firstQuote.startsWith("url")) {
                         return match;
                     }
                     const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
                     return `${firstQuote}${encodedUrl}${endQuote}`
-                })
+                }));
         });
         
         return str;
