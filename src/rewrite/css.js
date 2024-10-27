@@ -24,7 +24,7 @@ class CSS extends EventEmitter {
             url
         ) => {
             const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
-            return `url("${encodedUrl}")`;
+            return match.replace(url, encodedUrl)
         });
 
         str = str.replace(
