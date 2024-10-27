@@ -14,6 +14,7 @@ class CSS extends EventEmitter {
         return this.recast(str, options, 'source');
     }
     recast(str, options, type) {
+        // regex from vk6 (https://github.com/ading2210)
         const urlRegex = /url\(['"]?(.+?)['"]?\)/gm
         const Atruleregex = /@import\s+(url\s*?\(.{0,9999}?\)|['"].{0,9999}?['"]|.{0,9999}?)($|\s|;)/gm
 
