@@ -14,35 +14,35 @@ class CSS extends EventEmitter {
         return this.recast(str, options, 'source');
     }
     recast(str, options, type) {
-        // CSS Rewriting from Meteor (https://github.com/meteorproxy/meteor)
-        const regex =
-        /(@import\s+(?!url\())?\s*url\(\s*(['"]?)([^'")]+)\2\s*\)|@import\s+(['"])([^'"]+)\4/g
+        const urlRegex = /url\(['"]?(.+?)['"]?\)/gm
+        const Atruleregex = /@import\s+(url\s*?\(.{0,9999}?\)|['"].{0,9999}?['"]|.{0,9999}?)($|\s|;)/gm
 
         if (!str) return str;
         str = new String(str).toString();
-        return str.replace(
-            regex,
-            (
-                match,
-                importStatement,
-                urlQuote,
-                urlContent,
-                importQuote,
-                importContent
-            ) => {
-                const url = urlContent || importContent
-                const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
-    
-                if (importStatement) {
-                    return `@import url(${urlQuote}${encodedUrl}${urlQuote})`
-                }
-    
-                if (importQuote) {
-                    return `@import ${importQuote}${encodedUrl}${importQuote}`
-                }
-    
-                return `url(${urlQuote}${encodedUrl}${urlQuote})`
+        str = str.replace(urlRegex, (
+            match,
+            url
+        ) => {
+            const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
+            return `url("${encodedUrl}")`;
         });
+
+        str = str.replace(
+            Atruleregex,
+            (
+                _,
+                importStatement,
+            ) => {
+                return importStatement.replace(/^(url\(['"]?|['"]|)(.+?)(['"]|['"]?\)|)$/gm, (match, firstQuote, url, endQuote) => {
+                    if (firstQuote.startsWith("url")) {
+                        return match;
+                    }
+                    const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
+                    return `${firstQuote}${encodedUrl}${endQuote}`
+                })
+        });
+        
+        return str;
     }
 }
 
