@@ -1,3 +1,7 @@
+# v3.2.9
+
+-   This version of Ultraviolet fixes an oversight in the css rewriter.
+
 # v3.2.8
 
 -   This version of Ultraviolet updates the base64 codec to be more stable.
