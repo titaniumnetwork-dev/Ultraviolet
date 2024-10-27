@@ -15,31 +15,32 @@ class CSS extends EventEmitter {
     }
     recast(str, options, type) {
         // regex from vk6 (https://github.com/ading2210)
-        const urlRegex = /url\(['"]?(.+?)['"]?\)/gm
-        const Atruleregex = /@import\s+(url\s*?\(.{0,9999}?\)|['"].{0,9999}?['"]|.{0,9999}?)($|\s|;)/gm
-
-        if (!str) return str;
+        const urlRegex = /url\(['"]?(.+?)['"]?\)/gm;
+        const Atruleregex =
+            /@import\s+(url\s*?\(.{0,9999}?\)|['"].{0,9999}?['"]|.{0,9999}?)($|\s|;)/gm;
         str = new String(str).toString();
-        str = str.replace(urlRegex, (
-            match,
-            url
-        ) => {
-            const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
+        str = str.replace(urlRegex, (match, url) => {
+            const encodedUrl =
+                type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
+
             return match.replace(url, encodedUrl);
         });
-        str = str.replace(
-            Atruleregex,
-            (
-                match,
+        str = str.replace(Atruleregex, (match, importStatement) => {
+            return match.replace(
                 importStatement,
-            ) => {
-                return match.replace(importStatement, importStatement.replace(/^(url\(['"]?|['"]|)(.+?)(['"]|['"]?\)|)$/gm, (match, firstQuote, url, endQuote) => {
-                    if (firstQuote.startsWith("url")) {
-                        return match;
+                importStatement.replace(
+                    /^(url\(['"]?|['"]|)(.+?)(['"]|['"]?\)|)$/gm,
+                    (match, firstQuote, url, endQuote) => {
+                        if (firstQuote.startsWith("url")) {
+                            return match;
+                        }
+                        const encodedUrl =
+                            type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
+
+                        return `${firstQuote}${encodedUrl}${endQuote}`;
                     }
-                    const encodedUrl = type === "rewrite" ? this.ctx.rewriteUrl(url) : this.ctx.sourceUrl(url);
-                    return `${firstQuote}${encodedUrl}${endQuote}`
-                }));
+                )
+            );
         });
         
         return str;
