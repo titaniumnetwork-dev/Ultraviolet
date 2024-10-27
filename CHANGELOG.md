@@ -1,3 +1,10 @@
+# v3.2.8
+
+-   This version of Ultraviolet updates the base64 codec to be more stable.
+-   This version of Ultraviolet updates the websocket wrapper to make it more stable.
+-   This version of Ultraviolet updates the css rewriter, fixing some known bugs and issues.
+-   This version of Ultraviolet upgrades [bare-mux](https://www.npmjs.com/package/@mercuryworkshop/bare-mux). This update has various bug fixes involving requests.
+
 # v3.2.7
 
 -   This version of Ultraviolet updates the XOR and Base64 codecs to be more efficient and fast by removing unneccesary code.
