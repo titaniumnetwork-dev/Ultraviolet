@@ -1,4 +1,3 @@
-import CryptoJS from "crypto-js";
 import { openDB } from "idb";
 
 // -------------------------------------------------------------
@@ -6,23 +5,23 @@ import { openDB } from "idb";
 // Do not use any browser or node-specific API!
 // -------------------------------------------------------------
 export const none = {
-	encode: (str) => str,
-	decode: (str) => str,
+	encode: async (str) => str,
+	decode: async (str) => str,
 };
 
 export const plain = {
-	encode(str) {
+	async encode(str) {
 		if (!str) return str;
 		return encodeURIComponent(str);
 	},
-	decode(str) {
+	async decode(str) {
 		if (!str) return str;
 		return decodeURIComponent(str);
 	},
 };
 
 export const xor = {
-	encode(str) {
+	async encode(str) {
 		if (!str) return str;
 		let result = "";
 		for (let i = 0; i < str.length; i++) {
@@ -30,7 +29,7 @@ export const xor = {
 		}
 		return encodeURIComponent(result);
 	},
-	decode(str) {
+	async decode(str) {
 		if (!str) return str;
 		const [input, ...search] = str.split("?");
 		let result = "";
@@ -44,13 +43,13 @@ export const xor = {
 };
 
 export const base64 = {
-	encode(str) {
+	async encode(str) {
 		if (!str) return str;
 		str = str.toString();
 
 		return btoa(encodeURIComponent(str));
 	},
-	decode(str) {
+	async decode(str) {
 		if (!str) return str;
 		str = str.toString();
 
@@ -58,52 +57,92 @@ export const base64 = {
 	},
 };
 
-function generateUUID() {
-  const buffer = new Uint8Array(16);
-  window.crypto.getRandomValues(buffer);
-  buffer[6] = (buffer[6] & 0x0f) | 0x40; // Version 4
-  buffer[8] = (buffer[8] & 0x3f) | 0x80; // Variant 1
-  return [...buffer].map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function getDB() {
-	return openDB("uvDatabase", 1, {
+async function getOrSetIdb(storeName, key) {
+	const db = await openDB("myDatabase", 1, {
 		upgrade(db) {
-			if (!db.objectStoreNames.contains("codecs")) {
-				db.createObjectStore("codecs");
+			if (!db.objectStoreNames.contains(storeName)) {
+				db.createObjectStore(storeName);
 			}
 		},
 	});
-}
 
-async function getCodecStore(key) {
-	const db = await getDB();
-	const store = db.transaction("codecs", "readwrite").objectStore("codecs");
+	let value = await db.get(storeName, key);
 
-	let value = await store.get(key);
 	if (!value) {
-		value = generateUUID();
-		await store.put(value, key);
+		value = crypto.randomUUID();
+		await db.put(storeName, value, key);
 	}
 
 	return value;
 }
 
-let key = "";
-
-(async () => {
-	key = await getCodecStore("nebelcrypt");
-})();
-
 export const nebelcrypt = {
-	encode(str) {
+	async encode(str) {
 		if (!str) return str;
-		return encodeURIComponent(CryptoJS.AES.encrypt(str, key)).toString();
-	},
-	decode(str) {
-		if (!str) return str;
-		return CryptoJS.AES.decrypt(decodeURIComponent(str), key).toString(
-			CryptoJS.enc.Utf8
+
+		const key = await getOrSetIdb("nebelcrypt", "key");
+		const encoder = new TextEncoder();
+		const data = encoder.encode(str);
+
+		const cryptoKey = await window.crypto.subtle.importKey(
+			"raw",
+			encoder.encode(key),
+			{ name: "AES-GCM" },
+			false,
+			["encrypt"]
 		);
+
+		const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+		const encryptedData = await window.crypto.subtle.encrypt(
+			{ name: "AES-GCM", iv: iv },
+			cryptoKey,
+			data
+		);
+
+		const combined = new Uint8Array(iv.byteLength + encryptedData.byteLength);
+		combined.set(iv);
+		combined.set(new Uint8Array(encryptedData), iv.byteLength);
+
+		return btoa(String.fromCharCode(...combined));
+	},
+
+	async decode(str) {
+		if (!str) return str;
+
+		const key = await getOrSetIdb("nebelcrypt", "key");
+		const decoder = new TextDecoder();
+
+		const combined = new Uint8Array(
+			atob(str)
+				.split("")
+				.map((char) => char.charCodeAt(0))
+		);
+
+		const iv = combined.slice(0, 12);
+
+		const encryptedData = combined.slice(12);
+
+		const encoder = new TextEncoder();
+		const cryptoKey = await window.crypto.subtle.importKey(
+			"raw",
+			encoder.encode(key),
+			{ name: "AES-GCM" },
+			false,
+			["decrypt"]
+		);
+
+		try {
+			const decryptedData = await window.crypto.subtle.decrypt(
+				{ name: "AES-GCM", iv: iv },
+				cryptoKey,
+				encryptedData
+			);
+
+			return decoder.decode(decryptedData);
+		} catch (e) {
+			console.error("Decryption failed:", e);
+			return null;
+		}
 	},
 };

@@ -30,7 +30,7 @@ self.__uvHook = __uvHook;
  * @param {typeof globalThis} window
  * @returns
  */
-function __uvHook(window) {
+async function __uvHook(window) {
 	if ("__uv" in window && window.__uv instanceof Ultraviolet) return false;
 
 	if (window.document && !!window.window) {
@@ -90,13 +90,13 @@ function __uvHook(window) {
 
 	__uv.meta.origin = location.origin;
 	__uv.location = client.location.emulate(
-		(href) => {
+		async (href) => {
 			if (href === "about:srcdoc") return new URL(href);
 			if (href.startsWith("blob:")) href = href.slice("blob:".length);
-			return new URL(__uv.sourceUrl(href));
+			return new URL(await __uv.sourceUrl(href));
 		},
-		(href) => {
-			return __uv.rewriteUrl(href);
+		async (href) => {
+			return await __uv.rewriteUrl(href);
 		}
 	);
 
@@ -167,15 +167,15 @@ function __uvHook(window) {
 	let rawBase = window.document
 		? client.node.baseURI.get.call(window.document)
 		: window.location.href;
-	let base = __uv.sourceUrl(rawBase);
+	let base = await __uv.sourceUrl(rawBase);
 
 	client.nativeMethods.defineProperty(__uv.meta, "base", {
-		get() {
+		async get() {
 			if (!window.document) return __uv.meta.url.href;
 
 			if (client.node.baseURI.get.call(window.document) !== rawBase) {
 				rawBase = client.node.baseURI.get.call(window.document);
-				base = __uv.sourceUrl(rawBase);
+				base = await __uv.sourceUrl(rawBase);
 			}
 
 			return base;
@@ -236,39 +236,39 @@ function __uvHook(window) {
 		});
 	});
 
-	client.fetch.on("request", (event) => {
-		event.data.input = __uv.rewriteUrl(event.data.input);
+	client.fetch.on("request", async (event) => {
+		event.data.input = await __uv.rewriteUrl(event.data.input);
 	});
 
-	client.fetch.on("requestUrl", (event) => {
-		event.data.value = __uv.sourceUrl(event.data.value);
+	client.fetch.on("requestUrl", async (event) => {
+		event.data.value = await __uv.sourceUrl(event.data.value);
 	});
 
-	client.fetch.on("responseUrl", (event) => {
-		event.data.value = __uv.sourceUrl(event.data.value);
+	client.fetch.on("responseUrl", async (event) => {
+		event.data.value = await __uv.sourceUrl(event.data.value);
 	});
 
 	// XMLHttpRequest
-	client.xhr.on("open", (event) => {
-		event.data.input = __uv.rewriteUrl(event.data.input);
+	client.xhr.on("open", async (event) => {
+		event.data.input = await __uv.rewriteUrl(event.data.input);
 	});
 
-	client.xhr.on("responseUrl", (event) => {
-		event.data.value = __uv.sourceUrl(event.data.value);
+	client.xhr.on("responseUrl", async (event) => {
+		event.data.value = await __uv.sourceUrl(event.data.value);
 	});
 
 	// Workers
-	client.workers.on("worker", (event) => {
-		event.data.url = __uv.rewriteUrl(event.data.url);
+	client.workers.on("worker", async (event) => {
+		event.data.url = await __uv.rewriteUrl(event.data.url);
 	});
 
-	client.workers.on("addModule", (event) => {
-		event.data.url = __uv.rewriteUrl(event.data.url);
+	client.workers.on("addModule", async (event) => {
+		event.data.url = await __uv.rewriteUrl(event.data.url);
 	});
 
-	client.workers.on("importScripts", (event) => {
+	client.workers.on("importScripts", async (event) => {
 		for (const i in event.data.scripts) {
-			event.data.scripts[i] = __uv.rewriteUrl(event.data.scripts[i]);
+			event.data.scripts[i] = await __uv.rewriteUrl(event.data.scripts[i]);
 		}
 	});
 
@@ -284,8 +284,8 @@ function __uvHook(window) {
 	});
 
 	// Navigator
-	client.navigator.on("sendBeacon", (event) => {
-		event.data.url = __uv.rewriteUrl(event.data.url);
+	client.navigator.on("sendBeacon", async (event) => {
+		event.data.url = await __uv.rewriteUrl(event.data.url);
 	});
 
 	// Cookies
@@ -393,12 +393,12 @@ function __uvHook(window) {
 
 	// EventSource
 
-	client.eventSource.on("construct", (event) => {
-		event.data.url = __uv.rewriteUrl(event.data.url);
+	client.eventSource.on("construct", async (event) => {
+		event.data.url = await __uv.rewriteUrl(event.data.url);
 	});
 
-	client.eventSource.on("url", (event) => {
-		event.data.url = __uv.rewriteUrl(event.data.url);
+	client.eventSource.on("url", async (event) => {
+		event.data.url = await __uv.rewriteUrl(event.data.url);
 	});
 
 	// IDB
@@ -415,16 +415,16 @@ function __uvHook(window) {
 	});
 
 	// History
-	client.history.on("replaceState", (event) => {
+	client.history.on("replaceState", async (event) => {
 		if (event.data.url)
-			event.data.url = __uv.rewriteUrl(
+			event.data.url = await __uv.rewriteUrl(
 				event.data.url,
 				"__uv" in event.that ? event.that.__uv.meta : __uv.meta
 			);
 	});
-	client.history.on("pushState", (event) => {
+	client.history.on("pushState", async (event) => {
 		if (event.data.url)
-			event.data.url = __uv.rewriteUrl(
+			event.data.url = await __uv.rewriteUrl(
 				event.data.url,
 				"__uv" in event.that ? event.that.__uv.meta : __uv.meta
 			);
@@ -498,12 +498,12 @@ function __uvHook(window) {
 		},
 	});
 
-	client.node.on("baseURI", (event) => {
+	client.node.on("baseURI", async (event) => {
 		if (event.data.value.startsWith(window.location.origin))
-			event.data.value = __uv.sourceUrl(event.data.value);
+			event.data.value = await __uv.sourceUrl(event.data.value);
 	});
 
-	client.element.on("setAttribute", (event) => {
+	client.element.on("setAttribute", async (event) => {
 		if (
 			event.that instanceof HTMLMediaElement &&
 			event.data.name === "src" &&
@@ -524,7 +524,7 @@ function __uvHook(window) {
 				__uv.attributePrefix + "-attr-" + event.data.name,
 				event.data.value
 			);
-			event.data.value = __uv.rewriteUrl(event.data.value);
+			event.data.value = await __uv.rewriteUrl(event.data.value);
 		}
 
 		if (__uv.attrs.isStyle(event.data.name)) {
@@ -572,8 +572,8 @@ function __uvHook(window) {
 		}
 	});
 
-	client.element.on("audio", (event) => {
-		event.data.url = __uv.rewriteUrl(event.data.url);
+	client.element.on("audio", async (event) => {
+		event.data.url = await __uv.rewriteUrl(event.data.url);
 	});
 
 	// Element Property Attributes
@@ -581,16 +581,16 @@ function __uvHook(window) {
 		[HTMLAnchorElement, HTMLAreaElement, HTMLLinkElement, HTMLBaseElement],
 		"href",
 		{
-			get: (target, that) => {
-				return __uv.sourceUrl(target.call(that));
+			get: async (target, that) => {
+				return await __uv.sourceUrl(target.call(that));
 			},
-			set: (target, that, [val]) => {
+			set: async (target, that, [val]) => {
 				client.element.setAttribute.call(
 					that,
 					__uv.attributePrefix + "-attr-href",
 					val
 				);
-				target.call(that, __uv.rewriteUrl(val));
+				target.call(that, await __uv.rewriteUrl(val));
 			},
 		}
 	);
@@ -610,10 +610,10 @@ function __uvHook(window) {
 		],
 		"src",
 		{
-			get: (target, that) => {
-				return __uv.sourceUrl(target.call(that));
+			get: async (target, that) => {
+				return await __uv.sourceUrl(target.call(that));
 			},
-			set: (target, that, [val]) => {
+			set: async (target, that, [val]) => {
 				if (
 					new String(val).toString().trim().startsWith("blob:") &&
 					that instanceof HTMLMediaElement
@@ -631,22 +631,22 @@ function __uvHook(window) {
 					__uv.attributePrefix + "-attr-src",
 					val
 				);
-				target.call(that, __uv.rewriteUrl(val));
+				target.call(that, await __uv.rewriteUrl(val));
 			},
 		}
 	);
 
 	client.element.hookProperty([HTMLFormElement], "action", {
-		get: (target, that) => {
-			return __uv.sourceUrl(target.call(that));
+		get: async (target, that) => {
+			return await __uv.sourceUrl(target.call(that));
 		},
-		set: (target, that, [val]) => {
+		set: async (target, that, [val]) => {
 			client.element.setAttribute.call(
 				that,
 				__uv.attributePrefix + "-attr-action",
 				val
 			);
-			target.call(that, __uv.rewriteUrl(val));
+			target.call(that, await __uv.rewriteUrl(val));
 		},
 	});
 
@@ -804,8 +804,8 @@ function __uvHook(window) {
 		event.data.value = __uv.location.href;
 	});
 
-	client.document.on("referrer", (event) => {
-		event.data.value = __uv.referrer || __uv.sourceUrl(event.data.value);
+	client.document.on("referrer", async (event) => {
+		event.data.value = __uv.referrer || await __uv.sourceUrl(event.data.value);
 	});
 
 	client.document.on("parseFromString", (event) => {
@@ -831,14 +831,14 @@ function __uvHook(window) {
 		}
 	});
 
-	client.attribute.on("setValue", (event) => {
+	client.attribute.on("setValue", async (event) => {
 		if (__uv.attrs.isUrl(event.data.name)) {
 			client.element.setAttribute.call(
 				event.that.ownerElement,
 				__uv.attributePrefix + "-attr-" + event.data.name,
 				event.data.value
 			);
-			event.data.value = __uv.rewriteUrl(event.data.value);
+			event.data.value = await __uv.rewriteUrl(event.data.value);
 		}
 
 		if (__uv.attrs.isStyle(event.data.name)) {
@@ -1110,13 +1110,13 @@ function __uvHook(window) {
 		__uv.location.hash = hash;
 	});
 
-	client.location.on("hashchange", (oldUrl, newUrl, ctx) => {
+	client.location.on("hashchange", async (oldUrl, newUrl, ctx) => {
 		if (ctx.HashChangeEvent && client.history.replaceState) {
 			client.history.replaceState.call(
 				window.history,
 				"",
 				"",
-				__uv.rewriteUrl(newUrl)
+				await __uv.rewriteUrl(newUrl)
 			);
 
 			const event = new ctx.HashChangeEvent("hashchange", {
@@ -1178,8 +1178,8 @@ function __uvHook(window) {
 	client.navigator.overrideSendBeacon();
 	client.function.overrideFunction();
 	client.function.overrideToString();
-	client.location.overrideWorkerLocation((href) => {
-		return new URL(__uv.sourceUrl(href));
+	client.location.overrideWorkerLocation(async (href) => {
+		return new URL(await __uv.sourceUrl(href));
 	});
 
 	client.overrideDescriptor(window, "localStorage", {
@@ -1193,11 +1193,11 @@ function __uvHook(window) {
 		},
 	});
 
-	client.override(window, "open", (target, that, args) => {
+	client.override(window, "open", async (target, that, args) => {
 		if (!args.length) return target.apply(that, args);
 		let [url] = args;
 
-		url = __uv.rewriteUrl(url);
+		url = await __uv.rewriteUrl(url);
 
 		return target.call(that, url);
 	});

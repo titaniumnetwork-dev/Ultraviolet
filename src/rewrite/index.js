@@ -109,7 +109,7 @@ class Ultraviolet {
 			base: src,
 		});
 	}
-	rewriteUrl(str, meta = this.meta) {
+	async rewriteUrl(str, meta = this.meta) {
 		str = new String(str).trim();
 		if (!str || this.urlRegex.test(str)) return str;
 
@@ -119,21 +119,21 @@ class Ultraviolet {
 
 		try {
 			return (
-				meta.origin + this.prefix + this.encodeUrl(new URL(str, meta.base).href)
+				meta.origin + this.prefix + await this.encodeUrl(new URL(str, meta.base).href)
 			);
 		} catch (e) {
-			return meta.origin + this.prefix + this.encodeUrl(str);
+			return meta.origin + this.prefix + await this.encodeUrl(str);
 		}
 	}
-	sourceUrl(str, meta = this.meta) {
+	async sourceUrl(str, meta = this.meta) {
 		if (!str || this.urlRegex.test(str)) return str;
 		try {
 			return new URL(
-				this.decodeUrl(str.slice(this.prefix.length + meta.origin.length)),
+				await this.decodeUrl(str.slice(this.prefix.length + meta.origin.length)),
 				meta.base
 			).href;
 		} catch (e) {
-			return this.decodeUrl(str.slice(this.prefix.length + meta.origin.length));
+			return await this.decodeUrl(str.slice(this.prefix.length + meta.origin.length));
 		}
 	}
 	encodeUrl(str) {

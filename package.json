@@ -35,7 +35,6 @@
 	"dependencies": {
 		"@mercuryworkshop/bare-mux": "^2.1.6",
 		"astring": "^1.9.0",
-		"crypto-js": "^4.2.0",
 		"events": "^3.3.0",
 		"idb": "^8.0.0",
 		"meriyah": "^6.0.2",

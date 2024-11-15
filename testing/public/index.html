@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chemical Example</title>
+		<script data-wisp="wss://wisp.mercurywork.shop/" src="/chemical.js"></script>
+	</head>
+	<body>
+		<h1>Chemical Example</h1>
+		<input id="search" placeholder="Enter URL" />
+
+		<script>
+			const search = document.getElementById("search");
+
+			search.addEventListener("keydown", async function (e) {
+				if (e.key == "Enter" && chemical.loaded && e.target.value) {
+					window.location = await chemical.encode(e.target.value);
+				}
+			});
+		</script>
+	</body>
+</html>
