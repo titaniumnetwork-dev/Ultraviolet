@@ -1,3 +1,7 @@
+# v3.3.0
+
+- This version of Ultraviolet adds nebelcrypt as a new codec which is more difficult to detect.
+
 # v3.2.10
 
 - This version of Ultraviolet fixes an NPM versioning error.

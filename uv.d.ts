@@ -95,14 +95,14 @@ export interface UVConfig {
 	 * The URL encoder.
 	 * This function will be used to encode URLs before they are sent to the server.
 	 * The encoder should use `encodeURIComponent` to encode the URLs.
-	 * @defaultValue `Ultraviolet.codec.xor.encode`
+	 * @defaultValue `Ultraviolet.codec.nebelcrypt.encode`
 	 */
 	encodeUrl?: UVEncode;
 	/**
 	 * The URL decoder.
 	 * This function will be used to decode URLs after they are received from the server.
 	 * The decoder should use `decodeURIComponent` to decode the URLs.
-	 * @defaultValue `Ultraviolet.codec.xor.decode`
+	 * @defaultValue `Ultraviolet.codec.nebelcrypt.decode`
 	 */
 	decodeUrl?: UVDecode;
 	/**
