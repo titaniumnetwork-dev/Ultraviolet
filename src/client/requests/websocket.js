@@ -28,17 +28,8 @@ class WebSocketApi extends EventEmitter {
 			"WebSocket",
 			(target, that, args) => {
 				const fakeWebSocket = new EventTarget();
-				Object.setPrototypeOf(fakeWebSocket, this.WebSocket.prototype);
+				Object.setPrototypeOf(fakeWebSocket, this.wsProto);
 				fakeWebSocket.constructor = this.WebSocket;
-
-				const trustEvent = (ev) =>
-					new Proxy(ev, {
-						get(target, prop) {
-							if (prop === "isTrusted") return true;
-
-							return Reflect.get(target, prop);
-						},
-					});
 
 				const barews = client.createWebSocket(args[0], args[1], null, {
 					"User-Agent": navigator.userAgent,
@@ -51,10 +42,15 @@ class WebSocketApi extends EventEmitter {
 					url: args[0],
 					binaryType: "blob",
 					barews,
+					
+					onclose: null,
+					onerror: null,
+					onmessage: null,
+					onopen: null,
 				};
 
 				function fakeEventSend(fakeev) {
-					state["on" + fakeev.type]?.(trustEvent(fakeev));
+					state["on" + fakeev.type]?.(fakeev);
 					fakeWebSocket.dispatchEvent(fakeev);
 				}
 
