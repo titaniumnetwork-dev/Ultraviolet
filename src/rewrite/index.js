@@ -98,11 +98,11 @@ class Ultraviolet {
 	}
 	/**
 	 *
-	 * @param {string} str Script being imported
 	 * @param {string} src Script that is importing
+	 * @param {string} str Script being imported
 	 * @param {*} meta
 	 */
-	rewriteImport(str, src, meta = this.meta) {
+	rewriteImport(src, str, meta = this.meta) {
 		// use importiing script as the base
 		return this.rewriteUrl(str, {
 			...meta,
