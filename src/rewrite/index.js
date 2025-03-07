@@ -25,6 +25,7 @@ import {
 //import { call, destructureDeclaration, dynamicImport, getProperty, importDeclaration, setProperty, sourceMethods, wrapEval, wrapIdentifier } from './rewrite.script.js';
 import {
 	dynamicImport,
+	importMeta,
 	identifier,
 	importDeclaration,
 	property,
@@ -150,6 +151,7 @@ class Ultraviolet {
 		// JS
 		importDeclaration(this);
 		dynamicImport(this);
+		importMeta(this);
 		property(this);
 		wrapEval(this);
 		identifier(this);

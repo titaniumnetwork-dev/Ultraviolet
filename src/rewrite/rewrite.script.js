@@ -261,6 +261,34 @@ function dynamicImport(ctx) {
 }
 
 /**
+ * @param {Ultraviolet} ctx
+ */
+function importMeta(ctx) {
+	const { js } = ctx;
+	js.on("MemberExpression", (node, data, type) => {
+		if (
+			node.object.type == "MetaProperty" &&
+			node.property.type === "Identifier" &&
+			node.property.name === "url"
+		) {
+			if (type === "rewrite") {
+				data.changes.push({
+					start: node.start,
+					end: node.end,
+					node: `__uv.sourceUrl(import.meta.url)`,
+				});
+			} else if (type === "source") {
+				data.changes.push({
+					start: node.start,
+					end: node.end,
+					node: `import.meta.url`,
+				});
+			}
+		}
+	});
+}
+
+/**
  *
  * @param {Ultraviolet} ctx
  */
@@ -353,6 +381,7 @@ export {
 	wrapEval,
 	dynamicImport,
 	importDeclaration,
+	importMeta,
 	identifier,
 	unwrap,
 };
