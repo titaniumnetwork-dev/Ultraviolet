@@ -123,7 +123,7 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 				: requestCtx.url;
 
 			const response = await this.bareClient.fetch(fetchedURL, {
-				headers: Object.entries(requestCtx.headers),
+				headers: requestCtx.headers,
 				method: requestCtx.method,
 				body: requestCtx.body,
 				credentials: requestCtx.credentials,
@@ -141,6 +141,9 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 			for (const name of cspHeaders) {
 				if (responseCtx.headers[name]) delete responseCtx.headers[name];
 			}
+
+			delete responseCtx.headers["content-encoding"];
+			delete responseCtx.headers["content-length"];
 
 			if (responseCtx.headers.location) {
 				responseCtx.headers.location = ultraviolet.rewriteUrl(
@@ -316,9 +319,16 @@ class ResponseContext {
 		this.raw = response;
 		this.ultraviolet = request.ultraviolet;
 		this.headers = {};
-		// eg set-cookie
-		for (const key in response.rawHeaders)
-			this.headers[key.toLowerCase()] = response.rawHeaders[key];
+		const rawHeaders = response.rawHeaders;
+		const headerEntries = Array.isArray(rawHeaders)
+			? rawHeaders
+			: Object.entries(rawHeaders || {});
+		for (const [rawKey, value] of headerEntries) {
+			const key = rawKey.toLowerCase();
+			if (key in this.headers)
+				this.headers[key] = [].concat(this.headers[key], value);
+			else this.headers[key] = value;
+		}
 		this.status = response.status;
 		this.statusText = response.statusText;
 		this.body = response.body;
